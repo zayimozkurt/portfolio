@@ -9,7 +9,7 @@ import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
 import { prisma } from 'prisma/prisma-client';
 
-export const contactService = {
+export const contactService = { // test
     async readAllByUserId(): Promise<ReadAllContactsResponse> {
         try {
             const contacts = await prisma.contact.findMany({ where: { userId }, orderBy: { order: 'asc' } });
