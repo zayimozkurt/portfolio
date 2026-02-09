@@ -1,22 +1,33 @@
-name: Sync Upstream
+name: Auto-Sync Upstream
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs once a day. Change to '*/30 * * * *' for every 30 mins.
-  workflow_dispatch: # Allows you to run it manually
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Keeps the "Run workflow" button for testing
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout target repo
+      - name: Checkout Your Fork
         uses: actions/checkout@v4
         with:
-          ref: main # The branch in your fork
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # Essential for merging histories
 
-      - name: Sync upstream changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
-          force: true # This ensures your fork stays identical to the original
+      - name: Sync and Merge
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          
+          # 1. Point to the original source
+          # REPLACE the URL below with the real one!
+          git remote add upstream https://github.com/mehmetaltinbas/portfolio.git
+          
+          # 2. Get their latest code
+          git fetch upstream
+          
+          # 3. Merge their main into your main
+          git checkout main
+          git merge upstream/main --allow-unrelated-histories -m "Auto-sync: merged upstream changes"
+          
+          # 4. Push back to your fork (triggers Vercel)
+          git push origin main
