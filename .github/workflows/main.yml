@@ -1,0 +1,22 @@
+name: Sync Upstream
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs once a day. Change to '*/30 * * * *' for every 30 mins.
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target repo
+        uses: actions/checkout@v4
+        with:
+          ref: main # The branch in your fork
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sync upstream changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true # This ensures your fork stays identical to the original
