@@ -1,9 +1,9 @@
-import { ExtendedUserRow } from '@/types/db/extended-user-row';
-import { ReadExtendedUserByIdResponse } from '@/types/response/user/read-extended-user-by-id-response';
+import { ExtendedUserModel } from '@/types/db/extended-user.model';
+import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id-response';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const refresh = createAsyncThunk('user/refresh', async () => {
-    const response: ReadExtendedUserByIdResponse = await (
+    const response: ReadUserByIdResponse = await (
         await fetch('/api/visitor/user/read', {
             method: 'GET',
         })
@@ -11,7 +11,7 @@ const refresh = createAsyncThunk('user/refresh', async () => {
     return response.user;
 });
 
-const initialState: ExtendedUserRow = {
+const initialState: ExtendedUserModel = {
     id: '',
     email: '',
     userName: '',
@@ -21,8 +21,8 @@ const initialState: ExtendedUserRow = {
     bio: '',
     about: '',
     location: '',
-    skills: [],
     cvUrl: '',
+    skills: [],
     userImages: [],
     contacts: [],
     experiences: [],
@@ -34,7 +34,7 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        set(state, action: PayloadAction<ExtendedUserRow>) {
+        set(state, action: PayloadAction<ExtendedUserModel>) {
             return action.payload;
         },
     },

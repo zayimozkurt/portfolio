@@ -7,10 +7,10 @@ import { contactIconMap } from '@/constants/contact-icon-map.constant';
 import { DEFAULT_ADD_FORM } from '@/constants/default-add-form-values.constant';
 import { MAX_CONTACTS } from '@/constants/max-contacts.constant';
 import { ContactLabel } from '@/enums/contact-label.enum';
+import { Contact } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
 import { ContactFormData } from '@/types/contact-form-data.interface';
-import { ContactRow } from '@/types/db/contact-row';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -27,7 +27,7 @@ import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-ki
 import { Pencil, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-export function Contacts({ contacts }: { contacts: ContactRow[] }) {
+export function Contacts({ contacts }: { contacts: Contact[] }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
 
@@ -35,7 +35,7 @@ export function Contacts({ contacts }: { contacts: ContactRow[] }) {
     const [isSaving, setIsSaving] = useState(false);
     const [addForm, setAddForm] = useState<ContactFormData>(DEFAULT_ADD_FORM);
     const [editForm, setEditForm] = useState<(ContactFormData & { id: string }) | null>(null);
-    const [localContacts, setLocalContacts] = useState<ContactRow[]>(contacts);
+    const [localContacts, setLocalContacts] = useState<Contact[]>(contacts);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {
@@ -71,7 +71,7 @@ export function Contacts({ contacts }: { contacts: ContactRow[] }) {
         });
     }
 
-    function startEdit(contact: ContactRow) {
+    function startEdit(contact: Contact) {
         setEditForm({ id: contact.id, label: contact.label, name: contact.name, value: contact.value });
     }
 

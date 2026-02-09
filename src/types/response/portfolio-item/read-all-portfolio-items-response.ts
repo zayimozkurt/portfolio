@@ -1,6 +1,6 @@
-import { PortfolioItemRow } from '@/types/db/portfolio-item-row';
+import { PortfolioItem } from '@/generated/client';
 import { ResponseBase } from '@/types/response/response-base';
 
 export interface ReadAllPortfolioItemsResponse extends ResponseBase {
-    portfolioItems?: PortfolioItemRow[];
+    portfolioItems?: PortfolioItem[];
 }

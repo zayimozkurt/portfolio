@@ -1,7 +1,7 @@
 'use client';
 
 import { ContactItem } from '@/components/contacts/ContactItem';
-import { ContactRow } from '@/types/db/contact-row';
+import { Contact } from '@/generated/client';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
@@ -12,7 +12,7 @@ export function SortableContactItem({
     onDelete,
     isSaving,
 }: {
-    contact: ContactRow;
+    contact: Contact;
     onEdit: () => void;
     onDelete: () => void;
     isSaving: boolean;

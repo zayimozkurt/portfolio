@@ -2,15 +2,15 @@
 
 import { Button } from '@/components/Button';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { PortfolioItem } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { PortfolioItemRow } from '@/types/db/portfolio-item-row';
 import { ResponseBase } from '@/types/response/response-base';
 import Link from 'next/link';
 import React from 'react';
 import { FaFolder } from 'react-icons/fa';
 
-export default function PortfolioItemCard({ portfolioItem }: { portfolioItem: PortfolioItemRow }) {
+export default function PortfolioItemCard({ portfolioItem }: { portfolioItem: PortfolioItem }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
     const [isDeleting, setIsDeleting] = React.useState<boolean>(false);

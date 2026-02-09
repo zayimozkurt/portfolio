@@ -3,7 +3,7 @@
 import { Button } from '@/components/Button';
 import { DESCRIPTION_CHAR_LIMIT } from '@/constants/description-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
-import { EducationRow } from '@/types/db/education-row';
+import { Education } from '@/generated/client';
 import { calculateDuration } from '@/utils/calculate-duration.util';
 import { useState } from 'react';
 
@@ -15,7 +15,7 @@ export function EducationItem({
     isLast = false,
     isSaving,
 }: {
-    education: EducationRow;
+    education: Education;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;

@@ -1,12 +1,12 @@
 'use client';
 
 import PortfolioItemCard from '@/components/portfolio/PortfolioItemCard';
-import { PortfolioItemRow } from '@/types/db/portfolio-item-row';
+import { PortfolioItem } from '@/generated/client';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
 
-export function SortablePortfolioItemCard({ portfolioItem }: { portfolioItem: PortfolioItemRow }) {
+export function SortablePortfolioItemCard({ portfolioItem }: { portfolioItem: PortfolioItem }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: portfolioItem.id,
     });

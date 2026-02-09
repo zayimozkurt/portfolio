@@ -5,6 +5,7 @@ import { Input } from '@/components/Input';
 import { SectionHeader } from '@/components/resume/SectionHeader';
 import { SortableSkillPill } from '@/components/resume/SortableSkillPill';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { Skill } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
 import { ResponseBase } from '@/types/response/response-base';
@@ -23,7 +24,6 @@ import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordi
 import { GripVertical } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { SkillRow } from '@/types/db/skill-row';
 
 export function SkillsSection({ id }: { id?: string }) {
     const dispatch = useAppDispatch();
@@ -32,7 +32,7 @@ export function SkillsSection({ id }: { id?: string }) {
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
     const [newSkillName, setNewSkillName] = useState<string>('');
     const [isSaving, setIsSaving] = useState(false);
-    const [localSkills, setLocalSkills] = useState<SkillRow[]>(user.skills);
+    const [localSkills, setLocalSkills] = useState<Skill[]>(user.skills);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {

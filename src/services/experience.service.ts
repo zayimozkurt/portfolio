@@ -44,7 +44,9 @@ export const experienceService = {
             const experiences = await prisma.experience.findMany({
                 where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
+                include: { skills: true }
             });
+            console.log("experiences: ", experiences);
             return { isSuccess: true, message: 'all experiences read', experiences };
         } catch {
             return { isSuccess: false, message: "experiences couldn't be read" };

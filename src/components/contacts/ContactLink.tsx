@@ -1,8 +1,8 @@
 import { contactIconMap } from '@/constants/contact-icon-map.constant';
 import { ContactLabel } from '@/enums/contact-label.enum';
-import { ContactRow } from '@/types/db/contact-row';
+import { Contact } from '@/generated/client';
 
-export function ContactLink({ contact }: { contact: ContactRow }) {
+export function ContactLink({ contact }: { contact: Contact }) {
     return (
         <a
             href={contact.value}

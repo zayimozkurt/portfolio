@@ -1,6 +1,6 @@
-import { SkillRow } from '@/types/db/skill-row';
+import { ExtendedSkillModel } from '@/types/db/extended-skill-model';
 import { ResponseBase } from '@/types/response/response-base';
 
 export interface ReadSingleSkillResponse extends ResponseBase {
-    skill?: SkillRow;
+    skill?: ExtendedSkillModel;
 }

@@ -6,8 +6,8 @@ import { NextResponse } from 'next/server';
 export async function POST() {
     const cookieOptions: Partial<ResponseCookie> = {
         maxAge: jwtCookieSettings.expiresIn, // this expires the cookie immediately
-        secure: jwtCookieSettings.isSecure === 'true',
-        httpOnly: jwtCookieSettings.isHttpOnly === 'true',
+        secure: jwtCookieSettings.isSecure,
+        httpOnly: jwtCookieSettings.isHttpOnly,
         sameSite: jwtCookieSettings.sameSite,
         path: '/', // important: must match the path used when setting
     };

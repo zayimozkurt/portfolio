@@ -1,6 +1,6 @@
-import { EducationRow } from '@/types/db/education-row';
+import { Education } from '@/generated/client';
 import { ResponseBase } from '@/types/response/response-base';
 
 export interface ReadAllEducationsResponse extends ResponseBase {
-    educations?: EducationRow[];
+    educations?: Education[];
 }

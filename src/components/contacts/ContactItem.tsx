@@ -1,6 +1,6 @@
 import { contactIconMap } from '@/constants/contact-icon-map.constant';
 import { ContactLabel } from '@/enums/contact-label.enum';
-import { ContactRow } from '@/types/db/contact-row';
+import { Contact } from '@/generated/client';
 import { Pencil, Trash2 } from 'lucide-react';
 
 export function ContactItem({
@@ -9,7 +9,7 @@ export function ContactItem({
     onDelete,
     isSaving,
 }: {
-    contact: ContactRow;
+    contact: Contact;
     onEdit: () => void;
     onDelete: () => void;
     isSaving?: boolean;

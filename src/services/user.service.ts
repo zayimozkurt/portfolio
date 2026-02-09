@@ -6,7 +6,6 @@ import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
 import { UserSignInDto } from '@/types/dto/user/user-sign-in.dto';
 import { UserSignUpDto } from '@/types/dto/user/user-sign-up.dto';
 import { ResponseBase } from '@/types/response/response-base';
-import { ReadExtendedUserByIdResponse } from '@/types/response/user/read-extended-user-by-id-response';
 import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id-response';
 import { UserSignInResponse } from '@/types/response/user/user-sign-in-response';
 import { checkErrorMessage } from '@/utils/check-error-message.util';
@@ -83,26 +82,6 @@ export const userService = {
                 where: {
                     id: userId,
                 },
-            });
-            if (!user) {
-                return { isSuccess: false, message: 'no user found' };
-            }
-            return {
-                isSuccess: true,
-                message: 'user read',
-                user,
-            };
-        } catch {
-            return { isSuccess: false, message: "user couldn't be read" };
-        }
-    },
-
-    async readExtendedById(): Promise<ReadExtendedUserByIdResponse> {
-        try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    id: userId,
-                },
                 include: {
                     skills: { orderBy: { order: 'asc' } },
                     userImages: true,
@@ -120,18 +99,16 @@ export const userService = {
                     portfolioItems: { orderBy: { order: 'asc' } },
                 },
             });
-
             if (!user) {
                 return { isSuccess: false, message: 'no user found' };
             }
-
             return {
                 isSuccess: true,
                 message: 'user read',
                 user,
             };
-        } catch (error) {
-            return { isSuccess: false, message: "couldn't read user" };
+        } catch {
+            return { isSuccess: false, message: "user couldn't be read" };
         }
     },
 

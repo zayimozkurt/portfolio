@@ -3,7 +3,7 @@
 import { Button } from '@/components/Button';
 import { DESCRIPTION_CHAR_LIMIT } from '@/constants/description-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
-import { ExperienceRow } from '@/types/db/experience-row';
+import { Experience } from '@/generated/client';
 import { calculateDuration } from '@/utils/calculate-duration.util';
 import { useState } from 'react';
 
@@ -15,7 +15,7 @@ export function ExperienceItem({
     isLast = false,
     isSaving,
 }: {
-    experience: ExperienceRow;
+    experience: Experience;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;

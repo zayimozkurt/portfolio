@@ -5,9 +5,9 @@ import { ExperienceForm } from '@/components/resume/ExperienceForm';
 import { ExperienceItem } from '@/components/resume/ExperienceItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { Experience } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { ExperienceRow } from '@/types/db/experience-row';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import { ChangeEvent, useState } from 'react';
@@ -38,7 +38,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
         }));
     }
 
-    function startEdit(experience: ExperienceRow) {
+    function startEdit(experience: Experience) {
         setEditingExperienceId(experience.id);
         setExperienceForm({
             id: experience.id,

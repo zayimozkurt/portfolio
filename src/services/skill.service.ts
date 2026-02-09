@@ -42,7 +42,7 @@ export const skillService = {
 
     async readById(id: string): Promise<ReadSingleSkillResponse> {
         try {
-            const skill = await prisma.skill.findUnique({ where: { id } });
+            const skill = await prisma.skill.findUnique({ where: { id }, include: { experiences: true, educations: true, portfolioItems: true } });
 
             if (!skill) return { isSuccess: false, message: "skill couldn't be read" };
 

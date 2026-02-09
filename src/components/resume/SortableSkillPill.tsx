@@ -1,6 +1,6 @@
 'use client';
 
-import { SkillRow } from '@/types/db/skill-row';
+import { Skill } from '@/generated/client';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
@@ -10,7 +10,7 @@ export function SortableSkillPill({
     onDelete,
     isSaving,
 }: {
-    skill: SkillRow;
+    skill: Skill;
     onDelete: (id: string, name: string) => void;
     isSaving: boolean;
 }) {

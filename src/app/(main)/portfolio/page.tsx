@@ -5,9 +5,9 @@ import CreatePortfolioItemForm from '@/components/portfolio/CreatePortfolioItemF
 import PortfolioItemCard from '@/components/portfolio/PortfolioItemCard';
 import { SortablePortfolioItemCard } from '@/components/portfolio/SortablePortfolioItemCard';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { PortfolioItem } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { PortfolioItemRow } from '@/types/db/portfolio-item-row';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -31,7 +31,7 @@ export default function Page() {
     const isAdmin = useAppSelector((state) => state.isAdmin);
     const [isCreatePortfolioItemFormHidden, setIsCreatePortfolioItemFormHidden] = useState<boolean>(true);
     const createPortfolioItemFormRef = useRef<HTMLDivElement>(null);
-    const [localPortfolioItems, setLocalPortfolioItems] = useState<PortfolioItemRow[]>(user.portfolioItems);
+    const [localPortfolioItems, setLocalPortfolioItems] = useState<PortfolioItem[]>(user.portfolioItems);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     useEffect(() => {

@@ -5,9 +5,9 @@ import { EducationForm } from '@/components/resume/EducationForm';
 import { EducationItem } from '@/components/resume/EducationItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { Education } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { EducationRow } from '@/types/db/education-row';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import { ChangeEvent, useState } from 'react';
@@ -38,7 +38,7 @@ export function EducationsSection({ id }: { id?: string }) {
         }));
     }
 
-    function startEdit(education: EducationRow) {
+    function startEdit(education: Education) {
         setEditingEducationId(education.id);
         setEducationForm({
             id: education.id,

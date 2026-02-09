@@ -9,20 +9,7 @@ import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
 import { prisma } from 'prisma/prisma-client';
 
-export const contactService = { // test
-    async readAllByUserId(): Promise<ReadAllContactsResponse> {
-        try {
-            const contacts = await prisma.contact.findMany({ where: { userId }, orderBy: { order: 'asc' } });
-            
-            if (contacts.length === 0) {
-                return { isSuccess: false, message: 'no contact found' };
-            }
-            return { isSuccess: true, message: 'all contacts read', contacts };
-        } catch (error) {
-            return { isSuccess: false, message: "contacts couldn't read" };
-        }
-    },
-
+export const contactService = {
     async create(dto: CreateContactDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(async (tx: TransactionClient)=> {
@@ -45,6 +32,19 @@ export const contactService = { // test
             return { isSuccess: true, message: 'contact created' };
         } catch (error) {
             return { isSuccess: false, message: "contact couldn't created" };
+        }
+    },
+
+    async readAllByUserId(): Promise<ReadAllContactsResponse> {
+        try {
+            const contacts = await prisma.contact.findMany({ where: { userId }, orderBy: { order: 'asc' } });
+            
+            if (contacts.length === 0) {
+                return { isSuccess: false, message: 'no contact found' };
+            }
+            return { isSuccess: true, message: 'all contacts read', contacts };
+        } catch (error) {
+            return { isSuccess: false, message: "contacts couldn't read" };
         }
     },
 

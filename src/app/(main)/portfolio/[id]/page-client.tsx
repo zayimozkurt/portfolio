@@ -7,14 +7,14 @@ import { TextArea } from '@/components/TextArea';
 import ContentEditor from '@/components/tiptap/ContentEditor';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
+import { PortfolioItem } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { PortfolioItemRow } from '@/types/db/portfolio-item-row';
 import { ResponseBase } from '@/types/response/response-base';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function PageClient({ portfolioItem }: { portfolioItem: PortfolioItemRow }) {
+export default function PageClient({ portfolioItem }: { portfolioItem: PortfolioItem }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
 

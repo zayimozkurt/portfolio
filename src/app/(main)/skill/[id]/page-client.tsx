@@ -8,12 +8,12 @@ import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { SkillRow } from '@/types/db/skill-row';
+import { ExtendedSkillModel } from '@/types/db/extended-skill-model';
 import { ResponseBase } from '@/types/response/response-base';
 import Link from 'next/link';
 import { useState } from 'react';
 
-export default function PageClient({ skill }: { skill: SkillRow }) {
+export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
 

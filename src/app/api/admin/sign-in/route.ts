@@ -14,8 +14,8 @@ export async function POST(req: Request) {
 
     const cookieOptions: Partial<ResponseCookie> = {
         maxAge: jwtCookieSettings.expiresIn,
-        secure: jwtCookieSettings.isSecure === 'true',
-        httpOnly: jwtCookieSettings.isHttpOnly === 'true',
+        secure: jwtCookieSettings.isSecure,
+        httpOnly: jwtCookieSettings.isHttpOnly,
         sameSite: jwtCookieSettings.sameSite
     };
     // add validation here to validate cookie options
