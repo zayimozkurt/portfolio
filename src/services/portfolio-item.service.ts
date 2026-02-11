@@ -81,14 +81,17 @@ export const portfolioItemService = {
 
     async updateById(id: string, updatePortfolioItemDto: UpdatePortfolioItemDto): Promise<ResponseBase> {
         try {
-            const existingPortfolioItem = await prisma.portfolioItem.findFirst({
-                where: {
-                    userId,
-                    title: updatePortfolioItemDto.title
+            if (updatePortfolioItemDto.title) {
+                const existingPortfolioItem = await prisma.portfolioItem.findFirst({
+                    where: {
+                        userId,
+                        title: updatePortfolioItemDto.title
+                    }
+                });
+
+                if (existingPortfolioItem) {
+                    throw new Error('Portfolio item with this title already exists');
                 }
-            });
-            if (existingPortfolioItem) {
-                throw new Error('Portfolio item with this title already exists');
             }
 
             await prisma.portfolioItem.update({

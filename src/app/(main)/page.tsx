@@ -167,40 +167,8 @@ export default function Page() {
 
     return (
         <div className="w-full h-full flex justify-center items-start">
-            <div className="relative w-[700px] h-[300px] grid grid-cols-1 md:grid-cols-2 gap-0 pt-10">
-                {!isEditMode ? (
-                    <>
-                        {isAdmin && (
-                            <div className="absolute top-2 right-2">
-                                <Button onClick={toggleEditMode} variant={ButtonVariant.PRIMARY}>
-                                    Edit
-                                </Button>
-                            </div>
-                        )}
-
-                        <div className="h-full flex justify-center items-start">
-                            <Image
-                                src={
-                                    user.userImages.find((userImage) => userImage.place === UserImagePlace.LANDING_PAGE)
-                                        ?.url ?? `/default-avatar-profile-icon.jpg`
-                                }
-                                width={200}
-                                height={200}
-                                className="rounded-full"
-                                alt="profile photo"
-                            />
-                        </div>
-
-                        <div className="h-full flex flex-col justify-start items-center gap-2 py-2">
-                            <p className="text-2xl font-bold text-center text-[#003366]">{user.fullName}</p>
-                            <p className="text-l font-semibold text-center text-[#174978]">{user.headline}</p>
-                            <p className="text-center">{user.bio}</p>
-                            <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
-                                View CV
-                            </Button>
-                        </div>
-                    </>
-                ) : (
+            <div className="relative w-[700px] h-auto grid grid-cols-1 md:grid-cols-2 gap-0 pt-10 px-6 sm:px-0">
+                {isEditMode ? (
                     <>
                         <div className="absolute top-2 right-2 flex gap-2">
                             <Button onClick={onSave} variant={ButtonVariant.PRIMARY} disabled={isSaving}>
@@ -303,6 +271,38 @@ export default function Page() {
                             </div>
                             <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
                                 View Current CV
+                            </Button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {isAdmin && (
+                            <div className="absolute top-2 right-2">
+                                <Button onClick={toggleEditMode} variant={ButtonVariant.PRIMARY}>
+                                    Edit
+                                </Button>
+                            </div>
+                        )}
+
+                        <div className="h-full flex justify-center items-start">
+                            <Image
+                                src={
+                                    user.userImages.find((userImage) => userImage.place === UserImagePlace.LANDING_PAGE)
+                                        ?.url ?? `/default-avatar-profile-icon.png`
+                                }
+                                width={200}
+                                height={200}
+                                className="rounded-full"
+                                alt="profile photo"
+                            />
+                        </div>
+
+                        <div className="h-full flex flex-col justify-start items-center gap-2 py-2">
+                            <p className="text-2xl font-bold text-center text-[#003366]">{user.fullName}</p>
+                            <p className="text-l font-semibold text-center text-[#174978]">{user.headline}</p>
+                            <p className="text-center">{user.bio}</p>
+                            <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
+                                View CV
                             </Button>
                         </div>
                     </>

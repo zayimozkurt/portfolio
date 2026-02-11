@@ -1,1 +1,1 @@
-export const DESCRIPTION_CHAR_LIMIT = 150;
+export const DESCRIPTION_CHAR_LIMIT = 200;
