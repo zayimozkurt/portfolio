@@ -1,4 +1,4 @@
-import { contactService } from '@/services/contact.service';
+import { ContactService } from '@/services/contact.service';
 import { ReorderContactsDto } from '@/types/dto/contact/reorder-contacts.dto';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +9,6 @@ export async function PATCH(req: Request) {
 
     const dto: ReorderContactsDto = { orderedIds };
 
-    const response = await contactService.reorder(dto);
+    const response = await ContactService.reorder(dto);
     return NextResponse.json(response);
 }

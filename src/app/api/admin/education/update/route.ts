@@ -1,4 +1,4 @@
-import { educationService } from '@/services/education.service';
+import { EducationService } from '@/services/education.service';
 import { UpdateEducationDto } from '@/types/dto/education/update-education.dto';
 import { NextResponse } from 'next/server';
 
@@ -18,6 +18,6 @@ export async function PATCH(req: Request) {
         endDate,
     };
 
-    const response = await educationService.updateById(dto);
+    const response = await EducationService.updateById(dto);
     return NextResponse.json(response);
 }

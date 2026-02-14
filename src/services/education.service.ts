@@ -7,8 +7,10 @@ import { ResponseBase } from '@/types/response/response-base';
 import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';
 
-export const educationService = {
-    async create(dto: CreateEducationDto): Promise<ResponseBase> {
+export class EducationService {
+    private constructor() {}
+
+    static async create(dto: CreateEducationDto): Promise<ResponseBase> {
         if (!isValidYearMonth(dto.startDate)) {
             return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
         }
@@ -39,9 +41,9 @@ export const educationService = {
         } catch {
             return { isSuccess: false, message: "education couldn't be created" };
         }
-    },
+    }
 
-    async readAllByUserId(): Promise<ReadAllEducationsResponse> {
+    static async readAllByUserId(): Promise<ReadAllEducationsResponse> {
         try {
             const educations = await prisma.education.findMany({
                 where: { userId },
@@ -51,9 +53,9 @@ export const educationService = {
         } catch {
             return { isSuccess: false, message: "educations couldn't be read" };
         }
-    },
+    }
 
-    async updateById(dto: UpdateEducationDto): Promise<ResponseBase> {
+    static async updateById(dto: UpdateEducationDto): Promise<ResponseBase> {
         try {
             const education = await prisma.education.findUnique({ where: { id: dto.id } });
             if (!education) {
@@ -92,9 +94,9 @@ export const educationService = {
         } catch {
             return { isSuccess: false, message: "education couldn't be updated" };
         }
-    },
+    }
 
-    async deleteById(dto: DeleteEducationDto): Promise<ResponseBase> {
+    static async deleteById(dto: DeleteEducationDto): Promise<ResponseBase> {
         try {
             const education = await prisma.education.findUnique({ where: { id: dto.id } });
             if (!education) {
@@ -106,5 +108,5 @@ export const educationService = {
         } catch {
             return { isSuccess: false, message: "education couldn't be deleted" };
         }
-    },
-};
+    }
+}

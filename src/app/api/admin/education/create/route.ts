@@ -1,4 +1,4 @@
-import { educationService } from '@/services/education.service';
+import { EducationService } from '@/services/education.service';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { NextResponse } from 'next/server';
 
@@ -17,6 +17,6 @@ export async function POST(req: Request) {
         endDate,
     };
 
-    const response = await educationService.create(dto);
+    const response = await EducationService.create(dto);
     return NextResponse.json(response);
 }

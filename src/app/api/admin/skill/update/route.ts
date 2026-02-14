@@ -1,4 +1,4 @@
-import { skillService } from '@/services/skill.service';
+import { SkillService } from '@/services/skill.service';
 import { UpdateSkillDto } from '@/types/dto/skill/update-skill.dto';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +9,6 @@ export async function PATCH(req: Request) {
 
     const dto: UpdateSkillDto = { id, name, content };
 
-    const response = await skillService.updateById(dto);
+    const response = await SkillService.updateById(dto);
     return NextResponse.json(response);
 }

@@ -15,8 +15,10 @@ import { extractImageUrlsFromTipTapJson } from '@/utils/extract-image-urls-from-
 import { supabase } from '@/utils/supabase-client';
 import { prisma } from 'prisma/prisma-client';
 
-export const skillService = {
-    async create(dto: CreateSkillDto): Promise<ResponseBase> {
+export class SkillService {
+    private constructor() {}
+
+    static async create(dto: CreateSkillDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(async (tx: TransactionClient) => {
                 await tx.skill.updateMany({
@@ -38,9 +40,9 @@ export const skillService = {
         } catch {
             return { isSuccess: false, message: "skill couldn't be created" };
         }
-    },
+    }
 
-    async readById(id: string): Promise<ReadSingleSkillResponse> {
+    static async readById(id: string): Promise<ReadSingleSkillResponse> {
         try {
             const skill = await prisma.skill.findUnique({ where: { id }, include: { experiences: true, educations: true, portfolioItems: true } });
 
@@ -50,9 +52,9 @@ export const skillService = {
         } catch {
             return { isSuccess: false, message: "skill couldn't be read" };
         }
-    },
+    }
 
-    async updateById(dto: UpdateSkillDto): Promise<ResponseBase> {
+    static async updateById(dto: UpdateSkillDto): Promise<ResponseBase> {
         try {
             const skill = await prisma.skill.findUnique({ where: { id: dto.id } });
             if (!skill) {
@@ -68,7 +70,7 @@ export const skillService = {
             });
 
             if (dto.content) {
-                skillService
+                SkillService
                     .cleanUpOrphanedImages({
                         skillId: dto.id,
                         content: dto.content,
@@ -80,9 +82,9 @@ export const skillService = {
         } catch {
             return { isSuccess: false, message: "skill couldn't be updated" };
         }
-    },
+    }
 
-    async deleteById(id: string): Promise<ResponseBase> {
+    static async deleteById(id: string): Promise<ResponseBase> {
         try {
             const skill = await prisma.skill.findUnique({ where: { id } });
             if (!skill) {
@@ -107,9 +109,9 @@ export const skillService = {
         } catch {
             return { isSuccess: false, message: "skill couldn't be deleted" };
         }
-    },
+    }
 
-    async reorder(dto: ReorderSkillsDto): Promise<ResponseBase> {
+    static async reorder(dto: ReorderSkillsDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(
                 dto.orderedIds.map((id, index) => prisma.skill.update({ where: { id }, data: { order: index } }))
@@ -119,9 +121,9 @@ export const skillService = {
         } catch {
             return { isSuccess: false, message: "skills couldn't be reordered" };
         }
-    },
+    }
 
-    async uploadImage(dto: UploadSkillImageDto): Promise<UploadSkillImageResponse> {
+    static async uploadImage(dto: UploadSkillImageDto): Promise<UploadSkillImageResponse> {
         if (!dto.file) {
             return { isSuccess: false, message: "file doesn't exist" };
         }
@@ -165,9 +167,9 @@ export const skillService = {
             console.error('Error uploading image:', error);
             return { isSuccess: false, message: 'internal server error' };
         }
-    },
+    }
 
-    async cleanUpOrphanedImages(dto: CleanUpOrphanedSkillImagesDto): Promise<ResponseBase> {
+    static async cleanUpOrphanedImages(dto: CleanUpOrphanedSkillImagesDto): Promise<ResponseBase> {
         if (!dto.skillId || !dto.content) {
             return { isSuccess: false, message: "skillId or content isn't provided" };
         }
@@ -201,5 +203,5 @@ export const skillService = {
             console.error('Error cleaning up orphaned images:', error);
             return { isSuccess: false, message: 'error cleaning up orphaned images' };
         }
-    },
-};
+    }
+}

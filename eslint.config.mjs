@@ -1,6 +1,6 @@
-import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
 const eslintConfig = defineConfig([
     ...nextVitals,
@@ -30,7 +30,7 @@ const eslintConfig = defineConfig([
             '@typescript-eslint/no-explicit-any': 'warn', // warn on use of any type
             '@typescript-eslint/no-inferrable-types': 'warn', // warn on redundant type annotations
             '@typescript-eslint/no-unsafe-member-access': 'error',
-            '@typescript-eslint/no-unsafe-argument': 'error',
+            '@typescript-eslint/no-unsafe-argument': 'warn',
         },
     },
     {

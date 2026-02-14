@@ -1,4 +1,4 @@
-import { portfolioItemService } from '@/services/portfolio-item.service';
+import { PortfolioItemService } from '@/services/portfolio-item.service';
 import { UploadPortfolioItemImageDto } from '@/types/dto/portfolio-item/upload-portfolio-item-image.dto';
 import { NextResponse } from 'next/server';
 
@@ -10,6 +10,6 @@ export async function POST(req: Request) {
         portfolioItemId: formData.get('portfolioItemId') as string,
     };
 
-    const response = await portfolioItemService.uploadImage(dto);
+    const response = await PortfolioItemService.uploadImage(dto);
     return NextResponse.json(response);
 }

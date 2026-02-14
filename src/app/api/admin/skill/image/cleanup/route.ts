@@ -1,4 +1,4 @@
-import { skillService } from '@/services/skill.service';
+import { SkillService } from '@/services/skill.service';
 import { CleanUpOrphanedSkillImagesDto } from '@/types/dto/skill/clean-up-orphaned-skill-images.dto';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         content,
     };
 
-    const response = await skillService.cleanUpOrphanedImages(dto);
+    const response = await SkillService.cleanUpOrphanedImages(dto);
 
     return NextResponse.json(response);
 }

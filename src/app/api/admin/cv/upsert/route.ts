@@ -1,4 +1,4 @@
-import { userService } from '@/services/user.service';
+import { UserService } from '@/services/user.service';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -6,6 +6,6 @@ export async function POST(req: Request) {
 
     const file = formData.get('file') as File;
 
-    const response = await userService.upsertCv(file);
+    const response = await UserService.upsertCv(file);
     return NextResponse.json(response);
 }

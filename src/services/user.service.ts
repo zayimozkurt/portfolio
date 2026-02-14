@@ -14,8 +14,10 @@ import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
 import { prisma } from 'prisma/prisma-client';
 
-export const userService = {
-    async signUp(userSignInDto: UserSignUpDto): Promise<ResponseBase> {
+export class UserService {
+    private constructor() {}
+
+    static async signUp(userSignInDto: UserSignUpDto): Promise<ResponseBase> {
         try {
             const { password, ...restOfDto } = userSignInDto;
             const passwordHash = bcrypt.hashSync(password, 10);
@@ -29,9 +31,9 @@ export const userService = {
         } catch (error) {
             return { isSuccess: false, message: 'error' };
         }
-    },
+    }
 
-    async signIn(userSignInDto: UserSignInDto): Promise<UserSignInResponse> {
+    static async signIn(userSignInDto: UserSignInDto): Promise<UserSignInResponse> {
         try {
             const user = await prisma.user.findUnique({
                 where: {
@@ -54,9 +56,9 @@ export const userService = {
         } catch {
             return { isSuccess: false, message: "sign in failed" };
         }
-    },
+    }
 
-    authorize(jwt: string | undefined): ResponseBase {
+    static authorize(jwt: string | undefined): ResponseBase {
         if (!jwt)
             return {
                 isSuccess: false,
@@ -74,9 +76,9 @@ export const userService = {
         } catch (error) {
             return { isSuccess: false, message: 'unauthorized' };
         }
-    },
+    }
 
-    async readById(): Promise<ReadUserByIdResponse> {
+    static async readById(): Promise<ReadUserByIdResponse> {
         try {
             const user = await prisma.user.findUnique({
                 where: {
@@ -110,9 +112,9 @@ export const userService = {
         } catch {
             return { isSuccess: false, message: "user couldn't be read" };
         }
-    },
+    }
 
-    async update(updateUserDto: UpdateUserDto): Promise<ResponseBase> {
+    static async update(updateUserDto: UpdateUserDto): Promise<ResponseBase> {
         let passwordHash = '';
         if (updateUserDto.password && updateUserDto.password.length !== 0) {
             passwordHash = bcrypt.hashSync(updateUserDto.password, 10);
@@ -133,9 +135,9 @@ export const userService = {
         } catch (error) {
             return { isSuccess: false, message: "user couldn't be updated" };
         }
-    },
+    }
 
-    async upsertCv(file: File): Promise<ResponseBase> {
+    static async upsertCv(file: File): Promise<ResponseBase> {
         if (!file) {
             return { isSuccess: false, message: "file doesn't exist" };
         }
@@ -193,9 +195,9 @@ export const userService = {
             const message = checkErrorMessage(error, "cv couldn't be upserted");
             return { isSuccess: false, message };
         }
-    },
+    }
 
-    async deleteCv(): Promise<ResponseBase> {
+    static async deleteCv(): Promise<ResponseBase> {
         try {
             const readUserByIdResponse = await this.readById();
             if (!readUserByIdResponse.isSuccess || !readUserByIdResponse.user)
@@ -227,5 +229,5 @@ export const userService = {
             const message = checkErrorMessage(error, "cv couldn't be deleted");
             return { isSuccess: false, message };
         }
-    },
-};
+    }
+}

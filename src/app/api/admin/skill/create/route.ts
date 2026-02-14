@@ -1,4 +1,4 @@
-import { skillService } from '@/services/skill.service';
+import { SkillService } from '@/services/skill.service';
 import { CreateSkillDto } from '@/types/dto/skill/create-skill.dto';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +9,6 @@ export async function POST(req: Request) {
 
     const dto: CreateSkillDto = { name };
 
-    const response = await skillService.create(dto);
+    const response = await SkillService.create(dto);
     return NextResponse.json(response);
 }

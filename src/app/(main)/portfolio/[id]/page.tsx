@@ -1,11 +1,11 @@
 'use server';
 
 import PageClient from '@/app/(main)/portfolio/[id]/page-client';
-import { portfolioItemService } from '@/services/portfolio-item.service';
+import { PortfolioItemService } from '@/services/portfolio-item.service';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const readSinglePortfolioItemResponse = await portfolioItemService.readById(id);
+    const readSinglePortfolioItemResponse = await PortfolioItemService.readById(id);
 
     return (
         <div className="w-full h-full flex justify-center items-start">

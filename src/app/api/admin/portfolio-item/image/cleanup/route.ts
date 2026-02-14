@@ -1,4 +1,4 @@
-import { portfolioItemService } from '@/services/portfolio-item.service';
+import { PortfolioItemService } from '@/services/portfolio-item.service';
 import { CleanUpOrphanedPortfolioImagesDto } from '@/types/dto/portfolio-item/clean-up-orphaned-portfolio-images.dto';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         content,
     };
 
-    const response = await portfolioItemService.cleanUpOrphanedImages(dto);
+    const response = await PortfolioItemService.cleanUpOrphanedImages(dto);
 
     return NextResponse.json(response);
 }

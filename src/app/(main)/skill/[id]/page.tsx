@@ -1,11 +1,11 @@
 'use server';
 
 import PageClient from '@/app/(main)/skill/[id]/page-client';
-import { skillService } from '@/services/skill.service';
+import { SkillService } from '@/services/skill.service';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const readSingleSkillResponse = await skillService.readById(id);
+    const readSingleSkillResponse = await SkillService.readById(id);
 
     return (
         <div className="w-full h-full flex justify-center items-start">

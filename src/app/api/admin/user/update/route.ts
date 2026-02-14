@@ -1,4 +1,4 @@
-import { userService } from '@/services/user.service';
+import { UserService } from '@/services/user.service';
 import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
 import { NextResponse } from 'next/server';
 
@@ -19,6 +19,6 @@ export async function PATCH(req: Request) {
         cvUrl,
     };
 
-    const response = await userService.update(dto);
+    const response = await UserService.update(dto);
     return NextResponse.json(response);
 }

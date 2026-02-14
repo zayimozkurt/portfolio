@@ -1,4 +1,4 @@
 import { ContactLabel } from "@/enums/contact-label.enum";
-import { ContactFormData } from "@/types/contact-form-data.interface";
+import { CreateContactDto } from "@/types/dto/contact/create-contact.dto";
 
-export const DEFAULT_ADD_FORM: ContactFormData = { label: ContactLabel.CUSTOM, name: '', value: '' };
+export const DEFAULT_ADD_FORM: CreateContactDto = { label: ContactLabel.CUSTOM, name: '', value: '' };

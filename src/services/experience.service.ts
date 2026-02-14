@@ -7,8 +7,10 @@ import { ResponseBase } from '@/types/response/response-base';
 import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';
 
-export const experienceService = {
-    async create(dto: CreateExperienceDto): Promise<ResponseBase> {
+export class ExperienceService {
+    private constructor() {}
+
+    static async create(dto: CreateExperienceDto): Promise<ResponseBase> {
         if (!isValidYearMonth(dto.startDate)) {
             return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
         }
@@ -37,9 +39,9 @@ export const experienceService = {
         } catch {
             return { isSuccess: false, message: "experience couldn't be created" };
         }
-    },
+    }
 
-    async readAllByUserId(): Promise<ReadAllExperiencesResponse> {
+    static async readAllByUserId(): Promise<ReadAllExperiencesResponse> {
         try {
             const experiences = await prisma.experience.findMany({
                 where: { userId },
@@ -51,9 +53,9 @@ export const experienceService = {
         } catch {
             return { isSuccess: false, message: "experiences couldn't be read" };
         }
-    },
+    }
 
-    async updateById(dto: UpdateExperienceDto): Promise<ResponseBase> {
+    static async updateById(dto: UpdateExperienceDto): Promise<ResponseBase> {
         try {
             const experience = await prisma.experience.findUnique({ where: { id: dto.id } });
             if (!experience) {
@@ -90,9 +92,9 @@ export const experienceService = {
         } catch {
             return { isSuccess: false, message: "experience couldn't be updated" };
         }
-    },
+    }
 
-    async deleteById(dto: DeleteExperienceDto): Promise<ResponseBase> {
+    static async deleteById(dto: DeleteExperienceDto): Promise<ResponseBase> {
         try {
             const experience = await prisma.experience.findUnique({ where: { id: dto.id } });
             if (!experience) {
@@ -104,5 +106,5 @@ export const experienceService = {
         } catch {
             return { isSuccess: false, message: "experience couldn't be deleted" };
         }
-    },
-};
+    }
+}

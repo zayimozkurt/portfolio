@@ -1,5 +1,5 @@
 import { jwtCookieSettings } from '@/constants/cookie-settings.constant';
-import { userService } from '@/services/user.service';
+import { UserService } from '@/services/user.service';
 import { UserSignInDto } from '@/types/dto/user/user-sign-in.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     const reqBody: UserSignInDto = await req.json();
 
-    const response = await userService.signIn(reqBody);
+    const response = await UserService.signIn(reqBody);
     if (!response.isSuccess || !response.jwt) return Response.json(response);
 
     const cookieOptions: Partial<ResponseCookie> = {

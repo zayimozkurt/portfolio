@@ -1,5 +1,6 @@
 import { MAX_CONTACTS } from '@/constants/max-contacts.constant';
 import { userId } from '@/constants/user-id.constant';
+import { ContactLabel } from '@/enums/contact-label.enum';
 import { CreateContactDto } from '@/types/dto/contact/create-contact.dto';
 import { DeleteContactDto } from '@/types/dto/contact/delete-contact.dto';
 import { ReorderContactsDto } from '@/types/dto/contact/reorder-contacts.dto';
@@ -9,11 +10,14 @@ import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
 import { prisma } from 'prisma/prisma-client';
 
-export const contactService = {
-    async create(dto: CreateContactDto): Promise<ResponseBase> {
+export class ContactService {
+    private constructor() {}
+
+    static async create(dto: CreateContactDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(async (tx: TransactionClient)=> {
                 const count = await tx.contact.count({ where: { userId } });
+
                 if (count >= MAX_CONTACTS) {
                     return { isSuccess: false, message: `Maximum of ${MAX_CONTACTS} contacts reached` };
                 }
@@ -22,7 +26,7 @@ export const contactService = {
                     data: {
                         userId,
                         label: dto.label,
-                        name: dto.name,
+                        name: dto.label === ContactLabel.CUSTOM ? dto.name : dto.label,
                         value: dto.value,
                         order: count,
                     },
@@ -31,11 +35,12 @@ export const contactService = {
 
             return { isSuccess: true, message: 'contact created' };
         } catch (error) {
-            return { isSuccess: false, message: "contact couldn't created" };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
-    },
+    }
 
-    async readAllByUserId(): Promise<ReadAllContactsResponse> {
+    static async readAllByUserId(): Promise<ReadAllContactsResponse> {
         try {
             const contacts = await prisma.contact.findMany({ where: { userId }, orderBy: { order: 'asc' } });
             
@@ -44,32 +49,46 @@ export const contactService = {
             }
             return { isSuccess: true, message: 'all contacts read', contacts };
         } catch (error) {
-            return { isSuccess: false, message: "contacts couldn't read" };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
-    },
+    }
 
-    async update(dto: UpdateContactDto): Promise<ResponseBase> {
+    static async update(dto: UpdateContactDto): Promise<ResponseBase> {
         try {
             const contact = await prisma.contact.findUnique({ where: { id: dto.id } });
+
             if (!contact) {
                 return { isSuccess: false, message: 'contact not found' };
+            }
+
+            const label = dto.label ?? contact.label;
+
+            let name = dto.name ?? contact.name;
+
+            if (label !== ContactLabel.CUSTOM) {
+                name = label;
+            } else if (dto.label === ContactLabel.CUSTOM && !dto.name) {
+                name = contact.name; 
             }
 
             await prisma.contact.update({
                 where: { id: dto.id },
                 data: {
-                    label: dto.label ?? contact.label,
-                    name: dto.name ?? contact.name,
+                    label: label,
+                    name: name,
                     value: dto.value ?? contact.value,
                 },
             });
-            return { isSuccess: true, message: 'contact updated' };
-        } catch {
-            return { isSuccess: false, message: "contact couldn't be updated" };
-        }
-    },
 
-    async delete(dto: DeleteContactDto): Promise<ResponseBase> {
+            return { isSuccess: true, message: 'contact updated' };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
+        }
+    }
+
+    static async delete(dto: DeleteContactDto): Promise<ResponseBase> {
         try {
             const contact = await prisma.contact.findUnique({ where: { id: dto.id } });
             if (!contact) {
@@ -81,9 +100,9 @@ export const contactService = {
         } catch {
             return { isSuccess: false, message: "contact couldn't be deleted" };
         }
-    },
+    }
 
-    async reorder(dto: ReorderContactsDto): Promise<ResponseBase> {
+    static async reorder(dto: ReorderContactsDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(
                 dto.orderedIds.map((id, index) =>
@@ -91,8 +110,9 @@ export const contactService = {
                 )
             );
             return { isSuccess: true, message: 'contacts reordered' };
-        } catch {
-            return { isSuccess: false, message: "contacts couldn't be reordered" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
-    },
-};
+    }
+}

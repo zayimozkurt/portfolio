@@ -1,4 +1,4 @@
-import { educationService } from '@/services/education.service';
+import { EducationService } from '@/services/education.service';
 import { DeleteEducationDto } from '@/types/dto/education/delete-education.dto';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +9,6 @@ export async function DELETE(req: Request) {
 
     const dto: DeleteEducationDto = { id };
 
-    const response = await educationService.deleteById(dto);
+    const response = await EducationService.deleteById(dto);
     return NextResponse.json(response);
 }

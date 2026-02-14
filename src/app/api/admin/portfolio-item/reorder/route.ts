@@ -1,4 +1,4 @@
-import { portfolioItemService } from '@/services/portfolio-item.service';
+import { PortfolioItemService } from '@/services/portfolio-item.service';
 import { ReorderPortfolioItemsDto } from '@/types/dto/portfolio-item/reorder-portfolio-items.dto';
 import { NextResponse } from 'next/server';
 
@@ -9,6 +9,6 @@ export async function PATCH(req: Request) {
 
     const dto: ReorderPortfolioItemsDto = { orderedIds };
 
-    const response = await portfolioItemService.reorder(dto);
+    const response = await PortfolioItemService.reorder(dto);
     return NextResponse.json(response);
 }

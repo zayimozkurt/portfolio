@@ -16,8 +16,10 @@ import { extractImageUrlsFromTipTapJson } from '@/utils/extract-image-urls-from-
 import { supabase } from '@/utils/supabase-client';
 import { prisma } from 'prisma/prisma-client';
 
-export const portfolioItemService = {
-    async create(createPortfolioItemDto: CreatePortfolioItemDto): Promise<ResponseBase> {
+export class PortfolioItemService {
+    private constructor() {}
+ 
+    static async create(createPortfolioItemDto: CreatePortfolioItemDto): Promise<ResponseBase> {
         if (!createPortfolioItemDto.title) {
             return { isSuccess: false, message: 'title must exist' };
         }
@@ -56,9 +58,9 @@ export const portfolioItemService = {
             const message = checkErrorMessage(error, "portfolio item couldn't created");
             return { isSuccess: false, message };
         }
-    },
+    }
 
-    async readById(id: string): Promise<ReadSinglePortfolioItemResponse> {
+    static async readById(id: string): Promise<ReadSinglePortfolioItemResponse> {
         try {
             const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id } });
 
@@ -68,18 +70,18 @@ export const portfolioItemService = {
         } catch {
             return { isSuccess: false, message: "portfolio item couldn't be read" };
         }
-    },
+    }
 
-    async readAllByUserId(): Promise<ReadAllPortfolioItemsResponse> {
+    static async readAllByUserId(): Promise<ReadAllPortfolioItemsResponse> {
         try {
             const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId } });
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems };
         } catch {
             return { isSuccess: false, message: "portfolio items couldn't be read" };
         }
-    },
+    }
 
-    async updateById(id: string, updatePortfolioItemDto: UpdatePortfolioItemDto): Promise<ResponseBase> {
+    static async updateById(id: string, updatePortfolioItemDto: UpdatePortfolioItemDto): Promise<ResponseBase> {
         try {
             if (updatePortfolioItemDto.title) {
                 const existingPortfolioItem = await prisma.portfolioItem.findFirst({
@@ -105,7 +107,7 @@ export const portfolioItemService = {
             });
 
             if (updatePortfolioItemDto.content) {
-                portfolioItemService
+                PortfolioItemService
                     .cleanUpOrphanedImages({
                         portfolioItemId: id,
                         content: updatePortfolioItemDto.content,
@@ -118,9 +120,9 @@ export const portfolioItemService = {
             const message = checkErrorMessage(error, "portfolio item couldn't be updated");
             return { isSuccess: false, message };
         }
-    },
+    }
 
-    async deleteById(id: string): Promise<ResponseBase> {
+    static async deleteById(id: string): Promise<ResponseBase> {
         try {
             const { data: files } = await supabase.storage.from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES).list(id);
 
@@ -136,9 +138,9 @@ export const portfolioItemService = {
             console.error('Error deleting portfolio item:', error);
             return { isSuccess: false, message: "portfolio item couldn't be deleted" };
         }
-    },
+    }
 
-    async reorder(dto: ReorderPortfolioItemsDto): Promise<ResponseBase> {
+    static async reorder(dto: ReorderPortfolioItemsDto): Promise<ResponseBase> {
         try {
             await prisma.$transaction(
                 dto.orderedIds.map((id, index) =>
@@ -150,9 +152,9 @@ export const portfolioItemService = {
         } catch {
             return { isSuccess: false, message: "portfolio items couldn't be reordered" };
         }
-    },
+    }
 
-    async uploadImage(
+    static async uploadImage(
         uploadPortfolioItemImageDto: UploadPortfolioItemImageDto
     ): Promise<UploadPortfolioItemImageResponse> {
         if (!uploadPortfolioItemImageDto.file) {
@@ -198,9 +200,9 @@ export const portfolioItemService = {
             console.error('Error uploading image:', error);
             return { isSuccess: false, message: 'internal server error' };
         }
-    },
+    }
 
-    async cleanUpOrphanedImages(dto: CleanUpOrphanedPortfolioImagesDto): Promise<ResponseBase> {
+    static async cleanUpOrphanedImages(dto: CleanUpOrphanedPortfolioImagesDto): Promise<ResponseBase> {
         if (!dto.portfolioItemId || !dto.content) {
             return { isSuccess: false, message: "portfolioItemId or content isn't provided" };
         }
@@ -236,5 +238,5 @@ export const portfolioItemService = {
             console.error('Error cleaning up orphaned images:', error);
             return { isSuccess: false, message: 'error cleaning up orphaned images' };
         }
-    },
-};
+    }
+}

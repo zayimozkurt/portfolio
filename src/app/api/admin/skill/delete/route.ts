@@ -1,4 +1,4 @@
-import { skillService } from '@/services/skill.service';
+import { SkillService } from '@/services/skill.service';
 import { NextResponse } from 'next/server';
 
 export async function DELETE(req: Request) {
@@ -6,6 +6,6 @@ export async function DELETE(req: Request) {
 
     const { id } = reqBody;
 
-    const response = await skillService.deleteById(id);
+    const response = await SkillService.deleteById(id);
     return NextResponse.json(response);
 }

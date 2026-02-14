@@ -1,4 +1,4 @@
-import { experienceService } from '@/services/experience.service';
+import { ExperienceService } from '@/services/experience.service';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { NextResponse } from 'next/server';
 
@@ -16,6 +16,6 @@ export async function POST(req: Request) {
         description,
     };
 
-    const response = await experienceService.create(dto);
+    const response = await ExperienceService.create(dto);
     return NextResponse.json(response);
 }

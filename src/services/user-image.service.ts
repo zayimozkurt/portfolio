@@ -9,8 +9,10 @@ import { isValidEnumValue } from '@/utils/is-string-valid-enum.util';
 import { supabase } from '@/utils/supabase-client';
 import { prisma } from 'prisma/prisma-client';
 
-export const userImageService = {
-    async upsert(upsertUserImageDto: UpsertUserImageDto): Promise<ResponseBase> {
+export class UserImageService {
+    private constructor() {}
+
+    static async upsert(upsertUserImageDto: UpsertUserImageDto): Promise<ResponseBase> {
         if (!upsertUserImageDto.file || !upsertUserImageDto.place) {
             return { isSuccess: false, message: "file or place doesn't exist" };
         }
@@ -78,9 +80,9 @@ export const userImageService = {
                     : "image couldn't be uploaded";
             return { isSuccess: false, message };
         }
-    },
+    }
 
-    async delete(deleteUserImageDto: DeleteUserImageDto): Promise<ResponseBase> {
+    static async delete(deleteUserImageDto: DeleteUserImageDto): Promise<ResponseBase> {
         if (!deleteUserImageDto.place) {
             return { isSuccess: false, message: 'place is required' };
         }
@@ -116,5 +118,5 @@ export const userImageService = {
             const message = checkErrorMessage(error, "image couldn't be deleted");
             return { isSuccess: false, message };
         }
-    },
-};
+    }
+}

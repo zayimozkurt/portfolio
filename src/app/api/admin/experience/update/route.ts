@@ -1,4 +1,4 @@
-import { experienceService } from '@/services/experience.service';
+import { ExperienceService } from '@/services/experience.service';
 import { UpdateExperienceDto } from '@/types/dto/experience/update-experience.dto';
 import { NextResponse } from 'next/server';
 
@@ -17,6 +17,6 @@ export async function PATCH(req: Request) {
         description,
     };
 
-    const response = await experienceService.updateById(dto);
+    const response = await ExperienceService.updateById(dto);
     return NextResponse.json(response);
 }
