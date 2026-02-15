@@ -11,7 +11,6 @@ import { ReadSinglePortfolioItemResponse } from '@/types/response/portfolio-item
 import { UploadPortfolioItemImageResponse } from '@/types/response/portfolio-item/upload-portfolio-item-image.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
-import { checkErrorMessage } from '@/utils/check-error-message.util';
 import { extractImageUrlsFromTipTapJson } from '@/utils/extract-image-urls-from-tip-tap-json.util';
 import { supabase } from '@/utils/supabase-client';
 import { prisma } from 'prisma/prisma-client';
@@ -55,8 +54,8 @@ export class PortfolioItemService {
 
             return { isSuccess: true, message: 'portfolio item created' };
         } catch (error) {
-            const message = checkErrorMessage(error, "portfolio item couldn't created");
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -76,8 +75,9 @@ export class PortfolioItemService {
         try {
             const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId } });
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems };
-        } catch {
-            return { isSuccess: false, message: "portfolio items couldn't be read" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -117,8 +117,8 @@ export class PortfolioItemService {
 
             return { isSuccess: true, message: 'updated' };
         } catch (error) {
-            const message = checkErrorMessage(error, "portfolio item couldn't be updated");
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -135,8 +135,8 @@ export class PortfolioItemService {
 
             return { isSuccess: true, message: 'portfolio item deleted' };
         } catch (error) {
-            console.error('Error deleting portfolio item:', error);
-            return { isSuccess: false, message: "portfolio item couldn't be deleted" };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -149,8 +149,9 @@ export class PortfolioItemService {
             );
 
             return { isSuccess: true, message: 'portfolio items reordered' };
-        } catch {
-            return { isSuccess: false, message: "portfolio items couldn't be reordered" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -197,8 +198,8 @@ export class PortfolioItemService {
                 url: publicUrlData.publicUrl,
             };
         } catch (error) {
-            console.error('Error uploading image:', error);
-            return { isSuccess: false, message: 'internal server error' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -235,8 +236,8 @@ export class PortfolioItemService {
 
             return { isSuccess: true, message: 'orphaned images removed' };
         } catch (error) {
-            console.error('Error cleaning up orphaned images:', error);
-            return { isSuccess: false, message: 'error cleaning up orphaned images' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }

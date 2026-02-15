@@ -39,9 +39,11 @@ model Skill {
     order   Int
     content Json?
 
-    experiences Experience[]
-    educations Education[]
+    experiences    Experience[]
+    educations     Education[]
     portfolioItems PortfolioItem[]
+
+    @@unique([userId, name])
 }
 
 model UserImage {

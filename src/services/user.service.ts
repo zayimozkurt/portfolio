@@ -29,7 +29,8 @@ export class UserService {
             });
             return { isSuccess: true, message: 'success' };
         } catch (error) {
-            return { isSuccess: false, message: 'error' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -53,8 +54,9 @@ export class UserService {
             });
 
             return { isSuccess: true, message: 'signed in', jwt: token };
-        } catch {
-            return { isSuccess: false, message: "sign in failed" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -74,7 +76,8 @@ export class UserService {
                 };
             return { isSuccess: true, message: 'authorized' };
         } catch (error) {
-            return { isSuccess: false, message: 'unauthorized' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -109,8 +112,9 @@ export class UserService {
                 message: 'user read',
                 user,
             };
-        } catch {
-            return { isSuccess: false, message: "user couldn't be read" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -133,7 +137,8 @@ export class UserService {
             });
             return { isSuccess: true, message: 'user updated' };
         } catch (error) {
-            return { isSuccess: false, message: "user couldn't be updated" };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -192,8 +197,8 @@ export class UserService {
 
             return { isSuccess: true, message: 'cv uploaded' };
         } catch (error) {
-            const message = checkErrorMessage(error, "cv couldn't be upserted");
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -226,8 +231,8 @@ export class UserService {
 
             return { isSuccess: true, message: 'cv deleted' };
         } catch (error) {
-            const message = checkErrorMessage(error, "cv couldn't be deleted");
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }

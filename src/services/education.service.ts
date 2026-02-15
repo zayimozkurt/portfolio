@@ -38,8 +38,9 @@ export class EducationService {
                 },
             });
             return { isSuccess: true, message: 'education created' };
-        } catch {
-            return { isSuccess: false, message: "education couldn't be created" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -50,8 +51,9 @@ export class EducationService {
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
             });
             return { isSuccess: true, message: 'all educations read', educations };
-        } catch {
-            return { isSuccess: false, message: "educations couldn't be read" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -91,8 +93,9 @@ export class EducationService {
                 },
             });
             return { isSuccess: true, message: 'education updated' };
-        } catch {
-            return { isSuccess: false, message: "education couldn't be updated" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -105,8 +108,9 @@ export class EducationService {
 
             await prisma.education.delete({ where: { id: dto.id } });
             return { isSuccess: true, message: 'education deleted' };
-        } catch {
-            return { isSuccess: false, message: "education couldn't be deleted" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }

@@ -20,6 +20,20 @@ export class SkillService {
 
     static async create(dto: CreateSkillDto): Promise<ResponseBase> {
         try {
+            const duplicateSkill = await prisma.skill.findFirst({
+                where: {
+                    userId,
+                    name: dto.name
+                }
+            });
+
+            if (duplicateSkill) {
+                return {
+                    isSuccess: false,
+                    message: `Failed! A skill with name ${dto.name} already exists.`
+                };
+            }
+
             await prisma.$transaction(async (tx: TransactionClient) => {
                 await tx.skill.updateMany({
                     where: { userId },
@@ -37,8 +51,9 @@ export class SkillService {
             });
 
             return { isSuccess: true, message: 'skill created' };
-        } catch {
-            return { isSuccess: false, message: "skill couldn't be created" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -49,8 +64,9 @@ export class SkillService {
             if (!skill) return { isSuccess: false, message: "skill couldn't be read" };
 
             return { isSuccess: true, message: 'skill read', skill };
-        } catch {
-            return { isSuccess: false, message: "skill couldn't be read" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -79,8 +95,9 @@ export class SkillService {
             }
 
             return { isSuccess: true, message: 'skill updated' };
-        } catch {
-            return { isSuccess: false, message: "skill couldn't be updated" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -106,8 +123,9 @@ export class SkillService {
             });
 
             return { isSuccess: true, message: 'skill deleted' };
-        } catch {
-            return { isSuccess: false, message: "skill couldn't be deleted" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -118,8 +136,9 @@ export class SkillService {
             );
 
             return { isSuccess: true, message: 'skills reordered' };
-        } catch {
-            return { isSuccess: false, message: "skills couldn't be reordered" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -164,8 +183,8 @@ export class SkillService {
                 url: publicUrlData.publicUrl,
             };
         } catch (error) {
-            console.error('Error uploading image:', error);
-            return { isSuccess: false, message: 'internal server error' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -200,8 +219,8 @@ export class SkillService {
 
             return { isSuccess: true, message: 'orphaned images removed' };
         } catch (error) {
-            console.error('Error cleaning up orphaned images:', error);
-            return { isSuccess: false, message: 'error cleaning up orphaned images' };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }

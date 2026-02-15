@@ -36,8 +36,9 @@ export class ExperienceService {
                 },
             });
             return { isSuccess: true, message: 'experience created' };
-        } catch {
-            return { isSuccess: false, message: "experience couldn't be created" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -50,8 +51,9 @@ export class ExperienceService {
             });
             console.log("experiences: ", experiences);
             return { isSuccess: true, message: 'all experiences read', experiences };
-        } catch {
-            return { isSuccess: false, message: "experiences couldn't be read" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -89,8 +91,9 @@ export class ExperienceService {
                 },
             });
             return { isSuccess: true, message: 'experience updated' };
-        } catch {
-            return { isSuccess: false, message: "experience couldn't be updated" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -103,8 +106,9 @@ export class ExperienceService {
 
             await prisma.experience.delete({ where: { id: dto.id } });
             return { isSuccess: true, message: 'experience deleted' };
-        } catch {
-            return { isSuccess: false, message: "experience couldn't be deleted" };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }

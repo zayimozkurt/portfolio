@@ -34,6 +34,7 @@ export function SkillsSection({ id }: { id?: string }) {
     const [isSaving, setIsSaving] = useState(false);
     const [localSkills, setLocalSkills] = useState<Skill[]>(user.skills);
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [isHandlingDragEnd, setIsHandlingDragEnd] = useState<boolean>(false);
 
     useEffect(() => {
         setLocalSkills(user.skills);
@@ -114,6 +115,7 @@ export function SkillsSection({ id }: { id?: string }) {
 
     async function handleDragEnd(event: DragEndEvent) {
         setActiveId(null);
+        setIsHandlingDragEnd(true);
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
@@ -139,6 +141,8 @@ export function SkillsSection({ id }: { id?: string }) {
                 setLocalSkills(previous);
                 alert(response.message);
             }
+
+            setIsHandlingDragEnd(false);
         } catch {
             setLocalSkills(previous);
         }
@@ -155,8 +159,8 @@ export function SkillsSection({ id }: { id?: string }) {
             )}
             {isEditMode && (
                 <div className="absolute top-2 right-2 md:right-0">
-                    <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY}>
-                        Done
+                    <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY} disabled={isHandlingDragEnd} >
+                        {isHandlingDragEnd ? 'Reordering...' : 'Done'}
                     </Button>
                 </div>
             )}
@@ -192,6 +196,7 @@ export function SkillsSection({ id }: { id?: string }) {
                                         skill={skill}
                                         onDelete={deleteSkill}
                                         isSaving={isSaving}
+                                        isHandlingDragEnd={isHandlingDragEnd}
                                     />
                                 ))}
                             </SortableContext>

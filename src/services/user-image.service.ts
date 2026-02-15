@@ -4,7 +4,6 @@ import { UserImagePlace } from '@/enums/user-image-place.enum';
 import { DeleteUserImageDto } from '@/types/dto/user-image/delete-user-image.dto';
 import { UpsertUserImageDto } from '@/types/dto/user-image/upsert-user-image.dto';
 import { ResponseBase } from '@/types/response/response-base';
-import { checkErrorMessage } from '@/utils/check-error-message.util';
 import { isValidEnumValue } from '@/utils/is-string-valid-enum.util';
 import { supabase } from '@/utils/supabase-client';
 import { prisma } from 'prisma/prisma-client';
@@ -74,11 +73,8 @@ export class UserImageService {
 
             return { isSuccess: true, message: 'image uploaded' };
         } catch (error) {
-            const message =
-                error && typeof error === 'object' && 'message' in error
-                    ? `${error.message}`
-                    : "image couldn't be uploaded";
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 
@@ -115,8 +111,8 @@ export class UserImageService {
 
             return { isSuccess: true, message: 'image deleted' };
         } catch (error) {
-            const message = checkErrorMessage(error, "image couldn't be deleted");
-            return { isSuccess: false, message };
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
         }
     }
 }
