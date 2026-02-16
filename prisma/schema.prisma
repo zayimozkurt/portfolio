@@ -104,10 +104,11 @@ model PortfolioItem {
     user   User   @relation(fields: [userId], references: [id])
     userId String
 
-    title       String
-    description String
-    order       Int
-    content     Json?
+    title         String
+    description   String
+    coverImageUrl String?
+    order         Int
+    content       Json?
 
     skills Skill[]
 

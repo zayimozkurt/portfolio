@@ -6,9 +6,8 @@ import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
 import { UserSignInDto } from '@/types/dto/user/user-sign-in.dto';
 import { UserSignUpDto } from '@/types/dto/user/user-sign-up.dto';
 import { ResponseBase } from '@/types/response/response-base';
-import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id-response';
-import { UserSignInResponse } from '@/types/response/user/user-sign-in-response';
-import { checkErrorMessage } from '@/utils/check-error-message.util';
+import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id.response';
+import { UserSignInResponse } from '@/types/response/user/user-sign-in.response';
 import { supabase } from '@/utils/supabase-client';
 import bcrypt from 'bcrypt';
 import jsonwebtoken from 'jsonwebtoken';
@@ -64,7 +63,7 @@ export class UserService {
         if (!jwt)
             return {
                 isSuccess: false,
-                message: 'Authorization failed. You need to sign in again.',
+                message: 'Authorization failed.',
             };
 
         try {
@@ -104,9 +103,11 @@ export class UserService {
                     portfolioItems: { orderBy: { order: 'asc' } },
                 },
             });
+
             if (!user) {
                 return { isSuccess: false, message: 'no user found' };
             }
+
             return {
                 isSuccess: true,
                 message: 'user read',
@@ -161,12 +162,16 @@ export class UserService {
 
             const newStoragePath = `cv_${Date.now()}`;
 
-            const supabaseResponse = await supabase.storage
+            const supabaseUploadResponse = await supabase.storage
                 .from(SupabaseBucketName.CV)
                 .upload(newStoragePath, fileBuffer, { contentType: file.type });
 
-            if (supabaseResponse.error) {
-                throw new Error(supabaseResponse.error.message);
+            if (supabaseUploadResponse.error) {
+                console.error(supabaseUploadResponse.error);
+                return {
+                    isSuccess: false,
+                    message: 'error while uploading to supabase'
+                };
             }
 
             const {
@@ -180,9 +185,9 @@ export class UserService {
                 const supabaseResponse = await supabase.storage.from(SupabaseBucketName.CV).remove([newStoragePath]);
 
                 if (supabaseResponse.error)
-                    console.error('Failed to delete cv from storage:', supabaseResponse.error.message);
+                    console.error(supabaseResponse.error);
 
-                throw new Error(updateUserResponse.message);
+                return updateUserResponse;
             }
 
             if (existingCvUrl && existingCvUrl.length !== 0) {
@@ -191,7 +196,7 @@ export class UserService {
                 if (oldFileName) {
                     const { error } = await supabase.storage.from(SupabaseBucketName.CV).remove([oldFileName]);
 
-                    if (error) console.error('Failed to delete old cv from storage:', error.message);
+                    if (error) console.error(error);
                 }
             }
 
@@ -211,7 +216,7 @@ export class UserService {
             const existingCvUrl = readUserByIdResponse.user.cvUrl;
 
             if (!existingCvUrl) {
-                return { isSuccess: false, message: 'no cv found' };
+                return { isSuccess: true, message: "there already isn't a cv" };
             }
 
             const updateUserResponse = await this.update({
@@ -226,7 +231,7 @@ export class UserService {
             if (fileName) {
                 const { error } = await supabase.storage.from(SupabaseBucketName.CV).remove([fileName]);
 
-                if (error) console.error('Failed to delete cv from storage:', error.message);
+                if (error) console.error(error);
             }
 
             return { isSuccess: true, message: 'cv deleted' };

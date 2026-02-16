@@ -22,7 +22,7 @@ export function EducationItem({
     isLast?: boolean;
     isSaving?: boolean;
 }) {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const endDate = education.isCurrent ? new Date() : new Date(education.endDate!);
     const duration = calculateDuration(education.startDate, endDate);
     const startDateFormatted = new Date(education.startDate).toLocaleDateString('en-US', {
@@ -33,9 +33,9 @@ export function EducationItem({
         ? 'Present'
         : new Date(education.endDate!).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
 
-    const shouldTruncate = education.description && education.description.length > DESCRIPTION_CHAR_LIMIT;
+    const shouldTruncate = !education.description ? false : education.description.length > DESCRIPTION_CHAR_LIMIT ? true : false;
     const displayDescription =
-        shouldTruncate && !isExpanded ? education.description!.slice(0, DESCRIPTION_CHAR_LIMIT) : education.description;
+        shouldTruncate && !isDescriptionExpanded ? education.description!.slice(0, DESCRIPTION_CHAR_LIMIT) : education.description;
 
     return (
         <div className="relative flex gap-4 md:gap-6">
@@ -136,9 +136,9 @@ export function EducationItem({
                         <div className="mt-3">
                             <p className="text-gray-600 text-sm leading-relaxed inline whitespace-pre-wrap">
                                 {displayDescription}
-                                {shouldTruncate && !isExpanded && (
+                                {shouldTruncate && !isDescriptionExpanded && (
                                     <Button
-                                        onClick={() => setIsExpanded(true)}
+                                        onClick={() => setIsDescriptionExpanded(true)}
                                         variant={ButtonVariant.LINK}
                                         className="cursor-pointer inline-flex items-center ml-1 font-medium"
                                     >
@@ -159,9 +159,9 @@ export function EducationItem({
                                     </Button>
                                 )}
                             </p>
-                            {shouldTruncate && isExpanded && (
+                            {shouldTruncate && isDescriptionExpanded && (
                                 <Button
-                                    onClick={() => setIsExpanded(false)}
+                                    onClick={() => setIsDescriptionExpanded(false)}
                                     variant={ButtonVariant.LINK}
                                     className="cursor-pointer flex items-center mt-2 text-sm font-medium"
                                 >

@@ -2,7 +2,7 @@ import { userId } from '@/constants/user-id.constant';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { DeleteEducationDto } from '@/types/dto/education/delete-education.dto';
 import { UpdateEducationDto } from '@/types/dto/education/update-education.dto';
-import { ReadAllEducationsResponse } from '@/types/response/education/read-all-educations-response';
+import { ReadAllEducationsResponse } from '@/types/response/education/read-all-educations.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';

@@ -5,4 +5,5 @@ export enum ButtonVariant {
     GHOST = 'ghost',
     TOOLBAR = 'toolbar',
     LINK = 'link',
+    TRASH = 'trash'
 }

@@ -135,6 +135,8 @@ export default function Page() {
     }
 
     async function deleteCv() {
+        if (!confirm("Are you sure that you want to delete the cv?")) return;
+
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
@@ -155,6 +157,7 @@ export default function Page() {
 
     async function onSave() {
         setIsSaving(true);
+
         try {
             await updateProfileInfo();
             await upsertUserImage();
@@ -192,6 +195,7 @@ export default function Page() {
                                 className="rounded-full"
                                 alt="profile photo"
                             />
+
                             <div className="absolute top-0 left-0 flex flex-col justify-center items-center gap-2">
                                 <label
                                     className={`cursor-pointer right-0 px-2 py-0.5

@@ -6,9 +6,9 @@ import { PortfolioItem } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
 import { ResponseBase } from '@/types/response/response-base';
+import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { FaFolder } from 'react-icons/fa';
 
 export default function PortfolioItemCard({ portfolioItem }: { portfolioItem: PortfolioItem }) {
     const dispatch = useAppDispatch();
@@ -44,28 +44,45 @@ export default function PortfolioItemCard({ portfolioItem }: { portfolioItem: Po
     return (
         <Link
             href={`/portfolio/${portfolioItem.id}`}
-            className="w-[300px] h-[150px] bg-white p-6 rounded-2xl shadow-md border 
-            flex flex-col justify-center items-center gap-0 transition-all 
+            className="w-[300px] h-[350px] bg-white p-4 rounded-2xl shadow-md border 
+            flex flex-col justify-between items-center gap-0 transition-all 
             hover:border-[#00316E] duration-300 hover:cursor-pointer
             ease-out hover:shadow-xl"
         >
-            <div className="w-full flex justify-between items-center gap-2">
+            {/* <div className="w-full flex justify-between items-center gap-2">
                 <FaFolder className="text-xl" />
-            </div>
-            <p className="text-lg font-semibold">{portfolioItem.title}</p>
-            {/* <p className="text-gray-600 whitespace-pre-wrap">{portfolioItem.description}</p> */}
-            {/* <div className="w-full flex items-center gap-[10px] overflow-x-auto">
-                slideable project skills...
             </div> */}
+
+            <Image 
+                alt='portfolio item cover image'
+                src={portfolioItem.coverImageUrl ? portfolioItem.coverImageUrl : '/portfolio-item-cover-placeholder-image.png'}
+                width={250}
+                height={125}
+                className="object-contain w-auto h-[125] max-w-[250] rounded-[10px]"
+            />
+
+            <p className="w-full h-auto font-semibold">{portfolioItem.title}</p>
+
+            <p className="w-full h-[120px] text-gray-600 whitespace-pre-wrap truncate text-sm">{portfolioItem.description}</p>
+
+            <div className="w-full h-[30px] flex justify-start items-center gap-3 overflow-x-scroll text-sm whitespace-nowrap">
+                {/* <p>* skill-1</p>
+                <p>* skill-2</p>
+                <p>* skill-3</p>
+                <p>* skill-4</p>
+                <p>* skill-5</p>
+                <p>* skill-6</p>
+                <p>* skill-7</p>
+                <p>* skill-8</p> */}
+            </div>
+
             {isAdmin && (
-                <div className="w-full mt-4">
+                <div className="absolute top-4 right-7">
                     <Button
                         onClick={(event) => deletePortfolioItem(event)}
-                        variant={ButtonVariant.DANGER}
+                        variant={ButtonVariant.TRASH}
                         disabled={isDeleting}
-                    >
-                        {isDeleting ? 'Deleting...' : 'Delete'}
-                    </Button>
+                    />
                 </div>
             )}
         </Link>

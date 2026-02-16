@@ -22,7 +22,7 @@ export function ExperienceItem({
     isLast?: boolean;
     isSaving?: boolean;
 }) {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const endDate = experience.isCurrent ? new Date() : new Date(experience.endDate!);
     const duration = calculateDuration(experience.startDate, endDate);
     const startDateFormatted = new Date(experience.startDate).toLocaleDateString('en-US', {
@@ -35,7 +35,7 @@ export function ExperienceItem({
 
     const shouldTruncate = experience.description && experience.description.length > DESCRIPTION_CHAR_LIMIT;
     const displayDescription =
-        shouldTruncate && !isExpanded
+        shouldTruncate && !isDescriptionExpanded
             ? experience.description!.slice(0, DESCRIPTION_CHAR_LIMIT)
             : experience.description;
 
@@ -128,9 +128,9 @@ export function ExperienceItem({
                         <div className="mt-3">
                             <p className="text-gray-600 text-sm leading-relaxed inline whitespace-pre-wrap">
                                 {displayDescription}
-                                {shouldTruncate && !isExpanded && (
+                                {shouldTruncate && !isDescriptionExpanded && (
                                     <Button
-                                        onClick={() => setIsExpanded(true)}
+                                        onClick={() => setIsDescriptionExpanded(true)}
                                         variant={ButtonVariant.LINK}
                                         className="cursor-pointer inline-flex items-center ml-1 font-medium"
                                     >
@@ -151,9 +151,9 @@ export function ExperienceItem({
                                     </Button>
                                 )}
                             </p>
-                            {shouldTruncate && isExpanded && (
+                            {shouldTruncate && isDescriptionExpanded && (
                                 <Button
-                                    onClick={() => setIsExpanded(false)}
+                                    onClick={() => setIsDescriptionExpanded(false)}
                                     variant={ButtonVariant.LINK}
                                     className="cursor-pointer flex items-center mt-2 text-sm font-medium"
                                 >

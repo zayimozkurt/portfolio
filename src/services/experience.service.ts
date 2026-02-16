@@ -2,7 +2,7 @@ import { userId } from '@/constants/user-id.constant';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { DeleteExperienceDto } from '@/types/dto/experience/delete-experience.dto';
 import { UpdateExperienceDto } from '@/types/dto/experience/update-experience.dto';
-import { ReadAllExperiencesResponse } from '@/types/response/experience/read-all-experiences-response';
+import { ReadAllExperiencesResponse } from '@/types/response/experience/read-all-experiences.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';

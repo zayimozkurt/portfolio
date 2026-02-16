@@ -35,8 +35,9 @@ export function SortableContactItem({
                 className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors shrink-0"
                 aria-label={`Drag to reorder ${contact.name}`}
             >
-                <GripVertical size={14} />
+                <GripVertical size={18} />
             </button>
+
             <div className="flex-1 min-w-0">
                 <ContactItem
                     contact={contact}

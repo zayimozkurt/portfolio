@@ -1,0 +1,1 @@
+export const PORTFOLIO_ITEM_TITLE_CHAR_LIMIT = 35;

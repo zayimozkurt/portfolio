@@ -26,10 +26,10 @@ export function SortablePortfolioItemCard({ portfolioItem }: { portfolioItem: Po
             <button
                 {...attributes}
                 {...listeners}
-                className="absolute top-2 left-2 z-10 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors bg-white/80 rounded p-0.5"
+                className="absolute top-3 left-3 z-10 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors bg-white/80 rounded p-0.5"
                 aria-label={`Drag to reorder ${portfolioItem.title}`}
             >
-                <GripVertical size={16} />
+                <GripVertical size={18} />
             </button>
             <PortfolioItemCard portfolioItem={portfolioItem} />
         </div>

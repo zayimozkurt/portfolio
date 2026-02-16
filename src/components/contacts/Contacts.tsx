@@ -197,16 +197,16 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                 <ContactLink key={contact.id} contact={contact} />
             ))}
 
+            <span className="block w-[2px] h-[150px] rounded-full bg-black"></span>
+
             {isAdmin && (
                 <button
                     onClick={() => setIsPanelOpen((prev) => !prev)}
                     className="text-gray-400 hover:text-black duration-300 cursor-pointer"
                 >
-                    <Pencil size={14} />
+                    <Pencil size={16} />
                 </button>
             )}
-
-            <span className="block w-[2px] h-[150px] rounded-full bg-black"></span>
 
             {isAdmin && (
                 <div className="relative">

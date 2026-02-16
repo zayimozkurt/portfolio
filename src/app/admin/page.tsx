@@ -6,7 +6,7 @@ import { ButtonVariant } from '@/enums/button-variants.enum';
 import { useAppDispatch } from '@/store/hooks';
 import { isAdminActions } from '@/store/slices/is-admin-slice';
 import { UserSignInDto } from '@/types/dto/user/user-sign-in.dto';
-import { UserSignInResponse } from '@/types/response/user/user-sign-in-response';
+import { UserSignInResponse } from '@/types/response/user/user-sign-in.response';
 import { useRouter } from 'next/navigation';
 
 export default function Page() {

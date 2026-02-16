@@ -5,7 +5,7 @@ import { CreateContactDto } from '@/types/dto/contact/create-contact.dto';
 import { DeleteContactDto } from '@/types/dto/contact/delete-contact.dto';
 import { ReorderContactsDto } from '@/types/dto/contact/reorder-contacts.dto';
 import { UpdateContactDto } from '@/types/dto/contact/update-contact.dto';
-import { ReadAllContactsResponse } from '@/types/response/contact/read-all-contacts-response';
+import { ReadAllContactsResponse } from '@/types/response/contact/read-all-contacts.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
 import { prisma } from 'prisma/prisma-client';
@@ -55,29 +55,29 @@ export class ContactService {
     }
 
     static async update(dto: UpdateContactDto): Promise<ResponseBase> {
+        const { id, label, name, ...restOfDto } = dto;
+
         try {
-            const contact = await prisma.contact.findUnique({ where: { id: dto.id } });
+            const contact = await prisma.contact.findUnique({ where: { id } });
 
             if (!contact) {
                 return { isSuccess: false, message: 'contact not found' };
             }
 
-            const label = dto.label ?? contact.label;
+            const newLabel = label ?? contact.label;
 
-            let name = dto.name ?? contact.name;
+            let newName = name ?? contact.name;
 
-            if (label !== ContactLabel.CUSTOM) {
-                name = label;
-            } else if (dto.label === ContactLabel.CUSTOM && !dto.name) {
-                name = contact.name; 
+            if (newLabel !== ContactLabel.CUSTOM) {
+                newName = newLabel;
             }
 
             await prisma.contact.update({
-                where: { id: dto.id },
+                where: { id },
                 data: {
-                    label: label,
-                    name: name,
-                    value: dto.value ?? contact.value,
+                    label: newLabel,
+                    name: newName,
+                    ...restOfDto
                 },
             });
 

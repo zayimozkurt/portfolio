@@ -10,5 +10,6 @@ export async function DELETE(req: Request) {
     const dto: DeleteContactDto = { id };
 
     const response = await ContactService.delete(dto);
+
     return NextResponse.json(response);
 }

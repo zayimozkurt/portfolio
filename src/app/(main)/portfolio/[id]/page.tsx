@@ -11,7 +11,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <div className="w-full h-full flex justify-center items-start">
             <div className="w-[750px] h-full">
                 {readSinglePortfolioItemResponse.isSuccess && readSinglePortfolioItemResponse.portfolioItem ? (
-                    <PageClient portfolioItem={readSinglePortfolioItemResponse.portfolioItem} />
+                    <PageClient initialPortfolioItem={readSinglePortfolioItemResponse.portfolioItem} />
                 ) : (
                     <div>PortfolioItem not found</div>
                 )}

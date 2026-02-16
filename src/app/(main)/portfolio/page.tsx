@@ -141,7 +141,7 @@ export default function Page() {
                             items={localPortfolioItems.map((item) => item.id)}
                             strategy={rectSortingStrategy}
                         >
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
                                 {localPortfolioItems.map((portfolioItem) => (
                                     <SortablePortfolioItemCard
                                         key={portfolioItem.id}
@@ -156,16 +156,16 @@ export default function Page() {
                                     <div className="absolute top-2 left-2 text-gray-400">
                                         <GripVertical size={16} />
                                     </div>
-                                    <div className="w-full flex justify-between items-center gap-2">
+                                    {/* <div className="w-full flex justify-between items-center gap-2">
                                         <FaFolder className="text-xl" />
-                                    </div>
+                                    </div> */}
                                     <p className="text-lg font-semibold">{activeItem.title}</p>
                                 </div>
                             ) : null}
                         </DragOverlay>
                     </DndContext>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
                         {user.portfolioItems.map((portfolioItem) => (
                             <PortfolioItemCard key={portfolioItem.id} portfolioItem={portfolioItem} />
                         ))}

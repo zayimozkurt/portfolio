@@ -1,5 +1,5 @@
 import { ExtendedUserModel } from '@/types/db/extended-user.model';
-import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id-response';
+import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id.response';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const refresh = createAsyncThunk('user/refresh', async () => {
