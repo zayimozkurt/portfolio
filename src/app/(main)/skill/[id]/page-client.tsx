@@ -2,8 +2,8 @@
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
-import PortfolioViewer from '@/components/portfolio/PortfolioItemViewer';
 import ContentEditor from '@/components/tiptap/ContentEditor';
+import TipTapContentViewer from '@/components/tiptap/TipTapContentViewer';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -153,7 +153,7 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
                         onCancel={toggleContentEditMode}
                     />
                 ) : (
-                    <PortfolioViewer content={content} />
+                    <TipTapContentViewer content={content} />
                 )}
             </div>
         </div>

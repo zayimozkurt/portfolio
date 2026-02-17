@@ -1,9 +1,11 @@
 'use client';
 
 import { Button } from '@/components/Button';
-import { Input } from '@/components/Input';
 import { SectionHeader } from '@/components/resume/SectionHeader';
-import { SortableSkillPill } from '@/components/resume/SortableSkillPill';
+import { CreateSkillForm } from '@/components/resume/skills/CreateSkillForm';
+import { SkillDragOverlayPill } from '@/components/resume/skills/SkillDragOverlayPill';
+import { SkillPill } from '@/components/resume/skills/SkillPill';
+import { SortableSkillPill } from '@/components/resume/skills/SortableSkillPill';
 import { ButtonVariant } from '@/enums/button-variants.enum';
 import { Skill } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -21,33 +23,30 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { GripVertical } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export function SkillsSection({ id }: { id?: string }) {
     const dispatch = useAppDispatch();
     const user = useAppSelector((state) => state.user);
     const isAdmin = useAppSelector((state) => state.isAdmin);
+
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
-    const [newSkillName, setNewSkillName] = useState<string>('');
-    const [isSaving, setIsSaving] = useState(false);
     const [localSkills, setLocalSkills] = useState<Skill[]>(user.skills);
-    const [activeId, setActiveId] = useState<string | null>(null);
-    const [isHandlingDragEnd, setIsHandlingDragEnd] = useState<boolean>(false);
+    const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         setLocalSkills(user.skills);
     }, [user.skills]);
 
     useEffect(() => {
-        if (activeId) {
+        if (activeSkill) {
             document.body.style.cursor = 'grabbing';
             return () => {
                 document.body.style.cursor = '';
             };
         }
-    }, [activeId]);
+    }, [activeSkill]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -55,37 +54,11 @@ export function SkillsSection({ id }: { id?: string }) {
     );
 
     function toggleEditMode() {
-        setNewSkillName('');
         setIsEditMode((prev) => !prev);
     }
 
-    async function addSkill() {
-        const trimmed = newSkillName.trim();
-        if (!trimmed || isSaving) return;
-
-        setIsSaving(true);
-        try {
-            const response: ResponseBase = await (
-                await fetch('/api/admin/skill/create', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: trimmed }),
-                })
-            ).json();
-
-            if (response.isSuccess) {
-                await dispatch(userActions.refresh());
-                setNewSkillName('');
-            } else {
-                alert(response.message);
-            }
-        } finally {
-            setIsSaving(false);
-        }
-    }
-
     async function deleteSkill(id: string, skillName: string) {
-        if (!confirm(`Are you you sure you want to delete the ${skillName} skill?`)) return;
+        if (!confirm(`Are you you sure you want to delete the skill named ${skillName}?`)) return;
 
         if (isSaving) return;
 
@@ -110,12 +83,13 @@ export function SkillsSection({ id }: { id?: string }) {
     }
 
     function handleDragStart(event: DragStartEvent) {
-        setActiveId(event.active.id as string);
+        const skill = localSkills.find((s) => s.id === event.active.id);
+        setActiveSkill(skill ? skill : null);
     }
 
     async function handleDragEnd(event: DragEndEvent) {
-        setActiveId(null);
-        setIsHandlingDragEnd(true);
+        setActiveSkill(null);
+        setIsSaving(true);
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
@@ -142,9 +116,10 @@ export function SkillsSection({ id }: { id?: string }) {
                 alert(response.message);
             }
 
-            setIsHandlingDragEnd(false);
         } catch {
             setLocalSkills(previous);
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -159,8 +134,8 @@ export function SkillsSection({ id }: { id?: string }) {
             )}
             {isEditMode && (
                 <div className="absolute top-2 right-2 md:right-0">
-                    <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY} disabled={isHandlingDragEnd} >
-                        {isHandlingDragEnd ? 'Reordering...' : 'Done'}
+                    <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY} disabled={isSaving} >
+                        {isSaving ? 'Saving...' : 'Done'}
                     </Button>
                 </div>
             )}
@@ -181,7 +156,7 @@ export function SkillsSection({ id }: { id?: string }) {
             />
 
             <div className="mt-6">
-                <div className="flex flex-wrap gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 justify-between gap-4">
                     {isEditMode ? (
                         <DndContext
                             sensors={sensors}
@@ -196,55 +171,27 @@ export function SkillsSection({ id }: { id?: string }) {
                                         skill={skill}
                                         onDelete={deleteSkill}
                                         isSaving={isSaving}
-                                        isHandlingDragEnd={isHandlingDragEnd}
                                     />
                                 ))}
                             </SortableContext>
                             <DragOverlay>
-                                {activeId ? (
-                                    <span className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full border border-gray-200 flex items-center gap-1.5 shadow-lg select-none">
-                                        <span className="text-gray-400 -ml-1">
-                                            <GripVertical size={14} />
-                                        </span>
-                                        {localSkills.find((s) => s.id === activeId)?.name}
-                                    </span>
+                                {activeSkill ? (
+                                    <SkillDragOverlayPill activeSkill={activeSkill} />
                                 ) : null}
                             </DragOverlay>
                         </DndContext>
                     ) : (
                         user.skills.map((skill) => (
-                            <Link key={skill.id} href={`/skill/${skill.id}`}>
-                                <span className="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full border border-gray-200 hover:bg-gray-200 transition-colors flex items-center gap-1.5">
-                                    {skill.name}
-                                </span>
-                            </Link>
+                            <SkillPill key={skill.id} skill={skill} />
                         ))
                     )}
                 </div>
 
                 {isEditMode && (
-                    <div className="flex gap-2 mt-4">
-                        <Input
-                            name="newSkill"
-                            value={newSkillName}
-                            onChange={(e) => setNewSkillName(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    addSkill();
-                                }
-                            }}
-                            placeholder="New skill..."
-                            className="flex-1"
-                        />
-                        <Button
-                            onClick={addSkill}
-                            variant={ButtonVariant.PRIMARY}
-                            disabled={isSaving || !newSkillName.trim()}
-                        >
-                            Add
-                        </Button>
-                    </div>
+                    <CreateSkillForm
+                        isSaving={isSaving}
+                        setIsSaving={setIsSaving}
+                    />
                 )}
             </div>
         </div>

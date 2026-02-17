@@ -4,7 +4,7 @@ import { AboutSection } from '@/components/resume/AboutSection';
 import { EducationsSection } from '@/components/resume/EducationsSection';
 import { ExperiencesSection } from '@/components/resume/ExperiencesSection';
 import { ResumeNavigationSidebar } from '@/components/resume/ResumeNavigationSidebar';
-import { SkillsSection } from '@/components/resume/SkillsSection';
+import { SkillsSection } from '@/components/resume/skills/SkillsSection';
 
 export default function Page() {
     return (

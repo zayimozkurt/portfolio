@@ -1,3 +1,4 @@
+import { SKILL_NAME_CHAR_LIMIT } from '@/constants/skill-name-char-limit.constant';
 import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { Prisma } from '@/generated/client';
@@ -27,12 +28,17 @@ export class SkillService {
                 }
             });
 
-            if (duplicateSkill) {
+            if (duplicateSkill)
                 return {
                     isSuccess: false,
                     message: `Failed! A skill with name ${dto.name} already exists.`
                 };
-            }
+
+            if (dto.name.length > SKILL_NAME_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Skill's name char length can't exceed ${SKILL_NAME_CHAR_LIMIT}.`
+                };
 
             await prisma.$transaction(async (tx: TransactionClient) => {
                 await tx.skill.updateMany({
@@ -73,9 +79,30 @@ export class SkillService {
     static async updateById(dto: UpdateSkillDto): Promise<ResponseBase> {
         try {
             const skill = await prisma.skill.findUnique({ where: { id: dto.id } });
+
             if (!skill) {
                 return { isSuccess: false, message: 'skill not found' };
             }
+
+            const duplicateSkill = await prisma.skill.findFirst({
+                where: {
+                    userId,
+                    name: dto.name,
+                    NOT: { id: dto.id }
+                }
+            });
+
+            if (duplicateSkill)
+                return {
+                    isSuccess: false,
+                    message: `Failed! A skill with name ${dto.name} already exists.`
+                };
+
+            if (dto.name && dto.name.length > SKILL_NAME_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Skill's name char length can't exceed ${SKILL_NAME_CHAR_LIMIT}.`
+                };
 
             await prisma.skill.update({
                 where: { id: dto.id },

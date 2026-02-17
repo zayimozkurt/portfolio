@@ -3,6 +3,8 @@
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
+import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-description-char-limit.constant';
+import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
 import { useAppDispatch } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
@@ -27,8 +29,10 @@ export default function CreatePortfolioItemForm({
     };
     const [createPortfolioItemDto, setCreatePortfolioItemDto] = React.useState<CreatePortfolioItemDto>(initialCreatePortfolioItemDto);
 
-    function handleOnChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        const element = event.currentTarget;
+    function handleOnChange(element: HTMLInputElement | HTMLTextAreaElement) {
+        if (element.name === 'title' && element.value.length > PORTFOLIO_ITEM_TITLE_CHAR_LIMIT) return;
+        else if (element.name === 'description' && element.value.length > PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT) return;
+
         setCreatePortfolioItemDto((prev) => {
             return {
                 ...prev,
@@ -78,18 +82,29 @@ export default function CreatePortfolioItemForm({
                 flex flex-col justify-start items-center gap-2
             `}
         >
-            <Input 
-                name="title" 
-                value={createPortfolioItemDto.title}
-                onChange={(event) => handleOnChange(event)} 
-                placeholder="title..." />
-            <TextArea
-                name="description"
-                value={createPortfolioItemDto.description}
-                onChange={(event) => handleOnChange(event)}
-                placeholder="description..."
-                className="min-h-[100px]"
-            />
+            <div className='w-full relative'>
+                <Input 
+                    name="title" 
+                    value={createPortfolioItemDto.title}
+                    onChange={(event) => handleOnChange(event.currentTarget)} 
+                    placeholder="title..." 
+                />
+
+                    <p className={`${createPortfolioItemDto.title.length >= PORTFOLIO_ITEM_TITLE_CHAR_LIMIT ? 'text-red-500' : ''} text-xs absolute bottom-1 right-2`}>{createPortfolioItemDto.title.length}/{PORTFOLIO_ITEM_TITLE_CHAR_LIMIT}</p>
+            </div>
+
+            <div className='w-full relative'>
+                <TextArea
+                    name="description"
+                    value={createPortfolioItemDto.description}
+                    onChange={(event) => handleOnChange(event.currentTarget)}
+                    placeholder="description..."
+                    className="min-h-[100px]"
+                />
+
+                <p className={`${createPortfolioItemDto.description.length >= PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT ? 'text-red-500' : ''} text-xs absolute bottom-2 right-2`}>{createPortfolioItemDto.description.length}/{PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT}</p>
+            </div>
+
             <div className="flex gap-2">
                 <Button
                     onClick={createPortfolioItem}

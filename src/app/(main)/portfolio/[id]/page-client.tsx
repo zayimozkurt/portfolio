@@ -2,10 +2,12 @@
 
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
-import PortfolioViewer from '@/components/portfolio/PortfolioItemViewer';
 import { TextArea } from '@/components/TextArea';
 import ContentEditor from '@/components/tiptap/ContentEditor';
+import TipTapContentViewer from '@/components/tiptap/TipTapContentViewer';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
+import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-description-char-limit.constant';
+import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variants.enum';
 import { PortfolioItem } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -161,10 +163,10 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
     } 
 
     return (
-        <div className="w-full h-full">
-            <div className="relative">
+        <div className="w-full h-auto">
+            <div className="w-full h-auto relative">
                 {isAdmin && !isEditingMeta && (
-                    <div className="absolute top-4 right-4">
+                    <div className="sm:absolute top-4 right-4 flex justify-end gap-2 p-2">
                         <Button onClick={toggleMetaEditMode} variant={ButtonVariant.PRIMARY}>
                             Edit
                         </Button>
@@ -172,7 +174,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 )}
 
                 {isEditingMeta && (
-                    <div className="absolute top-4 right-4 flex gap-2">
+                    <div className="sm:absolute top-4 right-4 flex justify-end gap-2 p-2">
                         <Button onClick={onSave} variant={ButtonVariant.PRIMARY} disabled={isSaving}>
                             {isSaving ? 'Saving...' : 'Save'}
                         </Button>
@@ -182,36 +184,51 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                     </div>
                 )}
 
-                <div className="w-full h-auto flex justify-start items-center gap-8 p-6 pr-32">
+                <div className="w-full h-auto flex justify-start items-center gap-4 sm:gap-8 p-2 sm:p-6">
                     <Link href={'/portfolio'}>
                         <Button variant={ButtonVariant.PRIMARY}>←</Button>
                     </Link>
 
                     {isEditingMeta ? (
-                        <Input
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Title"
-                            className="text-2xl font-semibold"
-                        />
+                        <div className='w-[300px] sm:w-[400px] relative'>
+                            <Input
+                                value={title}
+                                onChange={(e) => {
+                                    if (e.currentTarget.value.length <= PORTFOLIO_ITEM_TITLE_CHAR_LIMIT)
+                                        setTitle(e.target.value);
+                                }}
+                                placeholder="Title"
+                                className="text-2xl font-semibold pr-12"
+                            />
+
+                            <p className={`${title.length >= PORTFOLIO_ITEM_TITLE_CHAR_LIMIT ? 'text-red-500' : ''} text-xs absolute bottom-1 right-2`}>{title.length}/{PORTFOLIO_ITEM_TITLE_CHAR_LIMIT}</p>
+                        </div>
                     ) : (
                         <p className="font-semibold text-2xl">{portfolioItem.title}</p>
                     )}
                 </div>
 
-                <div className="w-full h-auto p-6 flex justify-start items-center gap-2">
+                <div className="w-full h-auto p-6 flex flex-col sm:flex-row sm:justify-between items-center gap-4">
                     {isEditingMeta ? (
-                        <TextArea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Description"
-                            rows={3}
-                        />
+                        <div className='w-full relative'>
+                            <TextArea
+                                value={description}
+                                onChange={(e) => {
+                                    if (e.currentTarget.value.length <= PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT)
+                                        setDescription(e.target.value);
+                                }}
+                                placeholder="Description"
+                                rows={4}
+                                className='w-full pr-12'
+                            />
+
+                            <p className={`${description.length >= PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT ? 'text-red-500' : ''} text-xs absolute bottom-2 right-2`}>{description.length}/{PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT}</p>
+                        </div>
                     ) : (
                         <p className="whitespace-pre-wrap">{portfolioItem.description}</p>
                     )}
 
-                    <div className='w-[300px] h-auto flex flex-col gap-2'>
+                    <div className='w-[300px] h-auto items-center flex flex-col gap-2'>
                         <Image
                             alt='portfolio item cover image'
                             src={portfolioItem.coverImageUrl ? portfolioItem.coverImageUrl : '/portfolio-item-cover-placeholder-image.png'}
@@ -252,7 +269,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
 
             <span className="block w-[full] h-[2px] rounded-full bg-black"></span>
 
-            <div className="p-[25px]">
+            <div className="w-full p-[25px]">
                 {isAdmin && !isEditingContent && (
                     <div className="sticky flex justify-end p-2 z-40 bg-white" style={{ top: NAVBAR_HEIGHT }}>
                         <Button onClick={toggleContentEditMode} variant={ButtonVariant.PRIMARY}>
@@ -273,7 +290,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                         onCancel={toggleContentEditMode}
                     />
                 ) : (
-                    <PortfolioViewer content={content} />
+                    <TipTapContentViewer content={content} />
                 )}
             </div>
         </div>

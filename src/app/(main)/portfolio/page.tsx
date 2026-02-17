@@ -23,7 +23,6 @@ import {
 import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { GripVertical } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { FaFolder } from 'react-icons/fa';
 
 export default function Page() {
     const dispatch = useAppDispatch();
@@ -108,7 +107,7 @@ export default function Page() {
 
     return (
         <div className="w-full h-full flex flex-col items-center gap-16">
-            <div className="relative w-[300px] sm:w-[700px] xl:w-[1000px] h-auto flex flex-col gap-8">
+            <div className="relative w-[300px] sm:w-[700px] xl:w-[1000px] h-auto flex flex-col gap-8 pb-8">
                 <div className="flex justify-center items-center gap-4">
                     <div className="flex justify-center items-center">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

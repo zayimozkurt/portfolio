@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         content,
     };
 
-    const response = await PortfolioItemService.cleanUpOrphanedImages(dto);
+    const response = await PortfolioItemService.cleanUpOrphanedImagesFromContent(dto);
 
     return NextResponse.json(response);
 }

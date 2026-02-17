@@ -1,4 +1,6 @@
 import { INVALID_UUID_RESPONSE_MESSAGE } from '@/constants/invalid-uuid-response-message.constant';
+import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-description-char-limit.constant';
+import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
 import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { InputJsonValue } from '@/generated/client/runtime/library';
@@ -43,6 +45,17 @@ export class PortfolioItemService {
                 };
             }
 
+            if (dto.title.length > PORTFOLIO_ITEM_TITLE_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Title char length can't exceed ${PORTFOLIO_ITEM_TITLE_CHAR_LIMIT}.`
+                };
+            else if (dto.description.length > PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Description char length can't exceed ${PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT}.`
+                };
+
             await prisma.$transaction(async (tx: TransactionClient) => {
 
                 await tx.portfolioItem.updateMany({
@@ -50,11 +63,11 @@ export class PortfolioItemService {
                     data: { order: { increment: 1 } },
                 });
 
-                await prisma.portfolioItem.create({
+                await tx.portfolioItem.create({
                     data: {
                         userId,
                         ...dto,
-                        order: 1,
+                        order: 0,
                     },
                 });
             });
@@ -80,7 +93,8 @@ export class PortfolioItemService {
 
     static async readAllByUserId(): Promise<ReadAllPortfolioItemsResponse> {
         try {
-            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId } });
+            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' } });
+
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems };
         } catch (error) {
             console.error(error);
@@ -95,9 +109,7 @@ export class PortfolioItemService {
                     where: {
                         userId,
                         title: dto.title,
-                        NOT: {
-                            id
-                        }
+                        NOT: { id }
                     }
                 });
                 
@@ -108,6 +120,17 @@ export class PortfolioItemService {
                     };
                 }
             }
+
+            if (dto.title && dto.title.length > PORTFOLIO_ITEM_TITLE_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Title char length can't exceed ${PORTFOLIO_ITEM_TITLE_CHAR_LIMIT}.`
+                };
+            else if (dto.description && dto.description.length > PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT)
+                return {
+                    isSuccess: false,
+                    message: `Failed! Description char length can't exceed ${PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT}.`
+                };
 
             await prisma.portfolioItem.update({
                 where: {
@@ -121,7 +144,7 @@ export class PortfolioItemService {
 
             if (dto.content) {
                 PortfolioItemService
-                    .cleanUpOrphanedImages({
+                    .cleanUpOrphanedImagesFromContent({
                         portfolioItemId: id,
                         content: dto.content,
                     })
@@ -137,14 +160,30 @@ export class PortfolioItemService {
 
     static async deleteById(id: string): Promise<ResponseBase> {
         try {
+            const readPortfolioItemResponse = await this.readById(id);
+
+            if (!readPortfolioItemResponse.isSuccess || !readPortfolioItemResponse.portfolioItem) return readPortfolioItemResponse;
+
+            const portfolioItem = readPortfolioItemResponse.portfolioItem;
+
+            await prisma.$transaction(async (tx: TransactionClient) => {
+                await tx.portfolioItem.delete({ where: { id } });
+
+                await tx.portfolioItem.updateMany({
+                    where: { userId, order: { gt: portfolioItem.order }  },
+                    data: { order: { decrement: 1 } },
+                });
+            });
+
             const { data: files } = await supabase.storage.from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES).list(id);
 
             if (files && files.length > 0) {
                 const filePaths = files.map((f) => `${id}/${f.name}`);
-                await supabase.storage.from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES).remove(filePaths);
-            }
 
-            await prisma.portfolioItem.delete({ where: { id } });
+                const supabaseResponse = await supabase.storage.from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES).remove(filePaths);
+
+                if (supabaseResponse.error) console.error(supabaseResponse.error);
+            }
 
             return { isSuccess: true, message: 'portfolio item deleted' };
         } catch (error) {
@@ -216,7 +255,7 @@ export class PortfolioItemService {
         }
     }
 
-    static async cleanUpOrphanedImages(dto: CleanUpOrphanedPortfolioImagesDto): Promise<ResponseBase> {
+    static async cleanUpOrphanedImagesFromContent(dto: CleanUpOrphanedPortfolioImagesDto): Promise<ResponseBase> {
         if (!dto.portfolioItemId || !dto.content) {
             return { isSuccess: false, message: "portfolioItemId or content isn't provided" };
         }
