@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/Button';
 import { DESCRIPTION_CHAR_LIMIT } from '@/constants/description-char-limit.constant';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Education } from '@/generated/client';
 import { calculateDuration } from '@/utils/calculate-duration.util';
 import { useState } from 'react';

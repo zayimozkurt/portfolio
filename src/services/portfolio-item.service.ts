@@ -9,7 +9,9 @@ import { CreatePortfolioItemDto } from '@/types/dto/portfolio-item/create-portfo
 import { ReorderPortfolioItemsDto } from '@/types/dto/portfolio-item/reorder-portfolio-items.dto';
 import { UpdatePortfolioItemDto } from '@/types/dto/portfolio-item/update-portfolio-item.dto';
 import { UploadPortfolioItemImageDto } from '@/types/dto/portfolio-item/upload-portfolio-item-image.dto';
-import { ReadAllPortfolioItemsResponse } from '@/types/response/portfolio-item/read-all-portfolio-items.response';
+import { ReadMultipleExtendedPortfolioItemsResponse } from '@/types/response/portfolio-item/read-multiple-extended-portfolio-items.response';
+import { ReadMultiplePortfolioItemsResponse } from '@/types/response/portfolio-item/read-multiple-portfolio-items.response';
+import { ReadSingleExtendedPortfolioItemResponse } from '@/types/response/portfolio-item/read-single-extended-portfolio-item.response';
 import { ReadSinglePortfolioItemResponse } from '@/types/response/portfolio-item/read-single-portfolio-item.response';
 import { UploadPortfolioItemImageResponse } from '@/types/response/portfolio-item/upload-portfolio-item-image.response';
 import { ResponseBase } from '@/types/response/response-base';
@@ -25,9 +27,6 @@ export class PortfolioItemService {
     static async create(dto: CreatePortfolioItemDto): Promise<ResponseBase> {
         if (!dto.title) {
             return { isSuccess: false, message: 'title must exist' };
-        }
-        if (!dto.description) {
-            return { isSuccess: false, message: 'description must exist' };
         }
 
         try {
@@ -50,7 +49,7 @@ export class PortfolioItemService {
                     isSuccess: false,
                     message: `Failed! Title char length can't exceed ${PORTFOLIO_ITEM_TITLE_CHAR_LIMIT}.`
                 };
-            else if (dto.description.length > PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT)
+            else if (dto.description && dto.description.length > PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT)
                 return {
                     isSuccess: false,
                     message: `Failed! Description char length can't exceed ${PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT}.`
@@ -91,9 +90,32 @@ export class PortfolioItemService {
         }
     }
 
-    static async readAllByUserId(): Promise<ReadAllPortfolioItemsResponse> {
+    static async readExtendedById(id: string): Promise<ReadSingleExtendedPortfolioItemResponse> {
+        try {
+            const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id }, include: { skills: true } });
+
+            if (!portfolioItem) return { isSuccess: false, message: "portfolio item couldn't read" };
+
+            return { isSuccess: true, message: 'portfolio item read', portfolioItem };
+        } catch {
+            return { isSuccess: false, message: "portfolio item couldn't be read" };
+        }
+    }
+
+    static async readAllByUserId(): Promise<ReadMultiplePortfolioItemsResponse> {
         try {
             const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' } });
+
+            return { isSuccess: true, message: 'all portfolio items read', portfolioItems };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error" };
+        }
+    }
+
+    static async readAllExtendedByUserId(): Promise<ReadMultipleExtendedPortfolioItemsResponse> {
+        try {
+            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' }, include: { skills: true } });
 
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems };
         } catch (error) {

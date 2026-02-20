@@ -3,7 +3,7 @@
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { SKILL_NAME_CHAR_LIMIT } from "@/constants/skill-name-char-limit.constant";
-import { ButtonVariant } from "@/enums/button-variants.enum";
+import { ButtonVariant } from "@/enums/button-variant.enum";
 import { useAppDispatch } from "@/store/hooks";
 import { userActions } from "@/store/slices/user-slice";
 import { ResponseBase } from "@/types/response/response-base";

@@ -1,31 +1,33 @@
 'use client';
 
+import AttachOrDetachSkillForm from '@/components/AttachSkillForm';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
-import ContentEditor from '@/components/tiptap/ContentEditor';
+import ContentEditor from '@/components/tiptap/TipTapContentEditor';
 import TipTapContentViewer from '@/components/tiptap/TipTapContentViewer';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-description-char-limit.constant';
 import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
-import { ButtonVariant } from '@/enums/button-variants.enum';
-import { PortfolioItem } from '@/generated/client';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
-import { ReadSinglePortfolioItemResponse } from '@/types/response/portfolio-item/read-single-portfolio-item.response';
+import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
+import { ReadSingleExtendedPortfolioItemResponse } from '@/types/response/portfolio-item/read-single-extended-portfolio-item.response';
 import { ResponseBase } from '@/types/response/response-base';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-export default function PageClient({ initialPortfolioItem }: { initialPortfolioItem: PortfolioItem }) {
+export default function PageClient({ initialPortfolioItem }: { initialPortfolioItem: ExtendedPortfolioItemModel }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
-    const [portfolioItem, setPortfolioItem] = useState(initialPortfolioItem);
+
+    const [portfolioItem, setPortfolioItem] = useState<ExtendedPortfolioItemModel>(initialPortfolioItem);
 
     async function refreshPortfolioItem() {
-        const response: ReadSinglePortfolioItemResponse = await (
-            await fetch(`/api/admin/portfolio-item/read/${initialPortfolioItem.id}`)
+        const response: ReadSingleExtendedPortfolioItemResponse = await (
+            await fetch(`/api/admin/portfolio-item/read-extended-by-id/${initialPortfolioItem.id}`)
         ).json();
 
         if (response.isSuccess && response.portfolioItem) {
@@ -39,18 +41,22 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
     const [isEditingContent, setIsEditingContent] = useState(false);
 
     const [title, setTitle] = useState(portfolioItem.title);
-    const [description, setDescription] = useState(portfolioItem.description);
+    const [description, setDescription] = useState(portfolioItem.description ?? '');
     const [content, setContent] = useState<object>(portfolioItem.content as object);
     const [coverImage, setCoverImage] = useState<File | null>(null);
+    const [isAttachSkillFormHidden, setIsAttachSkillFormHidden] = useState<boolean>(true);
 
     const [isSaving, setIsSaving] = useState(false);
+
+    const attachSkillFormRef = React.useRef<HTMLDivElement>(null);
 
     function toggleMetaEditMode() {
         if (!isEditingMeta) {
             setTitle(portfolioItem.title);
-            setDescription(portfolioItem.description);
+            setDescription(portfolioItem.description ?? '');
         }
         setIsEditingMeta(!isEditingMeta);
+        setIsAttachSkillFormHidden(true);
     }
 
     function toggleContentEditMode() {
@@ -160,7 +166,22 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
             await refreshPortfolioItem();
             setIsSaving(false);
         }
-    } 
+    }
+
+    function toggleAttachSkillForm(button: HTMLButtonElement) {
+        if (!attachSkillFormRef.current) return;
+        setIsAttachSkillFormHidden((prev) => !prev);
+
+        const buttonRect = button.getBoundingClientRect();
+        const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
+        if (!parentRect) return;
+
+        const buttonCenterX = buttonRect.left + Math.floor(buttonRect.width / 2);
+        const formWidth = attachSkillFormRef.current.offsetWidth;
+
+        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
+        attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
+    }
 
     return (
         <div className="w-full h-auto">
@@ -240,11 +261,11 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                         {isEditingMeta &&
                             <div className='w-auto h-auto flex flex-col gap-2'>
                                 <label
-                                    className={`cursor-pointer right-0 px-2 py-0.5 text-center
+                                    className={`cursor-pointer right-0 px-2 py-1 text-center
                                     border-2 border-black rounded-[10px]
-                                    bg-black text-white text-s
+                                    bg-black text-white text-sm
                                     hover:bg-white hover:text-black
-                                        duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+                                    duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change Cover Image
                                     <input
@@ -265,6 +286,42 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                         }
                     </div>
                 </div>
+
+                <div className="w-full flex justify-start items-center gap-4 p-6">
+                    {isEditingMeta ?
+                        <>
+                            <Button 
+                                onClick={event => toggleAttachSkillForm(event.currentTarget)}>
+                                    Attach/Detach Skill
+                                </Button>
+                        </>
+                        :
+                        portfolioItem.skills.length === 0 ?
+                            <></>
+                            :
+                            <div className='w-full flex flex-col justify-start items-start'>
+                                <p className='w-full font-semibold'>Skills</p>
+                                <div
+                                    className='w-full h-[40px] flex justify-start items-center gap-4 p-2 overflow-x-auto text-sm whitespace-nowrap'
+                                    style={{ overflowY: 'hidden' }}
+                                >
+                                    {portfolioItem.skills.map(skill => (
+                                        <p key={skill.id}>• {skill.name}</p>
+                                    ))}
+                                </div>
+                            </div>
+
+                    }
+                </div>
+
+                <AttachOrDetachSkillForm
+                    portfolioItemId={portfolioItem.id}
+                    attachedSkills={portfolioItem.skills}
+                    attachSkillFormRef={attachSkillFormRef}
+                    isAttachSkillFormHidden={isAttachSkillFormHidden}
+                    setIsAttachSkillFormHidden={setIsAttachSkillFormHidden}
+                    refreshPortfolioItem={refreshPortfolioItem}
+                />
             </div>
 
             <span className="block w-[full] h-[2px] rounded-full bg-black"></span>

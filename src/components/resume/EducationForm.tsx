@@ -3,7 +3,7 @@
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { ChangeEvent } from 'react';
 

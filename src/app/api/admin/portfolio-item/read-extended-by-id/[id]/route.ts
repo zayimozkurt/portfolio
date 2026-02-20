@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
     const params = await context.params;
 
-    const response = await PortfolioItemService.readById(params.id);
+    const response = await PortfolioItemService.readExtendedById(params.id);
 
     return NextResponse.json(response);
 }

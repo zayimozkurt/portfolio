@@ -4,7 +4,7 @@ import { Button } from '@/components/Button';
 import { ExperienceForm } from '@/components/resume/ExperienceForm';
 import { ExperienceItem } from '@/components/resume/ExperienceItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Experience } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
@@ -157,7 +157,9 @@ export function ExperiencesSection({ id }: { id?: string }) {
         }
     }
 
-    return (
+    return (user.experiences.length === 0 && !isAdmin ? 
+        <></>
+        :
         <div id={id} className="relative w-[300px] sm:w-[700px] py-10 md:px-0">
             {isAdmin && !isEditMode && (
                 <div className="absolute top-2 right-2 md:right-0">
@@ -166,6 +168,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
                     </Button>
                 </div>
             )}
+
             {isEditMode && (
                 <div className="absolute top-2 right-2 md:right-0">
                     <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY}>

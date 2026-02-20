@@ -5,7 +5,8 @@ import { PortfolioItemService } from '@/services/portfolio-item.service';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const readSinglePortfolioItemResponse = await PortfolioItemService.readById(id);
+
+    const readSinglePortfolioItemResponse = await PortfolioItemService.readExtendedById(id);
 
     return (
         <div className="w-full h-full flex justify-center items-start">

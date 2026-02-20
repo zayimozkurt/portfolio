@@ -1,4 +1,4 @@
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
     [ButtonVariant.PRIMARY]: 'bg-black text-white border-black hover:bg-white hover:text-black',

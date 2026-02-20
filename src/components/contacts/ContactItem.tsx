@@ -1,9 +1,9 @@
 import { Button } from '@/components/Button';
 import { contactIconMap } from '@/constants/contact-icon-map.constant';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { ContactLabel } from '@/enums/contact-label.enum';
 import { Contact } from '@/generated/client';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 
 export function ContactItem({
     contact,

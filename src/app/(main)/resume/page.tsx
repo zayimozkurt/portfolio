@@ -10,7 +10,7 @@ export default function Page() {
     return (
         <div className="relative w-full h-full">
             <ResumeNavigationSidebar />
-            <div className="w-full h-full flex flex-col items-center gap-16 px-24">
+            <div className="w-full h-auto flex flex-col items-center gap-16 px-24 pb-32">
                 <AboutSection id="about" />
                 <SkillsSection id="skills" />
                 <ExperiencesSection id="experiences" />

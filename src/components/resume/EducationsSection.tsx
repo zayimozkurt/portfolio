@@ -4,7 +4,7 @@ import { Button } from '@/components/Button';
 import { EducationForm } from '@/components/resume/EducationForm';
 import { EducationItem } from '@/components/resume/EducationItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Education } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
@@ -160,7 +160,9 @@ export function EducationsSection({ id }: { id?: string }) {
         }
     }
 
-    return (
+    return (user.educations.length === 0 && !isAdmin ?
+        <></>
+        :
         <div id={id} className="relative w-[300px] sm:w-[700px] py-10 md:px-0">
             {isAdmin && !isEditMode && (
                 <div className="absolute top-2 right-2 md:right-0">

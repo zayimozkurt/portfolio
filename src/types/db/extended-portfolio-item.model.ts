@@ -1,6 +1,6 @@
 import { Prisma } from "@/generated/client";
 
-export type ExtendedPortfolioItemModel = Prisma.ExperienceGetPayload<{
+export type ExtendedPortfolioItemModel = Prisma.PortfolioItemGetPayload<{
     include: {
         skills: true
     }

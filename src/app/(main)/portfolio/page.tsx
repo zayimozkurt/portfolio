@@ -1,13 +1,15 @@
 'use client';
 
 import { Button } from '@/components/Button';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import CreatePortfolioItemForm from '@/components/portfolio/CreatePortfolioItemForm';
+import { PlaceholderSortablePortfolioItemCard } from '@/components/portfolio/PlaceholderSortablePortfolioItemCard';
 import PortfolioItemCard from '@/components/portfolio/PortfolioItemCard';
 import { SortablePortfolioItemCard } from '@/components/portfolio/SortablePortfolioItemCard';
-import { ButtonVariant } from '@/enums/button-variants.enum';
-import { PortfolioItem } from '@/generated/client';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { ButtonVariant } from '@/enums/button-variant.enum';
+import { useAppSelector } from '@/store/hooks';
+import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
+import { ReadMultipleExtendedPortfolioItemsResponse } from '@/types/response/portfolio-item/read-multiple-extended-portfolio-items.response';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -25,18 +27,31 @@ import { GripVertical } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function Page() {
-    const dispatch = useAppDispatch();
-    const user = useAppSelector((state) => state.user);
     const isAdmin = useAppSelector((state) => state.isAdmin);
+
     const [isCreatePortfolioItemFormHidden, setIsCreatePortfolioItemFormHidden] = useState<boolean>(true);
     const createPortfolioItemFormRef = useRef<HTMLDivElement>(null);
-    const [localPortfolioItems, setLocalPortfolioItems] = useState<PortfolioItem[]>(user.portfolioItems);
+    const [portfolioItems, setPortfolioItems] = useState<ExtendedPortfolioItemModel[]>([]);
     const [activeId, setActiveId] = useState<string | null>(null);
+
+    const COLS = 3;
+    const placeholderCount = portfolioItems.length % COLS === 0 ? 0 : COLS - (portfolioItems.length % COLS);
+    const placeholderIds = Array.from({ length: placeholderCount }, (_, i) => `placeholder-${i}`);
+
+    async function refreshPortfolioItems() {
+        const response: ReadMultipleExtendedPortfolioItemsResponse = await (
+            await fetch('/api/visitor/portfolio-item/read-all-extended-by-user-id')
+        ).json();
+
+        if (response.isSuccess && response.portfolioItems) {
+            setPortfolioItems(response.portfolioItems);
+        }
+    }
 
     useEffect(() => {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLocalPortfolioItems(user.portfolioItems);
-    }, [user.portfolioItems]);
+        refreshPortfolioItems();
+    }, []);
 
     useEffect(() => {
         if (activeId) {
@@ -73,15 +88,18 @@ export default function Page() {
 
     async function handleDragEnd(event: DragEndEvent) {
         setActiveId(null);
+
         const { active, over } = event;
         if (!over || active.id === over.id) return;
 
-        const oldIndex = localPortfolioItems.findIndex((item) => item.id === active.id);
-        const newIndex = localPortfolioItems.findIndex((item) => item.id === over.id);
+        const oldIndex = portfolioItems.findIndex((item) => item.id === active.id);
+        const newIndex = String(over.id).startsWith('placeholder')
+            ? portfolioItems.length - 1
+            : portfolioItems.findIndex((item) => item.id === over.id);
 
-        const reordered = arrayMove(localPortfolioItems, oldIndex, newIndex);
-        const previous = localPortfolioItems;
-        setLocalPortfolioItems(reordered);
+        const reordered = arrayMove(portfolioItems, oldIndex, newIndex);
+        const previous = portfolioItems;
+        setPortfolioItems(reordered);
 
         try {
             const response: ResponseBase = await (
@@ -93,19 +111,21 @@ export default function Page() {
             ).json();
 
             if (response.isSuccess) {
-                await dispatch(userActions.refresh());
+                await refreshPortfolioItems();
             } else {
-                setLocalPortfolioItems(previous);
+                setPortfolioItems(previous);
                 alert(response.message);
             }
         } catch {
-            setLocalPortfolioItems(previous);
+            setPortfolioItems(previous);
         }
     }
 
-    const activeItem = activeId ? localPortfolioItems.find((item) => item.id === activeId) : null;
+    const activeItem = activeId ? portfolioItems.find((item) => item.id === activeId) : null;
 
-    return (
+    return (portfolioItems.length === 0 ? 
+        <LoadingSpinner />
+        :
         <div className="w-full h-full flex flex-col items-center gap-16">
             <div className="relative w-[300px] sm:w-[700px] xl:w-[1000px] h-auto flex flex-col gap-8 pb-8">
                 <div className="flex justify-center items-center gap-4">
@@ -137,15 +157,19 @@ export default function Page() {
                         onDragEnd={handleDragEnd}
                     >
                         <SortableContext
-                            items={localPortfolioItems.map((item) => item.id)}
+                            items={[...portfolioItems.map((item) => item.id), ...placeholderIds]}
                             strategy={rectSortingStrategy}
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-                                {localPortfolioItems.map((portfolioItem) => (
+                            <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-${COLS} gap-8`}>
+                                {portfolioItems.map((portfolioItem) => (
                                     <SortablePortfolioItemCard
                                         key={portfolioItem.id}
                                         portfolioItem={portfolioItem}
+                                        refreshPortfolioItems={refreshPortfolioItems}
                                     />
+                                ))}
+                                {placeholderIds.map((id) => (
+                                    <PlaceholderSortablePortfolioItemCard key={id} id={id} />
                                 ))}
                             </div>
                         </SortableContext>
@@ -164,9 +188,13 @@ export default function Page() {
                         </DragOverlay>
                     </DndContext>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
-                        {user.portfolioItems.map((portfolioItem) => (
-                            <PortfolioItemCard key={portfolioItem.id} portfolioItem={portfolioItem} />
+                    <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-${COLS} gap-8 justify-items-center`}>
+                        {portfolioItems.map((portfolioItem) => (
+                            <PortfolioItemCard
+                                key={portfolioItem.id}
+                                portfolioItem={portfolioItem}
+                                refreshPortfolioItems={refreshPortfolioItems}
+                            />
                         ))}
                     </div>
                 )}
@@ -175,6 +203,7 @@ export default function Page() {
                     createPortfolioItemFormRef={createPortfolioItemFormRef}
                     isCreatePortfolioItemFormHidden={isCreatePortfolioItemFormHidden}
                     setIsCreatePortfolioItemFormHidden={setIsCreatePortfolioItemFormHidden}
+                    refreshPortfolioItems={refreshPortfolioItems}
                 />
             </div>
         </div>

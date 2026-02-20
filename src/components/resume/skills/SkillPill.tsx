@@ -8,7 +8,7 @@ export function SkillPill({ skill }: { skill: Skill }) {
             <Link 
                 key={skill.id}
                 href={`/skill/${skill.id}`}
-                className="w-full flex justify-center items"
+                className="flex justify-center items"
             >
                 <span 
                     className={`

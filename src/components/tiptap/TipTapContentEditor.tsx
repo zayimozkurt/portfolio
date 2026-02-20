@@ -1,7 +1,7 @@
 'use client';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
-import EditorToolbar from '@/components/tiptap/EditorToolbar';
+import EditorToolbar from '@/components/tiptap/TipTapEditorToolbar';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';

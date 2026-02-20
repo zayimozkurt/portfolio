@@ -3,7 +3,7 @@
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { UserImagePlace } from '@/enums/user-image-place.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
@@ -174,16 +174,17 @@ export default function Page() {
                 {isEditMode ? (
                     <>
                         <div className="absolute top-2 right-2 flex gap-2">
-                            <Button onClick={onSave} variant={ButtonVariant.PRIMARY} disabled={isSaving}>
+                            <Button onClick={onSave} variant={ButtonVariant.PRIMARY} disabled={isSaving} >
                                 {isSaving ? 'Saving...' : 'Save'}
                             </Button>
-                            <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY}>
+                            <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY} disabled={isSaving} >
                                 Cancel
                             </Button>
                         </div>
 
                         <div className="relative w-full h-full flex justify-center items-start">
                             <Image
+                                alt="profile photo"
                                 src={
                                     (userImageFile ? URL.createObjectURL(userImageFile) : null) ??
                                     user.userImages.find((userImage) => userImage.place === UserImagePlace.LANDING_PAGE)
@@ -192,8 +193,7 @@ export default function Page() {
                                 }
                                 width={200}
                                 height={200}
-                                className="rounded-full"
-                                alt="profile photo"
+                                className="w-[200px] h-[200px] object-cover rounded-full"
                             />
 
                             <div className="absolute top-0 left-0 flex flex-col justify-center items-center gap-2">
@@ -290,14 +290,14 @@ export default function Page() {
 
                         <div className="h-full flex justify-center items-start">
                             <Image
+                                alt="profile photo"
                                 src={
                                     user.userImages.find((userImage) => userImage.place === UserImagePlace.LANDING_PAGE)
                                         ?.url ?? `/default-avatar-profile-icon.png`
                                 }
                                 width={200}
                                 height={200}
-                                className="rounded-full"
-                                alt="profile photo"
+                                className="w-[200px] h-[200px] object-cover rounded-full"
                             />
                         </div>
 

@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/Button';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { ResponseBase } from '@/types/response/response-base';
 import { Editor } from '@tiptap/react';
 import { ChangeEvent, useRef, useState } from 'react';

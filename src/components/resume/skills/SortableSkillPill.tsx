@@ -10,10 +10,12 @@ export function SortableSkillPill({
     skill,
     onDelete,
     isSaving,
+    className
 }: {
     skill: Skill;
     onDelete: (id: string, name: string) => void;
     isSaving: boolean;
+    className?: string;
 }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: skill.id,
@@ -33,7 +35,8 @@ export function SortableSkillPill({
                 className={`max-w-[220px] h-auto
                     px-2 py-1 sm:px-3 sm:py-1.5 bg-gray-100 text-gray-700 font-medium rounded-full border   
                     text-xs ${skill.name.length > SKILL_NAME_CHAR_LIMIT / 2 ? '' : 'sm:text-sm'}
-                    border-gray-200 hover:bg-gray-200 transition-colors flex items-cente gap-0.5 sm:gap-1.5 select-none
+                    border-gray-200 hover:bg-gray-200 transition-colors flex items-center gap-0.5 sm:gap-1.5 select-none
+                    ${className}
                 `}
             >
                 {isSaving ? 

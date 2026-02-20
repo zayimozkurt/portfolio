@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
-import { ButtonVariant } from '@/enums/button-variants.enum';
+import { ButtonVariant } from '@/enums/button-variant.enum';
 import { ContactLabel } from '@/enums/contact-label.enum';
 import { ContactFormData } from '@/types/contact-form-data.interface';
 

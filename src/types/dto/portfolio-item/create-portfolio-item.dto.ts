@@ -1,4 +1,4 @@
 export interface CreatePortfolioItemDto {
     title: string;
-    description: string;
+    description?: string;
 }
