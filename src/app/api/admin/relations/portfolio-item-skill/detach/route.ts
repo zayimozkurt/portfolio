@@ -11,18 +11,19 @@ export async function POST(req: NextRequest) {
         const validateDtoResponse = await validateDto(AttachOrDetachPortfolioItemSkillDto, reqBody);
 
         if (!validateDtoResponse.isSuccess || !validateDtoResponse.body) {
-            return NextResponse.json(validateDtoResponse);
+            return NextResponse.json(validateDtoResponse, { status: validateDtoResponse.statusCode });
         }
 
         const response = await PortfolioItemSkillService.detach(validateDtoResponse.body);
 
-        return NextResponse.json(response);
+        return NextResponse.json(response, { status: response.statusCode });
     } catch (error) {
         const response: ResponseBase = {
             isSuccess: false,
-            message: 'internal server error'
+            message: 'internal server error',
+            statusCode: 500,
         };
 
-        return NextResponse.json(response);
+        return NextResponse.json(response, { status: 500 });
     }
 }

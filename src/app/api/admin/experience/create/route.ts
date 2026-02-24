@@ -1,21 +1,24 @@
 import { ExperienceService } from '@/services/experience.service';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
+import { ResponseBase } from '@/types/response/response-base';
+import { validateDto } from '@/utils/validate-dto.util';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-    const reqBody = await req.json();
+    try {
+        const reqBody = await req.json();
 
-    const { title, company, isCurrent, startDate, endDate, description } = reqBody;
+        const validateDtoResponse = await validateDto(CreateExperienceDto, reqBody);
 
-    const dto: CreateExperienceDto = {
-        title,
-        company,
-        isCurrent,
-        startDate,
-        endDate,
-        description,
-    };
+        if (!validateDtoResponse.isSuccess || !validateDtoResponse.body) {
+            return NextResponse.json(validateDtoResponse, { status: validateDtoResponse.statusCode });
+        }
 
-    const response = await ExperienceService.create(dto);
-    return NextResponse.json(response);
+        const response = await ExperienceService.create(validateDtoResponse.body);
+
+        return NextResponse.json(response, { status: response.statusCode });
+    } catch (error) {
+        const response: ResponseBase = { isSuccess: false, message: 'internal server error', statusCode: 500 };
+        return NextResponse.json(response, { status: 500 });
+    }
 }

@@ -51,10 +51,10 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/skill/update', {
+                await fetch(`/api/admin/skill/update/${skill.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: skill.id, name }),
+                    body: JSON.stringify({ name }),
                 })
             ).json();
             if (response.isSuccess) {
@@ -74,10 +74,10 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/skill/update', {
+                await fetch(`/api/admin/skill/update/${skill.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: skill.id, content }),
+                    body: JSON.stringify({ content }),
                 })
             ).json();
             if (response.isSuccess) {

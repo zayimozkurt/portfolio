@@ -18,11 +18,12 @@ export class PortfolioItemSkillService {
 
             return {
                 isSuccess: true,
-                message: 'Skill successfully linked to portfolio item'
+                message: 'Skill successfully linked to portfolio item',
+                statusCode: 200,
             };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "Internal server error" };
+            return { isSuccess: false, message: "Internal server error", statusCode: 500 };
         }
     }
 
@@ -39,11 +40,12 @@ export class PortfolioItemSkillService {
 
             return {
                 isSuccess: true,
-                message: 'Skill successfully unlinked from portfolio item'
+                message: 'Skill successfully unlinked from portfolio item',
+                statusCode: 200,
             };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 }

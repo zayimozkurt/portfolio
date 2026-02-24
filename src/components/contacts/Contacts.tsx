@@ -109,10 +109,10 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/contact/update', {
+                await fetch(`/api/admin/contact/update/${editForm.id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: editForm.id, label: editForm.label, name: editForm.name, value: editForm.value }),
+                    body: JSON.stringify({ label: editForm.label, name: editForm.name, value: editForm.value }),
                 })
             ).json();
 
@@ -133,10 +133,8 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/contact/delete', {
+                await fetch(`/api/admin/contact/delete/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id }),
                 })
             ).json();
 

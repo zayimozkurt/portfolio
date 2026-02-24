@@ -1,27 +1,16 @@
 import { userId } from '@/constants/user-id.constant';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
-import { DeleteEducationDto } from '@/types/dto/education/delete-education.dto';
 import { UpdateEducationDto } from '@/types/dto/education/update-education.dto';
 import { ReadAllEducationsResponse } from '@/types/response/education/read-all-educations.response';
 import { ResponseBase } from '@/types/response/response-base';
-import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class EducationService {
     private constructor() {}
 
     static async create(dto: CreateEducationDto): Promise<ResponseBase> {
-        if (!isValidYearMonth(dto.startDate)) {
-            return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
-        }
-
-        if (!dto.isCurrent && dto.endDate) {
-            if (!isValidYearMonth(dto.endDate)) {
-                return { isSuccess: false, message: 'Invalid end date format. Use YYYY-MM' };
-            }
-            if (dto.endDate < dto.startDate) {
-                return { isSuccess: false, message: 'End date cannot be before start date' };
-            }
+        if (!dto.isCurrent && dto.endDate && dto.endDate < dto.startDate) {
+            return { isSuccess: false, message: 'End date cannot be before start date', statusCode: 400 };
         }
 
         try {
@@ -37,10 +26,10 @@ export class EducationService {
                     endDate: dto.isCurrent ? null : new Date(dto.endDate + '-01'),
                 },
             });
-            return { isSuccess: true, message: 'education created' };
+            return { isSuccess: true, message: 'education created', statusCode: 201 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -50,26 +39,18 @@ export class EducationService {
                 where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
             });
-            return { isSuccess: true, message: 'all educations read', educations };
+            return { isSuccess: true, message: 'all educations read', educations, statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
-    static async updateById(dto: UpdateEducationDto): Promise<ResponseBase> {
+    static async updateById(id: string, dto: UpdateEducationDto): Promise<ResponseBase> {
         try {
-            const education = await prisma.education.findUnique({ where: { id: dto.id } });
+            const education = await prisma.education.findUnique({ where: { id } });
             if (!education) {
-                return { isSuccess: false, message: 'education not found' };
-            }
-
-            if (dto.startDate && !isValidYearMonth(dto.startDate)) {
-                return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
-            }
-
-            if (dto.endDate && !isValidYearMonth(dto.endDate)) {
-                return { isSuccess: false, message: 'Invalid end date format. Use YYYY-MM' };
+                return { isSuccess: false, message: 'education not found', statusCode: 404 };
             }
 
             const startDate = dto.startDate ?? education.startDate.toISOString().slice(0, 7);
@@ -77,40 +58,39 @@ export class EducationService {
             const isCurrent = dto.isCurrent ?? education.isCurrent;
 
             if (!isCurrent && endDate && endDate < startDate) {
-                return { isSuccess: false, message: 'End date cannot be before start date' };
+                return { isSuccess: false, message: 'End date cannot be before start date', statusCode: 400 };
             }
 
+            const { startDate: startDateDto, endDate: endDateDto, isCurrent: isCurrentDto, ...restOfDto } = dto;
+
             await prisma.education.update({
-                where: { id: dto.id },
+                where: { id },
                 data: {
-                    school: dto.school ?? education.school,
-                    degree: dto.degree ?? education.degree,
-                    fieldOfStudy: dto.fieldOfStudy ?? education.fieldOfStudy,
-                    description: dto.description ?? education.description,
-                    isCurrent: dto.isCurrent ?? education.isCurrent,
-                    startDate: dto.startDate ? new Date(dto.startDate + '-01') : education.startDate,
-                    endDate: dto.isCurrent ? null : dto.endDate ? new Date(dto.endDate + '-01') : education.endDate,
+                    isCurrent,
+                    startDate: startDateDto ? new Date(startDateDto + '-01') : education.startDate,
+                    endDate: isCurrent ? null : endDateDto ? new Date(endDateDto + '-01') : education.endDate,
+                    ...restOfDto,
                 },
             });
-            return { isSuccess: true, message: 'education updated' };
+            return { isSuccess: true, message: 'education updated', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
-    static async deleteById(dto: DeleteEducationDto): Promise<ResponseBase> {
+    static async deleteById(id: string): Promise<ResponseBase> {
         try {
-            const education = await prisma.education.findUnique({ where: { id: dto.id } });
+            const education = await prisma.education.findUnique({ where: { id } });
             if (!education) {
-                return { isSuccess: false, message: 'education not found' };
+                return { isSuccess: false, message: 'education not found', statusCode: 404 };
             }
 
-            await prisma.education.delete({ where: { id: dto.id } });
-            return { isSuccess: true, message: 'education deleted' };
+            await prisma.education.delete({ where: { id } });
+            return { isSuccess: true, message: 'education deleted', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 }

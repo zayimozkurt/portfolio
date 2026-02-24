@@ -23,14 +23,14 @@ export async function validateDto<T extends object>(dtoClass: new () => T, body:
             return {
                 isSuccess: false,
                 message: `input validation failed, problematic fields: \n${errorMessage}`,
-                // statusCode: 400,
+                statusCode: 400,
             };
         }
 
         return {
             isSuccess: true,
             message: 'input validation success',
-            // statusCode: 200,
+            statusCode: 200,
             body: dtoInstance
         };
     } catch(error) {
@@ -38,7 +38,7 @@ export async function validateDto<T extends object>(dtoClass: new () => T, body:
         return {
             isSuccess: false,
             message: `internal server error thrown from validateDto`,
-            // statusCode: 400,
+            statusCode: 500,
         };
     }
 };

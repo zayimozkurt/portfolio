@@ -1,4 +1,5 @@
 import { jwtCookieSettings } from '@/constants/cookie-settings.constant';
+import { ResponseBase } from '@/types/response/response-base';
 import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
@@ -15,8 +16,11 @@ export async function POST() {
     const cookieStore = await cookies();
     cookieStore.set('jwt', '', cookieOptions);
 
-    return NextResponse.json({
+    const response: ResponseBase = {
         isSuccess: true,
         message: 'signed out',
-    });
+        statusCode: 200
+    };
+
+    return NextResponse.json(response, { status: response.statusCode });
 }

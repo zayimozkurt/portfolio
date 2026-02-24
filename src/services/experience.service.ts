@@ -1,27 +1,16 @@
 import { userId } from '@/constants/user-id.constant';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
-import { DeleteExperienceDto } from '@/types/dto/experience/delete-experience.dto';
 import { UpdateExperienceDto } from '@/types/dto/experience/update-experience.dto';
 import { ReadAllExperiencesResponse } from '@/types/response/experience/read-all-experiences.response';
 import { ResponseBase } from '@/types/response/response-base';
-import { isValidYearMonth } from '@/utils/validate-year-month.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class ExperienceService {
     private constructor() {}
 
     static async create(dto: CreateExperienceDto): Promise<ResponseBase> {
-        if (!isValidYearMonth(dto.startDate)) {
-            return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
-        }
-
-        if (!dto.isCurrent && dto.endDate) {
-            if (!isValidYearMonth(dto.endDate)) {
-                return { isSuccess: false, message: 'Invalid end date format. Use YYYY-MM' };
-            }
-            if (dto.endDate < dto.startDate) {
-                return { isSuccess: false, message: 'End date cannot be before start date' };
-            }
+        if (!dto.isCurrent && dto.endDate && dto.endDate < dto.startDate) {
+            return { isSuccess: false, message: 'End date cannot be before start date', statusCode: 400 };
         }
 
         try {
@@ -35,10 +24,10 @@ export class ExperienceService {
                     endDate: dto.isCurrent ? null : new Date(dto.endDate + '-01'),
                 },
             });
-            return { isSuccess: true, message: 'experience created' };
+            return { isSuccess: true, message: 'experience created', statusCode: 201 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -50,25 +39,18 @@ export class ExperienceService {
                 include: { skills: true }
             });
             console.log("experiences: ", experiences);
-            return { isSuccess: true, message: 'all experiences read', experiences };
+            return { isSuccess: true, message: 'all experiences read', experiences, statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
-    static async updateById(dto: UpdateExperienceDto): Promise<ResponseBase> {
+    static async updateById(id: string, dto: UpdateExperienceDto): Promise<ResponseBase> {
         try {
-            const experience = await prisma.experience.findUnique({ where: { id: dto.id } });
+            const experience = await prisma.experience.findUnique({ where: { id } });
             if (!experience) {
-                return { isSuccess: false, message: 'experience not found' };
-            }
-
-            if (dto.startDate && !isValidYearMonth(dto.startDate)) {
-                return { isSuccess: false, message: 'Invalid start date format. Use YYYY-MM' };
-            }
-            if (dto.endDate && !isValidYearMonth(dto.endDate)) {
-                return { isSuccess: false, message: 'Invalid end date format. Use YYYY-MM' };
+                return { isSuccess: false, message: 'experience not found', statusCode: 404 };
             }
 
             const startDate = dto.startDate ?? experience.startDate.toISOString().slice(0, 7);
@@ -76,39 +58,39 @@ export class ExperienceService {
             const isCurrent = dto.isCurrent ?? experience.isCurrent;
 
             if (!isCurrent && endDate && endDate < startDate) {
-                return { isSuccess: false, message: 'End date cannot be before start date' };
+                return { isSuccess: false, message: 'End date cannot be before start date', statusCode: 400 };
             }
 
+            const { startDate: startDateDto, endDate: endDateDto, isCurrent: isCurrentDto, ...restOfDto } = dto;
+
             await prisma.experience.update({
-                where: { id: dto.id },
+                where: { id },
                 data: {
-                    title: dto.title ?? experience.title,
-                    company: dto.company ?? experience.company,
-                    isCurrent: dto.isCurrent ?? experience.isCurrent,
-                    startDate: dto.startDate ? new Date(dto.startDate + '-01') : experience.startDate,
-                    endDate: dto.isCurrent ? null : dto.endDate ? new Date(dto.endDate + '-01') : experience.endDate,
-                    description: dto.description ?? experience.description,
+                    isCurrent,
+                    startDate: startDateDto ? new Date(startDateDto + '-01') : experience.startDate,
+                    endDate: isCurrent ? null : endDateDto ? new Date(endDateDto + '-01') : experience.endDate,
+                    ...restOfDto,
                 },
             });
-            return { isSuccess: true, message: 'experience updated' };
+            return { isSuccess: true, message: 'experience updated', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
-    static async deleteById(dto: DeleteExperienceDto): Promise<ResponseBase> {
+    static async deleteById(id: string): Promise<ResponseBase> {
         try {
-            const experience = await prisma.experience.findUnique({ where: { id: dto.id } });
+            const experience = await prisma.experience.findUnique({ where: { id } });
             if (!experience) {
-                return { isSuccess: false, message: 'experience not found' };
+                return { isSuccess: false, message: 'experience not found', statusCode: 404 };
             }
 
-            await prisma.experience.delete({ where: { id: dto.id } });
-            return { isSuccess: true, message: 'experience deleted' };
+            await prisma.experience.delete({ where: { id } });
+            return { isSuccess: true, message: 'experience deleted', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 }

@@ -4,5 +4,5 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(req: NextRequest) {
     const response = await PortfolioItemService.readAllExtendedByUserId();
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { status: response.statusCode });
 }

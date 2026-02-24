@@ -1,4 +1,7 @@
-export interface UploadSkillImageDto {
-    skillId: string;
-    file: File;
+import { IsNotEmpty, IsString } from 'class-validator';
+
+export class UploadSkillImageDto {
+    @IsString()
+    @IsNotEmpty()
+    skillId!: string;
 }

@@ -1,6 +1,8 @@
 import { UserImagePlace } from '@/enums/user-image-place.enum';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
-export interface UpsertUserImageDto {
-    file: File;
-    place: UserImagePlace;
+export class UpsertUserImageDto {
+    @IsEnum(UserImagePlace)
+    @IsNotEmpty()
+    place!: UserImagePlace;
 }

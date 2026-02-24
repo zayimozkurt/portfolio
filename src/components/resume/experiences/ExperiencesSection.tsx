@@ -1,16 +1,17 @@
 'use client';
 
 import { Button } from '@/components/Button';
-import { ExperienceForm } from '@/components/resume/ExperienceForm';
-import { ExperienceItem } from '@/components/resume/ExperienceItem';
+import { ExperienceForm } from '@/components/resume/experiences/ExperienceForm';
+import { ExperienceItem } from '@/components/resume/experiences/ExperienceItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
+import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSectionShell';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Experience } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user-slice';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { ResponseBase } from '@/types/response/response-base';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export function ExperiencesSection({ id }: { id?: string }) {
     const dispatch = useAppDispatch();
@@ -21,6 +22,15 @@ export function ExperiencesSection({ id }: { id?: string }) {
     const [experienceForm, setExperienceForm] = useState<Partial<CreateExperienceDto & { id?: string }>>({});
     const [isAddingExperience, setIsAddingExperience] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (experienceForm.isCurrent === true) {
+            setExperienceForm(prev => ({
+                ...prev,
+                endDate: undefined
+            }));
+        }
+    }, [experienceForm.isCurrent]);
 
     function toggleEditMode() {
         setEditingExperienceId(null);
@@ -115,11 +125,12 @@ export function ExperiencesSection({ id }: { id?: string }) {
 
         setIsSaving(true);
         try {
+            const { id: _id, ...experienceBody } = experienceForm;
             const response: ResponseBase = await (
-                await fetch('/api/admin/experience/update', {
+                await fetch(`/api/admin/experience/update/${editingExperienceId}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(experienceForm),
+                    body: JSON.stringify(experienceBody),
                 })
             ).json();
 
@@ -140,10 +151,8 @@ export function ExperiencesSection({ id }: { id?: string }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/experience/delete', {
+                await fetch(`/api/admin/experience/delete/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id }),
                 })
             ).json();
 
@@ -157,26 +166,10 @@ export function ExperiencesSection({ id }: { id?: string }) {
         }
     }
 
-    return (user.experiences.length === 0 && !isAdmin ? 
+    return (user.experiences.length === 0 && !isAdmin ?
         <></>
         :
         <div id={id} className="relative w-[300px] sm:w-[700px] py-10 md:px-0">
-            {isAdmin && !isEditMode && (
-                <div className="absolute top-2 right-2 md:right-0">
-                    <Button onClick={toggleEditMode} variant={ButtonVariant.PRIMARY}>
-                        Edit
-                    </Button>
-                </div>
-            )}
-
-            {isEditMode && (
-                <div className="absolute top-2 right-2 md:right-0">
-                    <Button onClick={toggleEditMode} variant={ButtonVariant.SECONDARY}>
-                        Done
-                    </Button>
-                </div>
-            )}
-
             <div className="mb-8">
                 <SectionHeader
                     title={
@@ -195,54 +188,59 @@ export function ExperiencesSection({ id }: { id?: string }) {
                 />
             </div>
 
-            <div className="flex flex-col">
-                {user.experiences.map((experience, index) => (
-                    <div key={experience.id} className="w-full">
-                        {editingExperienceId === experience.id ? (
-                            <div className="ml-10 md:ml-10 mb-4">
-                                <ExperienceForm
-                                    form={experienceForm}
-                                    onChange={handleFormChange}
-                                    onSave={updateExperience}
-                                    onCancel={cancelEdit}
-                                    saveLabel="Save"
-                                    isSaving={isSaving}
-                                />
-                            </div>
-                        ) : (
-                            <ExperienceItem
-                                experience={experience}
-                                isEditMode={isEditMode}
-                                onEdit={() => startEdit(experience)}
-                                onDelete={() => deleteExperience(experience.id)}
-                                isLast={index === user.experiences.length - 1 && !isAddingExperience}
+            <TimelineSectionShell
+                isAdmin={isAdmin}
+                isEditMode={isEditMode}
+                onToggleEditMode={toggleEditMode}
+            >
+                
+            {user.experiences.map((experience, index) => (
+                <div key={experience.id} className="w-full">
+                    {editingExperienceId === experience.id ? (
+                        <div className="ml-10 md:ml-10 mb-4">
+                            <ExperienceForm
+                                form={experienceForm}
+                                onChange={handleFormChange}
+                                onSave={updateExperience}
+                                onCancel={cancelEdit}
+                                saveLabel="Save"
                                 isSaving={isSaving}
                             />
-                        )}
-                    </div>
-                ))}
-
-                {isAddingExperience && (
-                    <div className="ml-10 md:ml-10">
-                        <ExperienceForm
-                            form={experienceForm}
-                            onChange={handleFormChange}
-                            onSave={createExperience}
-                            onCancel={cancelEdit}
-                            saveLabel="Add"
+                        </div>
+                    ) : (
+                        <ExperienceItem
+                            experience={experience}
+                            isEditMode={isEditMode}
+                            onEdit={() => startEdit(experience)}
+                            onDelete={() => deleteExperience(experience.id)}
+                            isLast={index === user.experiences.length - 1 && !isAddingExperience}
                             isSaving={isSaving}
                         />
-                    </div>
-                )}
+                    )}
+                </div>
+            ))}
 
-                {isEditMode && !isAddingExperience && !editingExperienceId && (
-                    <div className="ml-10 md:ml-10 mt-2">
-                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
-                            + Add Experience
-                        </Button>
-                    </div>
-                )}
-            </div>
+            {isAddingExperience && (
+                <div className="ml-10 md:ml-10">
+                    <ExperienceForm
+                        form={experienceForm}
+                        onChange={handleFormChange}
+                        onSave={createExperience}
+                        onCancel={cancelEdit}
+                        saveLabel="Add"
+                        isSaving={isSaving}
+                    />
+                </div>
+            )}
+
+            {isEditMode && !isAddingExperience && !editingExperienceId && (
+                <div className="ml-10 md:ml-10 mt-2">
+                    <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
+                        + Add Experience
+                    </Button>
+                </div>
+            )}
+            </TimelineSectionShell>
         </div>
     );
 }

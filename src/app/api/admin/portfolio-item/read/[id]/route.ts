@@ -6,5 +6,5 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
 
     const response = await PortfolioItemService.readById(params.id);
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { status: response.statusCode });
 }

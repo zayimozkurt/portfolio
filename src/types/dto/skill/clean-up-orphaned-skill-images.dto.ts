@@ -1,6 +1,11 @@
-import { JsonValue } from '@/generated/client/runtime/library';
+import type { JsonValue } from '@/generated/client/runtime/library';
+import { IsNotEmpty, IsString } from 'class-validator';
 
-export interface CleanUpOrphanedSkillImagesDto {
-    skillId: string;
-    content: JsonValue;
+export class CleanUpOrphanedSkillImagesDto {
+    @IsString()
+    @IsNotEmpty()
+    skillId!: string;
+
+    @IsNotEmpty()
+    content!: JsonValue;
 }

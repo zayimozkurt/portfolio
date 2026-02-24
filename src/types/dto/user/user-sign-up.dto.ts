@@ -1,10 +1,35 @@
-export interface UserSignUpDto {
-    email: string;
-    userName: string;
-    password: string;
-    fullName: string;
-    headline: string;
-    bio: string;
-    about: string;
-    location: string;
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+
+export class UserSignUpDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    userName!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    password!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    fullName!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    headline!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    bio!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    about!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    location!: string;
 }

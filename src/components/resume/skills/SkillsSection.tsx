@@ -35,7 +35,6 @@ export function SkillsSection({ id }: { id?: string }) {
     const [localSkills, setLocalSkills] = useState<Skill[]>(user.skills);
     const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
     const [isSaving, setIsSaving] = useState(false);
-    const [skillsPlaceholdersCount, setSkillsPlaceHoldersCount] = useState<number>((3 - (user.skills.length % 3)) % 3);
 
     const COLS = 3;
     const placeholderCount = localSkills.length % COLS === 0 ? 0 : COLS - (localSkills.length % COLS);
@@ -43,7 +42,6 @@ export function SkillsSection({ id }: { id?: string }) {
 
     useEffect(() => {
         setLocalSkills(user.skills);
-        setSkillsPlaceHoldersCount((3 - (user.skills.length % 3)) % 3);
     }, [user.skills]);
 
     useEffect(() => {
@@ -64,6 +62,30 @@ export function SkillsSection({ id }: { id?: string }) {
         setIsEditMode((prev) => !prev);
     }
 
+    async function renameSkill(id: string, newName: string): Promise<boolean> {
+        if (isSaving) return false;
+        setIsSaving(true);
+        try {
+            const response: ResponseBase = await (
+                await fetch(`/api/admin/skill/update/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName }),
+                })
+            ).json();
+
+            if (response.isSuccess) {
+                await dispatch(userActions.refresh());
+                return true;
+            } else {
+                alert(response.message);
+                return false;
+            }
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
     async function deleteSkill(id: string, skillName: string) {
         if (!confirm(`Are you you sure you want to delete the skill named ${skillName}?`)) return;
 
@@ -72,10 +94,8 @@ export function SkillsSection({ id }: { id?: string }) {
         setIsSaving(true);
         try {
             const response: ResponseBase = await (
-                await fetch('/api/admin/skill/delete', {
+                await fetch(`/api/admin/skill/delete/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id }),
                 })
             ).json();
 
@@ -186,6 +206,7 @@ export function SkillsSection({ id }: { id?: string }) {
                                         key={skill.id}
                                         skill={skill}
                                         onDelete={deleteSkill}
+                                        onRename={renameSkill}
                                         isSaving={isSaving}
                                     />
                                 ))}

@@ -26,10 +26,10 @@ export class UserService {
                     passwordHash,
                 },
             });
-            return { isSuccess: true, message: 'success' };
+            return { isSuccess: true, message: 'success', statusCode: 201 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -40,22 +40,22 @@ export class UserService {
                     userName: userSignInDto.userName,
                 },
             });
-            if (!user) return { isSuccess: false, message: 'no user found associated with given username' };
+            if (!user) return { isSuccess: false, message: 'no user found associated with given username', statusCode: 404 };
 
             const isMatch = bcrypt.compareSync(userSignInDto.password, user.passwordHash);
-            if (!isMatch) return { isSuccess: false, message: 'invalid password' };
+            if (!isMatch) return { isSuccess: false, message: 'invalid password', statusCode: 401 };
 
             const jwtSecret = jwtCookieSettings.secret;
             const jwtExpiresIn = jwtCookieSettings.expiresIn;
-            if (!jwtSecret || !jwtExpiresIn) return { isSuccess: false, message: 'secret is undefined' };
+            if (!jwtSecret || !jwtExpiresIn) return { isSuccess: false, message: 'secret is undefined', statusCode: 500 };
             const token = jsonwebtoken.sign({ userId: user.id }, jwtSecret, {
                 expiresIn: jwtExpiresIn,
             });
 
-            return { isSuccess: true, message: 'signed in', jwt: token };
+            return { isSuccess: true, message: 'signed in', jwt: token, statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -64,6 +64,7 @@ export class UserService {
             return {
                 isSuccess: false,
                 message: 'Authorization failed.',
+                statusCode: 401,
             };
 
         try {
@@ -72,11 +73,12 @@ export class UserService {
                 return {
                     isSuccess: false,
                     message: 'userId is not matching',
+                    statusCode: 403,
                 };
-            return { isSuccess: true, message: 'authorized' };
+            return { isSuccess: true, message: 'authorized', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -105,17 +107,18 @@ export class UserService {
             });
 
             if (!user) {
-                return { isSuccess: false, message: 'no user found' };
+                return { isSuccess: false, message: 'no user found', statusCode: 404 };
             }
 
             return {
                 isSuccess: true,
                 message: 'user read',
                 user,
+                statusCode: 200,
             };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -136,21 +139,14 @@ export class UserService {
                     ...(passwordHash.length !== 0 && { passwordHash }),
                 },
             });
-            return { isSuccess: true, message: 'user updated' };
+            return { isSuccess: true, message: 'user updated', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
     static async upsertCv(file: File): Promise<ResponseBase> {
-        if (!file) {
-            return { isSuccess: false, message: "file doesn't exist" };
-        }
-        if (file.type !== 'application/pdf') {
-            return { isSuccess: false, message: 'file must be a pdf' };
-        }
-
         try {
             const fileBuffer = Buffer.from(await file.arrayBuffer());
 
@@ -170,7 +166,8 @@ export class UserService {
                 console.error(supabaseUploadResponse.error);
                 return {
                     isSuccess: false,
-                    message: 'error while uploading to supabase'
+                    message: 'error while uploading to supabase',
+                    statusCode: 500,
                 };
             }
 
@@ -200,10 +197,10 @@ export class UserService {
                 }
             }
 
-            return { isSuccess: true, message: 'cv uploaded' };
+            return { isSuccess: true, message: 'cv uploaded', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 
@@ -216,7 +213,7 @@ export class UserService {
             const existingCvUrl = readUserByIdResponse.user.cvUrl;
 
             if (!existingCvUrl) {
-                return { isSuccess: true, message: "there already isn't a cv" };
+                return { isSuccess: true, message: "there already isn't a cv", statusCode: 200 };
             }
 
             const updateUserResponse = await this.update({
@@ -234,10 +231,10 @@ export class UserService {
                 if (error) console.error(error);
             }
 
-            return { isSuccess: true, message: 'cv deleted' };
+            return { isSuccess: true, message: 'cv deleted', statusCode: 200 };
         } catch (error) {
             console.error(error);
-            return { isSuccess: false, message: "internal server error" };
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
     }
 }
