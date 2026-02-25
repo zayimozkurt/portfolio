@@ -44,7 +44,7 @@ export function ContactForm({
             <Input
                 value={form.value}
                 onChange={(e) => onFieldChange('value', e.target.value)}
-                placeholder="URL"
+                placeholder={form.label === ContactLabel.EMAIL ? 'Mail' : 'URL'}
                 disabled={isSaving}
             />
             <div className="flex gap-1">

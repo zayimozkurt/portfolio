@@ -4,30 +4,37 @@ import { ButtonSize } from "@/enums/button-size.enum";
 import { ButtonVariant } from "@/enums/button-variant.enum";
 import { Skill } from "@/generated/client";
 import { useAppSelector } from "@/store/hooks";
-import { AttachOrDetachPortfolioItemSkillDto } from "@/types/dto/relations/portfolio-item-skill/attach-portfolio-item-skill.dto";
 import { ResponseBase } from "@/types/response/response-base";
 import { X } from "lucide-react";
 import React from "react";
 
 export default function AttachOrDetachSkillForm(
     {
-        portfolioItemId,
+        entityType,
+        entityId,
         attachedSkills,
         attachSkillFormRef,
         isAttachSkillFormHidden,
         setIsAttachSkillFormHidden,
-        refreshPortfolioItem,
+        onRefresh,
     }: {
-        portfolioItemId: string;
+        entityType: 'portfolioItem' | 'experience' | 'education';
+        entityId: string;
         attachedSkills: Skill[];
         attachSkillFormRef: React.RefObject<HTMLDivElement | null>;
         isAttachSkillFormHidden: boolean;
         setIsAttachSkillFormHidden: React.Dispatch<React.SetStateAction<boolean>>;
-         refreshPortfolioItem(): Promise<void>
+        onRefresh(): Promise<void>;
     }
 ) {
     const user = useAppSelector(state => state.user);
     const [isSaving, setIsSaving] = React.useState<boolean>(false);
+
+    const idFieldMap = {
+        'portfolioItem': 'portfolioItemId',
+        'experience': 'experienceId',
+        'education': 'educationId',
+    } as const;
 
     function cancel() {
         setIsAttachSkillFormHidden(true);
@@ -37,13 +44,13 @@ export default function AttachOrDetachSkillForm(
         setIsSaving(true);
 
         try {
-            const dto: AttachOrDetachPortfolioItemSkillDto = {
-                portfolioItemId,
+            const dto = {
+                [idFieldMap[entityType]]: entityId,
                 skillId
             };
 
             const response = (await (
-                await fetch('/api/admin/relations/portfolio-item-skill/attach', {
+                await fetch(`/api/admin/relations/${entityType}-skill/attach`, {
                     method: 'POST',
                     body: JSON.stringify(dto),
                     headers: {
@@ -55,7 +62,7 @@ export default function AttachOrDetachSkillForm(
             if (!response.isSuccess) {
                 alert(response.message);
             } else {
-                await refreshPortfolioItem();
+                await onRefresh();
             }
         } finally {
             setIsSaving(false);
@@ -66,13 +73,13 @@ export default function AttachOrDetachSkillForm(
         setIsSaving(true);
 
         try {
-            const dto: AttachOrDetachPortfolioItemSkillDto = {
-                portfolioItemId,
+            const dto = {
+                [idFieldMap[entityType]]: entityId,
                 skillId
             };
 
             const response = (await (
-                await fetch('/api/admin/relations/portfolio-item-skill/detach', {
+                await fetch(`/api/admin/relations/${entityType}-skill/detach`, {
                     method: 'POST',
                     body: JSON.stringify(dto),
                     headers: {
@@ -84,7 +91,7 @@ export default function AttachOrDetachSkillForm(
             if (!response.isSuccess) {
                 alert(response.message);
             } else {
-                await refreshPortfolioItem();
+                await onRefresh();
             }
         } finally {
             setIsSaving(false);
@@ -109,7 +116,7 @@ export default function AttachOrDetachSkillForm(
                 <X size={16} />
             </button>
             <div className="w-full h-full flex flex-col gap-2 overflow-y-scroll">
-                {user.skills.map(skill => 
+                {user.skills.map(skill =>
                     <div key={skill.id} className=" w-full flex justify-between items-center gap-2">
                         <p className={`${skill.name.length > SKILL_NAME_CHAR_LIMIT / 2 ? 'text-xs' : ''} whitespace-nowrap truncate`}>{skill.name}</p>
                         {attachedSkills.map(attachedSkill => attachedSkill.id).includes(skill.id) ?

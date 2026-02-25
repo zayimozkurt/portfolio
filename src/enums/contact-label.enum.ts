@@ -1,5 +1,6 @@
 export enum ContactLabel {
     CUSTOM = 'Custom',
+    EMAIL = 'Email',
     YOUTUBE = 'YouTube',
     INSTAGRAM = 'Instagram',
     X = 'X',

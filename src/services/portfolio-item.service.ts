@@ -74,7 +74,7 @@ export class PortfolioItemService {
 
     static async readExtendedById(id: string): Promise<ReadSingleExtendedPortfolioItemResponse> {
         try {
-            const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id }, include: { skills: true } });
+            const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id }, include: { skills: { orderBy: { order: 'asc' } } } });
 
             if (!portfolioItem) return { isSuccess: false, message: "portfolio item couldn't read", statusCode: 404 };
 
@@ -97,7 +97,7 @@ export class PortfolioItemService {
 
     static async readAllExtendedByUserId(): Promise<ReadMultipleExtendedPortfolioItemsResponse> {
         try {
-            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' }, include: { skills: true } });
+            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' }, include: { skills: { orderBy: { order: 'asc' } } } });
 
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems, statusCode: 200 };
         } catch (error) {

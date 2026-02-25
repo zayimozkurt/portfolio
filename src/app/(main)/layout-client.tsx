@@ -5,8 +5,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import NavBar from '@/components/NavBar';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { isAdminActions } from '@/store/slices/is-admin-slice';
-import { userActions } from '@/store/slices/user-slice';
+import { isAdminActions } from '@/store/slices/is-admin.slice';
+import { userActions } from '@/store/slices/user.slice';
 import React, { useEffect, useState } from 'react';
 
 export default function LayoutClient({ children, isAuthorized }: { children: React.ReactNode; isAuthorized: boolean }) {

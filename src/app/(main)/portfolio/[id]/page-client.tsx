@@ -1,6 +1,6 @@
 'use client';
 
-import AttachOrDetachSkillForm from '@/components/AttachSkillForm';
+import AttachOrDetachSkillForm from '@/components/AttachOrDetachSkillForm';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
@@ -11,7 +11,7 @@ import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-ite
 import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
 import { ReadSingleExtendedPortfolioItemResponse } from '@/types/response/portfolio-item/read-single-extended-portfolio-item.response';
 import { ResponseBase } from '@/types/response/response-base';
@@ -176,9 +176,6 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
         const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
         if (!parentRect) return;
 
-        const buttonCenterX = buttonRect.left + Math.floor(buttonRect.width / 2);
-        const formWidth = attachSkillFormRef.current.offsetWidth;
-
         attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
         attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
     }
@@ -252,7 +249,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                     <div className='w-[300px] h-auto items-center flex flex-col gap-2'>
                         <Image
                             alt='portfolio item cover image'
-                            src={portfolioItem.coverImageUrl ? portfolioItem.coverImageUrl : '/portfolio-item-cover-placeholder-image.png'}
+                            src={coverImage ? URL.createObjectURL(coverImage) : portfolioItem.coverImageUrl ? portfolioItem.coverImageUrl : '/portfolio-item-cover-placeholder-image.png'}
                             width={300}
                             height={150}
                             className="object-contain w-auto h-[150] max-w-[300] rounded-[20px]"
@@ -276,7 +273,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                                         onChange={(event) => {
                                             if (event.currentTarget.files?.[0].type.startsWith('image/'))
                                                 setCoverImage(event.currentTarget.files?.[0] ?? null);
-                                            else alert('uploaded file must be type of pdf');
+                                            else alert('uploaded file must be type of image');
                                         }}
                                     />
                                 </label>
@@ -315,12 +312,13 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 </div>
 
                 <AttachOrDetachSkillForm
-                    portfolioItemId={portfolioItem.id}
+                    entityType="portfolioItem"
+                    entityId={portfolioItem.id}
                     attachedSkills={portfolioItem.skills}
                     attachSkillFormRef={attachSkillFormRef}
                     isAttachSkillFormHidden={isAttachSkillFormHidden}
                     setIsAttachSkillFormHidden={setIsAttachSkillFormHidden}
-                    refreshPortfolioItem={refreshPortfolioItem}
+                    onRefresh={refreshPortfolioItem}
                 />
             </div>
 

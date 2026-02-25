@@ -99,3 +99,23 @@ html {
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
     background-color: #555;
 }
+
+/* target the editor content specifically */
+.prose hr {
+    margin: 3rem 0 !important;
+    border: none !important;
+    text-align: center;
+    overflow: visible;
+    line-height: 1;
+}
+
+.prose hr::after {
+    content: "···"; /* Those specific Medium-style dots */
+    display: inline-block;
+    margin-top: -0.5em;
+    font-size: 32px;
+    letter-spacing: 0.5em;
+    color: #292929; /* Medium's dark gray */
+    font-weight: 400;
+    font-family: serif; /* Serifs look better for these dots */
+}

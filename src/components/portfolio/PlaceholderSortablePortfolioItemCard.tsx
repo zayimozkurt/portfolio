@@ -3,7 +3,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-export function PlaceholderSortablePortfolioItemCard({ id }: { id: string }) {
+export function PlaceholderSortablePortfolioItemCard({ id, isAnyDragging }: { id: string; isAnyDragging: boolean }) {
     const { setNodeRef, transform, transition } = useSortable({ id });
 
     const style = {
@@ -15,7 +15,7 @@ export function PlaceholderSortablePortfolioItemCard({ id }: { id: string }) {
         <div
             ref={setNodeRef}
             style={style}
-            className="w-[300px] h-[350px] invisible"
+            className={`w-[300px] ${isAnyDragging ? 'h-[60px]' : 'h-[350px]'} invisible`}
         />
     );
 }

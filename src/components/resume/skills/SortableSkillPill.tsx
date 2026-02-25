@@ -74,6 +74,7 @@ export function SortableSkillPill({
                         {...listeners}
                         className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors -ml-1"
                         aria-label={`Drag to reorder ${skill.name}`}
+                        style={{ touchAction: 'none' }}
                     >
                         <GripVertical size={14} color='black' />
                     </button>

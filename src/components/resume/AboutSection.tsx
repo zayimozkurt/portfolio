@@ -6,7 +6,7 @@ import { SectionHeader } from '@/components/resume/SectionHeader';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { UserImagePlace } from '@/enums/user-image-place.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { DeleteUserImageDto } from '@/types/dto/user-image/delete-user-image.dto';
 import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
 import { ResponseBase } from '@/types/response/response-base';

@@ -1,1 +1,1 @@
-export const MAX_CONTACTS = 7;
+export const MAX_CONTACTS = 9;

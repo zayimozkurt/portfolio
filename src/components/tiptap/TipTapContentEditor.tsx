@@ -2,6 +2,7 @@
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import EditorToolbar from '@/components/tiptap/TipTapEditorToolbar';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -34,6 +35,7 @@ export default function ContentEditor({
             Link.configure({
                 openOnClick: false,
             }),
+            HorizontalRule
         ],
         content: initialContent || '',
         editorProps: {

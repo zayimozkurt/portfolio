@@ -1,20 +1,22 @@
 'use client';
 
 import { TimelineItemCard } from '@/components/resume/timeline/TimelineItemCard';
-import { Education } from '@/generated/client';
+import { ExtendedEducationModel } from '@/types/db/extended-education.model';
 
 export function EducationItem({
     education,
     isEditMode,
     onEdit,
     onDelete,
+    onAttachSkillToggle,
     isLast = false,
     isSaving,
 }: {
-    education: Education;
+    education: ExtendedEducationModel;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;
+    onAttachSkillToggle?: (button: HTMLButtonElement) => void;
     isLast?: boolean;
     isSaving?: boolean;
 }) {
@@ -58,6 +60,8 @@ export function EducationItem({
                 </div>
             }
             description={education.description}
+            skills={education.skills}
+            onAttachSkillToggle={isEditMode ? onAttachSkillToggle : undefined}
         />
     );
 }

@@ -5,8 +5,8 @@ export type ExtendedUserModel = Prisma.UserGetPayload<{
         skills: true,
         userImages: true,
         contacts: true,
-        experiences: true,
-        educations: true,
+        experiences: { include: { skills: true } },
+        educations: { include: { skills: true } },
         portfolioItems: true,
     }
 }>;

@@ -8,6 +8,7 @@ import { ResponseBase } from '@/types/response/response-base';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { FaFolder } from 'react-icons/fa6';
 
 export default function PortfolioItemCard(
     {
@@ -50,21 +51,23 @@ export default function PortfolioItemCard(
     return (
         <Link
             href={`/portfolio/${portfolioItem.id}`}
-            className="w-[300px] h-[350px] bg-white p-4 rounded-2xl shadow-md border 
+            className="relative w-[300px] h-[350px] bg-white p-4 rounded-2xl shadow-md border 
             flex flex-col justify-between items-center gap-0 transition-all 
             hover:border-[#00316E] duration-300 hover:cursor-pointer
             ease-out hover:shadow-xl"
         >
-            {/* <div className="w-full flex justify-between items-center gap-2">
-                <FaFolder className="text-xl" />
-            </div> */}
+            {!isAdmin && (
+                <div className="absolute top-3 left-3 w-full flex justify-between items-center gap-2">
+                    <FaFolder className="text-xl" />
+                </div>
+            )}
 
             <Image 
                 alt='portfolio item cover image'
                 src={portfolioItem.coverImageUrl || '/portfolio-item-cover-placeholder-image.png'}
-                width={250}
+                width={200}
                 height={125}
-                className="w-auto max-w-[250px] h-[125px] object-contain rounded-[10px]"
+                className="w-auto max-w-[200px] h-[125px] object-contain rounded-[10px]"
             />
 
             <p className="w-full h-auto font-semibold text-center">{portfolioItem.title}</p>
@@ -82,7 +85,7 @@ export default function PortfolioItemCard(
             </div>
 
             {isAdmin && (
-                <div className="absolute top-4 right-7">
+                <div className="absolute top-3 right-3">
                     <Button
                         onClick={(event) => deletePortfolioItem(event)}
                         variant={ButtonVariant.TRASH}

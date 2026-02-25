@@ -7,7 +7,7 @@ import TipTapContentViewer from '@/components/tiptap/TipTapContentViewer';
 import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { ExtendedSkillModel } from '@/types/db/extended-skill-model';
 import { ResponseBase } from '@/types/response/response-base';
 import Link from 'next/link';

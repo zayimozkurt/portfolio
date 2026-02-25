@@ -14,5 +14,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/api/admin/:path((?!sign-in).*)'],
+    matcher: ['/api/admin/:path((?!sign-in|sign-out).*)'],
 };

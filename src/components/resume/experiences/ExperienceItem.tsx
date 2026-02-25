@@ -1,20 +1,22 @@
 'use client';
 
 import { TimelineItemCard } from '@/components/resume/timeline/TimelineItemCard';
-import { Experience } from '@/generated/client';
+import { ExtendedExperienceModel } from '@/types/db/extended-experience.model';
 
 export function ExperienceItem({
     experience,
     isEditMode,
     onEdit,
     onDelete,
+    onAttachSkillToggle,
     isLast = false,
     isSaving,
 }: {
-    experience: Experience;
+    experience: ExtendedExperienceModel;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;
+    onAttachSkillToggle?: (button: HTMLButtonElement) => void;
     isLast?: boolean;
     isSaving?: boolean;
 }) {
@@ -48,6 +50,8 @@ export function ExperienceItem({
                 </div>
             }
             description={experience.description}
+            skills={experience.skills}
+            onAttachSkillToggle={isEditMode ? onAttachSkillToggle : undefined}
         />
     );
 }

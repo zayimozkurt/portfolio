@@ -4,13 +4,13 @@ import { ContactForm } from '@/components/contacts/ContactForm';
 import { ContactLink } from '@/components/contacts/ContactLink';
 import { SortableContactItem } from '@/components/contacts/SortableContactItem';
 import { contactIconMap } from '@/constants/contact-icon-map.constant';
-import { DEFAULT_ADD_FORM } from '@/constants/default-add-form-values.constant';
 import { MAX_CONTACTS } from '@/constants/max-contacts.constant';
 import { ContactLabel } from '@/enums/contact-label.enum';
 import { Contact } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { ContactFormData } from '@/types/contact-form-data.interface';
+import { CreateContactDto } from '@/types/dto/contact/create-contact.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -19,6 +19,7 @@ import {
     DragStartEvent,
     KeyboardSensor,
     PointerSensor,
+    TouchSensor,
     closestCenter,
     useSensor,
     useSensors,
@@ -30,6 +31,8 @@ import React, { useEffect, useState } from 'react';
 export function Contacts({ contacts }: { contacts: Contact[] }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
+
+    const DEFAULT_ADD_FORM: CreateContactDto = { label: ContactLabel.CUSTOM, name: '', value: '' };
 
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -53,6 +56,7 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
         useSensor(KeyboardSensor)
     );
 
@@ -188,14 +192,14 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
 
     return (localContacts.length !== 0 || isAdmin ? (
         <div
-            className="fixed left-2 bottom-0 sm:left-8 md:left-12 sm:bottom-0 z-50
-                flex flex-col gap-4 justify-center items-center"
+            className={`fixed left-2 bottom-0 sm:left-8 md:left-12 sm:bottom-0 z-50
+                flex flex-col gap-4 sm:gap-4 justify-center items-center`}
         >
             {localContacts.map((contact) => (
                 <ContactLink key={contact.id} contact={contact} />
             ))}
 
-            <span className="block w-[2px] h-[150px] rounded-full bg-black"></span>
+            <span className={`block w-[2px] ${localContacts.length > 7 ? 'h-[125px]' : 'h-[150px]'} rounded-full bg-black`}></span>
 
             {isAdmin && (
                 <button
@@ -210,7 +214,7 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                 <div className="relative">
 
                     {isPanelOpen && (
-                        <div className="absolute left-2 bottom-[150px] sm:left-8 md:left-12 w-[350px] bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+                        <div className="absolute left-2 bottom-1 sm:bottom-[150px] sm:left-8 md:left-12 w-[350px] bg-white border border-gray-200 rounded-xl shadow-lg p-4">
                             <div className="flex justify-between items-center mb-3">
                                 <h3 className="font-semibold text-sm">Contacts</h3>
                                 <button

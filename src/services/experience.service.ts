@@ -2,6 +2,7 @@ import { userId } from '@/constants/user-id.constant';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { UpdateExperienceDto } from '@/types/dto/experience/update-experience.dto';
 import { ReadAllExperiencesResponse } from '@/types/response/experience/read-all-experiences.response';
+import { ReadAllExtendedExperiencesResponse } from '@/types/response/experience/read-all-extended-experiences.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { prisma } from 'prisma/prisma-client';
 
@@ -35,8 +36,22 @@ export class ExperienceService {
         try {
             const experiences = await prisma.experience.findMany({
                 where: { userId },
+                orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }]
+            });
+            console.log("experiences: ", experiences);
+            return { isSuccess: true, message: 'all experiences read', experiences, statusCode: 200 };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
+        }
+    }
+
+    static async readAllExtendedByUserId(): Promise<ReadAllExtendedExperiencesResponse> {
+        try {
+            const experiences = await prisma.experience.findMany({
+                where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
-                include: { skills: true }
+                include: { skills: { orderBy: { order: 'asc' } }, }
             });
             console.log("experiences: ", experiences);
             return { isSuccess: true, message: 'all experiences read', experiences, statusCode: 200 };

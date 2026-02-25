@@ -1,6 +1,7 @@
 'use client';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -10,7 +11,7 @@ import { Circle } from 'lucide-react'; // Or any icon library you use
 export default function TipTapContentViewer({ content }: { content: object }) {
     const editor = useEditor({
         immediatelyRender: false,
-        extensions: [StarterKit, Image, Link],
+        extensions: [StarterKit, Image, Link, HorizontalRule],
         content: content,
         editable: false,
         editorProps: {
@@ -34,6 +35,9 @@ export default function TipTapContentViewer({ content }: { content: object }) {
             // If the node is an image, it's not empty
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             if (node.type === 'image') return true;
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (node.type === 'horizontalRule') return true;
 
             // If the node has nested content (like a list or custom block), it's not empty
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

@@ -1,5 +1,6 @@
 'use client';
 
+import AttachOrDetachSkillForm from '@/components/AttachOrDetachSkillForm';
 import { Button } from '@/components/Button';
 import { ExperienceForm } from '@/components/resume/experiences/ExperienceForm';
 import { ExperienceItem } from '@/components/resume/experiences/ExperienceItem';
@@ -8,10 +9,10 @@ import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSecti
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Experience } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { ResponseBase } from '@/types/response/response-base';
-import { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 
 export function ExperiencesSection({ id }: { id?: string }) {
     const dispatch = useAppDispatch();
@@ -22,6 +23,10 @@ export function ExperiencesSection({ id }: { id?: string }) {
     const [experienceForm, setExperienceForm] = useState<Partial<CreateExperienceDto & { id?: string }>>({});
     const [isAddingExperience, setIsAddingExperience] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState(false);
+
+    const [isAttachSkillFormHidden, setIsAttachSkillFormHidden] = useState<boolean>(true);
+    const [attachingExperienceId, setAttachingExperienceId] = useState<string | null>(null);
+    const attachSkillFormRef = React.useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (experienceForm.isCurrent === true) {
@@ -37,6 +42,8 @@ export function ExperiencesSection({ id }: { id?: string }) {
         setExperienceForm({});
         setIsAddingExperience(false);
         setIsEditMode((prev) => !prev);
+        setIsAttachSkillFormHidden(true);
+        setAttachingExperienceId(null);
     }
 
     function handleFormChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -60,6 +67,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
             description: experience.description === null ? undefined : experience.description,
         });
         setIsAddingExperience(false);
+        setIsAttachSkillFormHidden(true);
     }
 
     function startAdd() {
@@ -72,12 +80,32 @@ export function ExperiencesSection({ id }: { id?: string }) {
             startDate: '',
             endDate: '',
         });
+        setIsAttachSkillFormHidden(true);
     }
 
     function cancelEdit() {
         setEditingExperienceId(null);
         setIsAddingExperience(false);
         setExperienceForm({});
+    }
+
+    function toggleAttachSkillForm(experienceId: string, button: HTMLButtonElement) {
+        if (!attachSkillFormRef.current) return;
+
+        if (attachingExperienceId === experienceId && !isAttachSkillFormHidden) {
+            setIsAttachSkillFormHidden(true);
+            return;
+        }
+
+        setAttachingExperienceId(experienceId);
+        setIsAttachSkillFormHidden(false);
+
+        const buttonRect = button.getBoundingClientRect();
+        const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
+        if (!parentRect) return;
+
+        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
+        attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
     }
 
     async function createExperience() {
@@ -166,6 +194,8 @@ export function ExperiencesSection({ id }: { id?: string }) {
         }
     }
 
+    const attachingExperience = user.experiences.find(e => e.id === attachingExperienceId);
+
     return (user.experiences.length === 0 && !isAdmin ?
         <></>
         :
@@ -193,7 +223,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
                 isEditMode={isEditMode}
                 onToggleEditMode={toggleEditMode}
             >
-                
+
             {user.experiences.map((experience, index) => (
                 <div key={experience.id} className="w-full">
                     {editingExperienceId === experience.id ? (
@@ -213,6 +243,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
                             isEditMode={isEditMode}
                             onEdit={() => startEdit(experience)}
                             onDelete={() => deleteExperience(experience.id)}
+                            onAttachSkillToggle={(button) => toggleAttachSkillForm(experience.id, button)}
                             isLast={index === user.experiences.length - 1 && !isAddingExperience}
                             isSaving={isSaving}
                         />
@@ -241,6 +272,16 @@ export function ExperiencesSection({ id }: { id?: string }) {
                 </div>
             )}
             </TimelineSectionShell>
+
+            <AttachOrDetachSkillForm
+                entityType="experience"
+                entityId={attachingExperienceId ?? ''}
+                attachedSkills={attachingExperience?.skills ?? []}
+                attachSkillFormRef={attachSkillFormRef}
+                isAttachSkillFormHidden={isAttachSkillFormHidden}
+                setIsAttachSkillFormHidden={setIsAttachSkillFormHidden}
+                onRefresh={async () => { await dispatch(userActions.refresh()); }}
+            />
         </div>
     );
 }

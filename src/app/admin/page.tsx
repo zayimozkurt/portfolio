@@ -4,7 +4,7 @@ import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch } from '@/store/hooks';
-import { isAdminActions } from '@/store/slices/is-admin-slice';
+import { isAdminActions } from '@/store/slices/is-admin.slice';
 import { UserSignInDto } from '@/types/dto/user/user-sign-in.dto';
 import { UserSignInResponse } from '@/types/response/user/user-sign-in.response';
 import { useRouter } from 'next/navigation';

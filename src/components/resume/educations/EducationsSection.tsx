@@ -1,5 +1,6 @@
 'use client';
 
+import AttachOrDetachSkillForm from '@/components/AttachOrDetachSkillForm';
 import { Button } from '@/components/Button';
 import { EducationForm } from '@/components/resume/educations/EducationForm';
 import { EducationItem } from '@/components/resume/educations/EducationItem';
@@ -8,7 +9,7 @@ import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSecti
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Education } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import React, { ChangeEvent, useState } from 'react';
@@ -22,6 +23,10 @@ export function EducationsSection({ id }: { id?: string }) {
     const [educationForm, setEducationForm] = useState<Partial<CreateEducationDto & { id?: string }>>({});
     const [isAddingEducation, setIsAddingEducation] = useState<boolean>(false);
     const [isSaving, setIsSaving] = useState(false);
+
+    const [isAttachSkillFormHidden, setIsAttachSkillFormHidden] = useState<boolean>(true);
+    const [attachingEducationId, setAttachingEducationId] = useState<string | null>(null);
+    const attachSkillFormRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
         if (educationForm.isCurrent === true) {
@@ -37,6 +42,8 @@ export function EducationsSection({ id }: { id?: string }) {
         setEducationForm({});
         setIsAddingEducation(false);
         setIsEditMode((prev) => !prev);
+        setIsAttachSkillFormHidden(true);
+        setAttachingEducationId(null);
     }
 
     function handleFormChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -61,6 +68,7 @@ export function EducationsSection({ id }: { id?: string }) {
             endDate: education.endDate === null ? undefined : new Date(education.endDate!).toISOString().slice(0, 7),
         });
         setIsAddingEducation(false);
+        setIsAttachSkillFormHidden(true);
     }
 
     function startAdd() {
@@ -75,12 +83,32 @@ export function EducationsSection({ id }: { id?: string }) {
             startDate: '',
             endDate: '',
         });
+        setIsAttachSkillFormHidden(true);
     }
 
     function cancelEdit() {
         setEditingEducationId(null);
         setIsAddingEducation(false);
         setEducationForm({});
+    }
+
+    function toggleAttachSkillForm(educationId: string, button: HTMLButtonElement) {
+        if (!attachSkillFormRef.current) return;
+
+        if (attachingEducationId === educationId && !isAttachSkillFormHidden) {
+            setIsAttachSkillFormHidden(true);
+            return;
+        }
+
+        setAttachingEducationId(educationId);
+        setIsAttachSkillFormHidden(false);
+
+        const buttonRect = button.getBoundingClientRect();
+        const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
+        if (!parentRect) return;
+
+        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
+        attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
     }
 
     async function createEducation() {
@@ -169,6 +197,8 @@ export function EducationsSection({ id }: { id?: string }) {
         }
     }
 
+    const attachingEducation = user.educations.find(e => e.id === attachingEducationId);
+
     return (user.educations.length === 0 && !isAdmin ?
         <></>
         :
@@ -228,6 +258,7 @@ export function EducationsSection({ id }: { id?: string }) {
                             isEditMode={isEditMode}
                             onEdit={() => startEdit(education)}
                             onDelete={() => deleteEducation(education.id)}
+                            onAttachSkillToggle={(button) => toggleAttachSkillForm(education.id, button)}
                             isLast={index === user.educations.length - 1 && !isAddingEducation}
                             isSaving={isSaving}
                         />
@@ -256,6 +287,16 @@ export function EducationsSection({ id }: { id?: string }) {
                 </div>
             )}
             </TimelineSectionShell>
+
+            <AttachOrDetachSkillForm
+                entityType="education"
+                entityId={attachingEducationId ?? ''}
+                attachedSkills={attachingEducation?.skills ?? []}
+                attachSkillFormRef={attachSkillFormRef}
+                isAttachSkillFormHidden={isAttachSkillFormHidden}
+                setIsAttachSkillFormHidden={setIsAttachSkillFormHidden}
+                onRefresh={async () => { await dispatch(userActions.refresh()); }}
+            />
         </div>
     );
 }

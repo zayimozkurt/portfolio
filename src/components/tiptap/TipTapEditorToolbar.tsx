@@ -76,6 +76,7 @@ export default function EditorToolbar({
             >
                 Bold
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -83,6 +84,7 @@ export default function EditorToolbar({
             >
                 Italic
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -90,6 +92,7 @@ export default function EditorToolbar({
             >
                 Title
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -97,6 +100,7 @@ export default function EditorToolbar({
             >
                 Subtitle
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -104,6 +108,7 @@ export default function EditorToolbar({
             >
                 Bullets
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -111,6 +116,7 @@ export default function EditorToolbar({
             >
                 Numbers
             </Button>
+
             <Button
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 variant={ButtonVariant.TOOLBAR}
@@ -118,6 +124,14 @@ export default function EditorToolbar({
             >
                 Code
             </Button>
+
+            <Button
+                onClick={() => editor.chain().focus().setHorizontalRule().run()}
+                variant={ButtonVariant.TOOLBAR}
+            >
+                Separator
+            </Button>
+
             <Button
                 onClick={() => {
                     if (editor.isActive('link')) {
@@ -134,6 +148,7 @@ export default function EditorToolbar({
             >
                 Link
             </Button>
+
             <label
                 className={`cursor-pointer px-3 py-1 rounded border text-sm hover:bg-gray-100 border-gray-300 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
             >
@@ -148,6 +163,7 @@ export default function EditorToolbar({
                     onChange={(event) => addImage(event)}
                 />
             </label>
+
             {(onSave || onCancel) && (
                 <div className="flex gap-2 ml-auto">
                     {onSave && (
@@ -155,6 +171,7 @@ export default function EditorToolbar({
                             {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                     )}
+                    
                     {onCancel && (
                         <Button onClick={onCancel} variant={ButtonVariant.SECONDARY}>
                             Cancel

@@ -4,7 +4,7 @@ import { Button } from '@/components/Button';
 import { links } from '@/constants/links.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { isAdminActions } from '@/store/slices/is-admin-slice';
+import { isAdminActions } from '@/store/slices/is-admin.slice';
 import { ResponseBase } from '@/types/response/response-base';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -17,10 +17,12 @@ export default function NavBar() {
     async function signOut() {
         const response: ResponseBase = await (
             await fetch(`/api/admin/sign-out`, {
-                method: 'POST',
+                method: 'POST'
             })
         ).json();
-        if (response.isSuccess) await dispatch(isAdminActions.set(false));
+
+        if (response.isSuccess)
+            dispatch(isAdminActions.set(false));
     }
 
     // return ( // hamburger menu on mobile

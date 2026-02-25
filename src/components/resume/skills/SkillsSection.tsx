@@ -7,10 +7,11 @@ import { PlaceholderSortableSkillPill } from '@/components/resume/skills/Placeho
 import { SkillDragOverlayPill } from '@/components/resume/skills/SkillDragOverlayPill';
 import { SkillPill } from '@/components/resume/skills/SkillPill';
 import { SortableSkillPill } from '@/components/resume/skills/SortableSkillPill';
+import { MAX_VISIBLE_SKILLS } from '@/constants/max-visible-skills.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Skill } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { userActions } from '@/store/slices/user-slice';
+import { userActions } from '@/store/slices/user.slice';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -19,6 +20,7 @@ import {
     DragStartEvent,
     KeyboardSensor,
     PointerSensor,
+    TouchSensor,
     closestCenter,
     useSensor,
     useSensors,
@@ -35,6 +37,7 @@ export function SkillsSection({ id }: { id?: string }) {
     const [localSkills, setLocalSkills] = useState<Skill[]>(user.skills);
     const [activeSkill, setActiveSkill] = useState<Skill | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const COLS = 3;
     const placeholderCount = localSkills.length % COLS === 0 ? 0 : COLS - (localSkills.length % COLS);
@@ -55,6 +58,7 @@ export function SkillsSection({ id }: { id?: string }) {
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
@@ -222,11 +226,34 @@ export function SkillsSection({ id }: { id?: string }) {
                             </DragOverlay>
                         </DndContext>
                     ) : (
-                        user.skills.map((skill) => (
+                        user.skills.slice(0, isExpanded ? undefined : MAX_VISIBLE_SKILLS).map((skill) => (
                             <SkillPill key={skill.id} skill={skill} />
                         ))
                     )}
                 </div>
+
+                {!isEditMode && user.skills.length > MAX_VISIBLE_SKILLS && (
+                    <button
+                        onClick={() => setIsExpanded((prev) => !prev)}
+                        className="mt-4 w-full flex items-center justify-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors cursor-pointer"
+                    >
+                        {isExpanded ? (
+                            <>
+                                <span>Show less</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                </svg>
+                            </>
+                        ) : (
+                            <>
+                                <span>+{user.skills.length - MAX_VISIBLE_SKILLS} more</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </>
+                        )}
+                    </button>
+                )}
 
                 {isEditMode && (
                     <CreateSkillForm
