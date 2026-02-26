@@ -33,13 +33,13 @@ export function ResumeNavigationSidebar() {
     }, []);
 
     return (
-        <nav className="hidden md:flex fixed left-8 lg:left-16 top-1/2 -translate-y-1/2 z-40 flex-col gap-3">
+        <nav className="hidden xl:flex fixed left-32 top-1/2 -translate-y-1/2 z-40 flex-col gap-3">
             {RESUME_NAVIGATION_ITEMS.map((item) => (
                 <a
                     key={item.id}
                     href={`/resume#${item.id}`}
                     className={`text-sm transition-colors duration-200 ${
-                        activeId === item.id ? 'text-black font-semibold' : 'text-gray-400 hover:text-gray-700'
+                        activeId === item.id ? 'text-text-primary font-semibold' : 'text-text-muted hover:text-text-secondary'
                     }`}
                 >
                     {item.label}

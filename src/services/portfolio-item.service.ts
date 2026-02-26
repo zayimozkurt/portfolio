@@ -1,3 +1,4 @@
+import { PORTFOLIO_ITEM_COVER_IMAGE_PREFIX } from '@/constants/portfolio-item-cover-image-prefix.constant';
 import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { InputJsonValue } from '@/generated/client/runtime/library';
@@ -249,13 +250,19 @@ export class PortfolioItemService {
         try {
             const { data: files } = await supabase.storage
                 .from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES)
-                .list(dto.portfolioItemId);
+                .list(dto.portfolioItemId)
+            ;
+        
             if (!files || files.length === 0) return { isSuccess: true, message: 'no orphaned images to remove', statusCode: 200 };
 
             const referencedUrls = extractImageUrlsFromTipTapJson(dto.content);
 
             const orphanedPaths: string[] = [];
             for (const file of files) {
+                if (file.name.startsWith(PORTFOLIO_ITEM_COVER_IMAGE_PREFIX)) {
+                    continue;
+                }
+
                 const filePath = `${dto.portfolioItemId}/${file.name}`;
                 const { data: publicUrlData } = supabase.storage
                     .from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES)
@@ -288,7 +295,7 @@ export class PortfolioItemService {
 
             const existingCoverImageUrl = readPortfolioItemByIdResponse.portfolioItem.coverImageUrl;
 
-            const newStoragePath = `${id}/cover_image_${Date.now()}`;
+            const newStoragePath = `${id}/${PORTFOLIO_ITEM_COVER_IMAGE_PREFIX}${Date.now()}`;
 
             const supabaseUploadResponse = await supabase.storage
                 .from(SupabaseBucketName.PORTFOLIO_ITEM_IMAGES)

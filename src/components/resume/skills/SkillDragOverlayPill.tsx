@@ -5,12 +5,12 @@ import { GripVertical } from 'lucide-react';
 export function SkillDragOverlayPill({ activeSkill }: { activeSkill: Skill }
 ) {
     return (
-        <span 
+        <span
             className={`
-                px-1 py-0.5 sm:px-3 sm:py-1.5 bg-gray-100 text-gray-700 font-medium rounded-full border border-gray-200 flex items-center gap-1.5 shadow-lg select-none
+                px-1 py-0.5 sm:px-3 sm:py-1.5 bg-surface-tertiary text-text-secondary font-medium rounded-full border border-border-muted flex items-center gap-1.5 shadow-lg select-none
                 text-xs ${activeSkill.name.length > SKILL_NAME_CHAR_LIMIT / 2 ? '' : 'sm:text-sm'}
             `}>
-            <span className="text-gray-400 -ml-1">
+            <span className="text-text-muted -ml-1">
                 <GripVertical size={14} />
             </span>
 

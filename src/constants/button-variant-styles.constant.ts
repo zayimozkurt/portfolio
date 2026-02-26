@@ -1,12 +1,12 @@
 import { ButtonVariant } from '@/enums/button-variant.enum';
 
 export const buttonVariantStyles: Record<ButtonVariant, string> = {
-    [ButtonVariant.PRIMARY]: 'bg-black text-white border-black hover:bg-white hover:text-black',
-    [ButtonVariant.SECONDARY]: 'bg-gray-500 text-white border-gray-500 hover:bg-white hover:text-black',
+    [ButtonVariant.PRIMARY]: 'bg-btn-primary-bg text-btn-primary-text border-btn-primary-border hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text',
+    [ButtonVariant.SECONDARY]: 'bg-text-tertiary text-surface border-text-tertiary hover:bg-surface hover:text-text-primary',
     [ButtonVariant.DANGER]:
-        'bg-red-800 text-white border-red-800 hover:bg-white hover:text-red-800 hover:border-red-800',
-    [ButtonVariant.GHOST]: 'bg-gray-200 text-gray-500 border-gray-300',
-    [ButtonVariant.TOOLBAR]: 'bg-white text-black border-gray-300 hover:bg-gray-100 rounded px-3 py-1 text-sm',
-    [ButtonVariant.LINK]: 'bg-transparent text-gray-800 border-transparent hover:text-gray-600 p-0 border-0',
-    [ButtonVariant.TRASH]: 'text-gray-400 hover:text-red-500 duration-300 cursor-pointer shrink-0'
+        'bg-danger text-danger-text border-danger hover:bg-surface hover:text-danger hover:border-danger',
+    [ButtonVariant.GHOST]: 'bg-surface-tertiary text-text-tertiary border-border-muted',
+    [ButtonVariant.TOOLBAR]: 'bg-surface text-text-primary border-border-muted hover:bg-surface-tertiary rounded px-3 py-1 text-sm',
+    [ButtonVariant.LINK]: 'bg-transparent text-text-secondary border-transparent hover:text-text-tertiary p-0 border-0',
+    [ButtonVariant.TRASH]: 'text-text-muted hover:text-red-500 duration-300 cursor-pointer shrink-0'
 };

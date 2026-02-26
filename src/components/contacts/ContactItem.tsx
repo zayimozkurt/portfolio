@@ -26,13 +26,13 @@ export function ContactItem({
                 {contact.name}
             </span>
 
-            <span className="text-xs text-gray-600 truncate flex-1">
+            <span className="text-xs text-text-tertiary truncate flex-1">
                 {contact.value}
             </span>
 
             <button
                 onClick={onEdit}
-                className="text-gray-400 hover:text-black duration-300 cursor-pointer shrink-0"
+                className="text-text-muted hover:text-text-primary duration-300 cursor-pointer shrink-0"
                 disabled={isSaving}
             >
                 <Pencil size={16} />

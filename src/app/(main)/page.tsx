@@ -199,9 +199,9 @@ export default function Page() {
                             <div className="absolute top-0 left-0 flex flex-col justify-center items-center gap-2">
                                 <label
                                     className={`cursor-pointer right-0 px-2 py-0.5
-                                    border-2 border-black rounded-[10px]
-                                    bg-black text-white text-s
-                                    hover:bg-white hover:text-black
+                                    border-2 border-btn-primary-border rounded-[10px]
+                                    bg-btn-primary-bg text-btn-primary-text text-s
+                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
                                         duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change
@@ -231,14 +231,14 @@ export default function Page() {
                                 name="fullName"
                                 onChange={(event) => handleOnChange(event)}
                                 value={profileInfo.fullName}
-                                className="text-2xl font-bold text-center text-[#003366]"
+                                className="text-2xl font-bold text-center text-brand-primary"
                                 placeholder="fullname..."
                             />
                             <TextArea
                                 name="headline"
                                 onChange={(event) => handleOnChange(event)}
                                 value={profileInfo.headline ?? ''}
-                                className="w-full text-l font-semibold text-center text-[#174978] resize-none whitespace-pre-wrap break-words"
+                                className="w-full text-l font-semibold text-center text-brand-secondary resize-none whitespace-pre-wrap break-words"
                                 placeholder="headline..."
                             />
                             <TextArea
@@ -251,9 +251,9 @@ export default function Page() {
                             <div className="flex gap-1">
                                 <label
                                     className={`cursor-pointer right-0 px-2 py-0.5
-                                    border-2 border-black rounded-[10px]
-                                    bg-black text-white text-s
-                                    hover:bg-white hover:text-black
+                                    border-2 border-btn-primary-border rounded-[10px]
+                                    bg-btn-primary-bg text-btn-primary-text text-s
+                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
                                         duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change CV
@@ -302,8 +302,8 @@ export default function Page() {
                         </div>
 
                         <div className="h-full flex flex-col justify-start items-center gap-2 py-2">
-                            <p className="text-2xl font-bold text-center text-[#003366]">{user.fullName}</p>
-                            <p className="text-l font-semibold text-center text-[#174978]">{user.headline}</p>
+                            <p className="text-2xl font-bold text-center text-brand-primary">{user.fullName}</p>
+                            <p className="text-l font-semibold text-center text-brand-secondary">{user.headline}</p>
                             <p className="text-center">{user.bio}</p>
                             <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
                                 View CV

@@ -23,14 +23,14 @@ export function ExperienceForm({
     isSaving?: boolean;
 }) {
     return (
-        <div className="w-full flex flex-col gap-4 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="w-full flex flex-col gap-4 p-5 bg-surface border border-border-muted rounded-lg shadow-sm">
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Job Title</label>
+                <label className="text-sm font-medium text-text-secondary">Job Title</label>
                 <Input name="title" value={form.title ?? ''} onChange={onChange} placeholder="e.g. Software Engineer" />
             </div>
 
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Company</label>
+                <label className="text-sm font-medium text-text-secondary">Company</label>
                 <Input name="company" value={form.company ?? ''} onChange={onChange} placeholder="e.g. Acme Inc." />
             </div>
 
@@ -41,22 +41,22 @@ export function ExperienceForm({
                     name="isCurrent"
                     checked={form.isCurrent ?? false}
                     onChange={onChange}
-                    className="w-4 h-4 text-gray-800 rounded border-gray-300 focus:ring-gray-500 accent-gray-800"
+                    className="w-4 h-4 text-text-primary rounded border-border-muted focus:ring-text-tertiary accent-text-primary"
                 />
-                <label htmlFor="isCurrent" className="text-sm font-medium text-gray-700 cursor-pointer">
+                <label htmlFor="isCurrent" className="text-sm font-medium text-text-secondary cursor-pointer">
                     I currently work here
                 </label>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Start Date</label>
+                    <label className="text-sm font-medium text-text-secondary">Start Date</label>
                     <Input name="startDate" type="month" value={form.startDate ?? ''} onChange={onChange} />
                 </div>
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">End Date</label>
+                    <label className="text-sm font-medium text-text-secondary">End Date</label>
                     {form.isCurrent ? (
-                        <div className="w-full py-2 px-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                        <div className="w-full py-2 px-3 border border-border-muted rounded-lg bg-surface-secondary text-text-tertiary text-sm">
                             Present
                         </div>
                     ) : (
@@ -66,7 +66,7 @@ export function ExperienceForm({
             </div>
 
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Description</label>
+                <label className="text-sm font-medium text-text-secondary">Description</label>
                 <TextArea
                     name="description"
                     value={form.description ?? ''}

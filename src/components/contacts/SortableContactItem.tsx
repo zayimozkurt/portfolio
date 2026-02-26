@@ -32,7 +32,7 @@ export function SortableContactItem({
             <button
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+                className="cursor-grab active:cursor-grabbing text-text-muted hover:text-text-tertiary transition-colors shrink-0"
                 aria-label={`Drag to reorder ${contact.name}`}
                 style={{ touchAction: 'none' }}
             >

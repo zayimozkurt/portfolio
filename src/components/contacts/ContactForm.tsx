@@ -24,7 +24,7 @@ export function ContactForm({
             <select
                 value={form.label}
                 onChange={(e) => onFieldChange('label', e.target.value)}
-                className="w-full py-1 px-3 border border-black rounded-[10px] text-s outline-none"
+                className="w-full py-1 px-3 border border-input-border rounded-[10px] text-s text-input-text bg-surface outline-none"
                 disabled={isSaving}
             >
                 {Object.values(ContactLabel).map((label) => (

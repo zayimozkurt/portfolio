@@ -43,7 +43,7 @@ export function SortablePortfolioItemCard(
                     <button
                         {...attributes}
                         {...listeners}
-                        className="absolute top-3 left-3 z-10 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 transition-colors bg-white/80 rounded p-0.5"
+                        className="absolute top-3 left-3 z-10 cursor-grab active:cursor-grabbing text-text-muted hover:text-text-tertiary transition-colors bg-surface/80 rounded p-0.5"
                         aria-label={`Drag to reorder ${portfolioItem.title}`}
                         style={{ touchAction: 'none' }}
                     >

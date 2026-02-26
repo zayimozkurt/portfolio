@@ -199,12 +199,12 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                 <ContactLink key={contact.id} contact={contact} />
             ))}
 
-            <span className={`block w-[2px] ${localContacts.length > 7 ? 'h-[125px]' : 'h-[150px]'} rounded-full bg-black`}></span>
+            <span className={`block w-[2px] ${localContacts.length > 7 ? 'h-[125px]' : 'h-[150px]'} rounded-full bg-border-theme`}></span>
 
             {isAdmin && (
                 <button
                     onClick={() => setIsPanelOpen((prev) => !prev)}
-                    className="text-gray-400 hover:text-black duration-300 cursor-pointer"
+                    className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
                 >
                     <Pencil size={16} />
                 </button>
@@ -214,7 +214,7 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                 <div className="relative">
 
                     {isPanelOpen && (
-                        <div className="absolute left-2 bottom-1 sm:bottom-[150px] sm:left-8 md:left-12 w-[350px] bg-white border border-gray-200 rounded-xl shadow-lg p-4">
+                        <div className="absolute left-2 bottom-1 sm:bottom-[150px] sm:left-8 md:left-12 w-[350px] bg-surface border border-border-muted rounded-xl shadow-lg p-4">
                             <div className="flex justify-between items-center mb-3">
                                 <h3 className="font-semibold text-sm">Contacts</h3>
                                 <button
@@ -222,7 +222,7 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                                         setIsPanelOpen(false);
                                         cancelEdit();
                                     }}
-                                    className="text-gray-400 hover:text-black duration-300 cursor-pointer"
+                                    className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
                                 >
                                     <X size={16} />
                                 </button>
@@ -261,7 +261,7 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                                 </SortableContext>
                                 <DragOverlay>
                                     {activeContact ? (
-                                        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg select-none">
+                                        <div className="flex items-center gap-2 bg-surface border border-border-muted rounded-lg px-2 py-1 shadow-lg select-none">
                                             <span className="text-sm shrink-0">
                                                 {contactIconMap[activeContact.label] ?? contactIconMap[ContactLabel.CUSTOM]}
                                             </span>
@@ -274,10 +274,10 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
                             </DndContext>
 
                             {localContacts.length >= MAX_CONTACTS ? (
-                                <p className="text-xs text-gray-400">Maximum of {MAX_CONTACTS} contacts reached</p>
+                                <p className="text-xs text-text-muted">Maximum of {MAX_CONTACTS} contacts reached</p>
                             ) : (
-                                <div className="flex flex-col gap-2 border-t border-gray-100 pt-3">
-                                    <p className="text-xs text-gray-500 font-medium">Add Contact</p>
+                                <div className="flex flex-col gap-2 border-t border-border-subtle pt-3">
+                                    <p className="text-xs text-text-tertiary font-medium">Add Contact</p>
                                     <ContactForm
                                         form={addForm}
                                         onFieldChange={(field, value) => updateForm(setAddForm, field, value)}

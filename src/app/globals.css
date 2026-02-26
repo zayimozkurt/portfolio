@@ -1,29 +1,145 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
     --background: #ffffff;
     --foreground: #171717;
+
+    /* Surfaces */
+    --surface: #ffffff;
+    --surface-secondary: #f9fafb;
+    --surface-tertiary: #f3f4f6;
+
+    /* Borders */
+    --border-theme: #171717;
+    --border-muted: #e5e7eb;
+    --border-subtle: #f3f4f6;
+
+    /* Text */
+    --text-primary: #171717;
+    --text-secondary: #374151;
+    --text-tertiary: #6b7280;
+    --text-muted: #9ca3af;
+
+    /* Brand */
+    --brand-primary: #003366;
+    --brand-secondary: #174978;
+    --brand-accent: #00316E;
+
+    /* Button Primary */
+    --btn-primary-bg: #171717;
+    --btn-primary-text: #ffffff;
+    --btn-primary-border: #171717;
+    --btn-primary-hover-bg: #ffffff;
+    --btn-primary-hover-text: #171717;
+
+    /* NavBar */
+    --navbar-bg: #000000;
+    --navbar-text: #ffffff;
+
+    /* Input */
+    --input-border: #171717;
+    --input-text: #171717;
+    --input-placeholder: #9ca3af;
+
+    /* Scrollbar */
+    --scrollbar-track: #f1f1f1;
+    --scrollbar-thumb: #888888;
+
+    /* Danger */
+    --danger: #991b1b;
+    --danger-text: #ffffff;
+}
+
+.dark {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    /* Surfaces */
+    --surface: #18181b;
+    --surface-secondary: #1e1e22;
+    --surface-tertiary: #27272a;
+
+    /* Borders */
+    --border-theme: #a1a1aa;
+    --border-muted: #3f3f46;
+    --border-subtle: #27272a;
+
+    /* Text */
+    --text-primary: #f4f4f5;
+    --text-secondary: #d4d4d8;
+    --text-tertiary: #a1a1aa;
+    --text-muted: #71717a;
+
+    /* Brand */
+    --brand-primary: #60a5fa;
+    --brand-secondary: #93c5fd;
+    --brand-accent: #3b82f6;
+
+    /* Button Primary */
+    --btn-primary-bg: #f4f4f5;
+    --btn-primary-text: #18181b;
+    --btn-primary-border: #f4f4f5;
+    --btn-primary-hover-bg: #18181b;
+    --btn-primary-hover-text: #f4f4f5;
+
+    /* NavBar */
+    --navbar-bg: #09090b;
+    --navbar-text: #f4f4f5;
+
+    /* Input */
+    --input-border: #3f3f46;
+    --input-text: #f4f4f5;
+    --input-placeholder: #71717a;
+
+    /* Scrollbar */
+    --scrollbar-track: #27272a;
+    --scrollbar-thumb: #52525b;
+
+    /* Danger */
+    --danger: #dc2626;
+    --danger-text: #ffffff;
 }
 
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
+    --color-surface: var(--surface);
+    --color-surface-secondary: var(--surface-secondary);
+    --color-surface-tertiary: var(--surface-tertiary);
+    --color-border-theme: var(--border-theme);
+    --color-border-muted: var(--border-muted);
+    --color-border-subtle: var(--border-subtle);
+    --color-text-primary: var(--text-primary);
+    --color-text-secondary: var(--text-secondary);
+    --color-text-tertiary: var(--text-tertiary);
+    --color-text-muted: var(--text-muted);
+    --color-brand-primary: var(--brand-primary);
+    --color-brand-secondary: var(--brand-secondary);
+    --color-brand-accent: var(--brand-accent);
+    --color-btn-primary-bg: var(--btn-primary-bg);
+    --color-btn-primary-text: var(--btn-primary-text);
+    --color-btn-primary-border: var(--btn-primary-border);
+    --color-btn-primary-hover-bg: var(--btn-primary-hover-bg);
+    --color-btn-primary-hover-text: var(--btn-primary-hover-text);
+    --color-navbar-bg: var(--navbar-bg);
+    --color-navbar-text: var(--navbar-text);
+    --color-input-border: var(--input-border);
+    --color-input-text: var(--input-text);
+    --color-input-placeholder: var(--input-placeholder);
+    --color-scrollbar-track: var(--scrollbar-track);
+    --color-scrollbar-thumb: var(--scrollbar-thumb);
+    --color-danger: var(--danger);
+    --color-danger-text: var(--danger-text);
     --font-sans: var(--font-geist-sans);
     --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #0a0a0a;
-        --foreground: #ededed;
-    }
 }
 
 body {
     background: var(--background);
     color: var(--foreground);
-    /* font-family: Arial, Helvetica, sans-serif; */
 }
 
 html {
@@ -37,10 +153,17 @@ html {
     scroll-margin-top: 68px;
 }
 
+.prose iframe,
+.prose [data-youtube-video] iframe {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9 !important;
+}
+
 .prose img {
     max-width: 100% !important;
     height: auto !important;
-    max-height: 300px !important;
+    max-height: 400px !important;
     object-fit: contain !important;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -57,16 +180,16 @@ html {
 /* 1. This is the key: Give the track a background color */
 .overflow-x-scroll::-webkit-scrollbar-track,
 .overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f1f1; 
+    background: var(--scrollbar-track);
     border-radius: 10px;
 }
 
 /* 2. Make the 'thumb' (the part you grab) very obvious */
 .overflow-x-scroll::-webkit-scrollbar-thumb,
 .overflow-x-auto::-webkit-scrollbar-thumb {
-    background-color: #888; 
+    background-color: var(--scrollbar-thumb);
     border-radius: 10px;
-    border: 2px solid #f1f1f1; /* Creates a little 'padding' around the thumb */
+    border: 2px solid var(--scrollbar-track); /* Creates a little 'padding' around the thumb */
 }
 
 /* 3. Darken on hover so the user knows it's interactive */
@@ -84,15 +207,15 @@ html {
 
 .overflow-y-scroll::-webkit-scrollbar-track,
 .overflow-y-auto::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--scrollbar-track);
     border-radius: 10px;
 }
 
 .overflow-y-scroll::-webkit-scrollbar-thumb,
 .overflow-y-auto::-webkit-scrollbar-thumb {
-    background-color: #888;
+    background-color: var(--scrollbar-thumb);
     border-radius: 10px;
-    border: 2px solid #f1f1f1;
+    border: 2px solid var(--scrollbar-track);
 }
 
 .overflow-y-scroll::-webkit-scrollbar-thumb:hover,
@@ -118,4 +241,8 @@ html {
     color: #292929; /* Medium's dark gray */
     font-weight: 400;
     font-family: serif; /* Serifs look better for these dots */
+}
+
+.dark .prose hr::after {
+    color: #d1d5db;
 }

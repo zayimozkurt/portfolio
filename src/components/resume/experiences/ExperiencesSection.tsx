@@ -7,6 +7,7 @@ import { ExperienceItem } from '@/components/resume/experiences/ExperienceItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
 import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSectionShell';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { SkillAttachableOrDetachableEntity } from '@/enums/skill-attachable-or-detachable-entity.enum';
 import { Experience } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
@@ -274,7 +275,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm
-                entityType="experience"
+                entityType={SkillAttachableOrDetachableEntity.EXPERIENCE}
                 entityId={attachingExperienceId ?? ''}
                 attachedSkills={attachingExperience?.skills ?? []}
                 attachSkillFormRef={attachSkillFormRef}

@@ -45,6 +45,7 @@ export default function Page() {
         ).json();
 
         if (response.isSuccess && response.portfolioItems) {
+            console.log("portfolioItems: ", response.portfolioItems);
             setPortfolioItems(response.portfolioItems);
         }
     }

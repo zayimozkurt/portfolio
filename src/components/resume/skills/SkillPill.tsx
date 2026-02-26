@@ -14,16 +14,16 @@ export function SkillPill({ skill }: { skill: Skill }) {
                 <span
                     className={`
                         max-w-[220px] h-auto px-2 py-1 sm:px-3 sm:py-1.5 rounded-full whitespace-nowrap
-                        bg-gray-100 text-gray-700 font-medium
+                        bg-surface-tertiary text-text-secondary font-medium
                         text-xs ${skill.name.length > SKILL_NAME_CHAR_LIMIT / 2 ? '' : 'sm:text-sm'}
-                        border border-gray-200 hover:bg-gray-200 hover:border-[#00316E] hover:shadow-md
+                        border border-border-muted hover:bg-border-muted hover:border-brand-accent hover:shadow-md
                         transition-all duration-100
                         cursor-pointer
                         flex justify-center items-center gap-1.5
                     `}
                 >
-                    <p className='max-w-[125px] sm:max-w-[175px] truncate decoration-gray-300 underline-offset-2 group-hover:decoration-[#00316E] transition-all duration-100'>{skill.name}</p>
-                    <ArrowUpRight size={12} className="text-[#00316E] opacity-0 w-0 group-hover:opacity-100 group-hover:w-3 transition-all duration-300" />
+                    <p className='max-w-[125px] sm:max-w-[175px] truncate decoration-border-muted underline-offset-2 group-hover:decoration-brand-accent transition-all duration-100'>{skill.name}</p>
+                    <ArrowUpRight size={12} className="text-brand-accent opacity-0 w-0 group-hover:opacity-100 group-hover:w-3 transition-all duration-300" />
                 </span>
             </Link>
     );

@@ -23,14 +23,14 @@ export function EducationForm({
     isSaving?: boolean;
 }) {
     return (
-        <div className="w-full flex flex-col gap-4 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div className="w-full flex flex-col gap-4 p-5 bg-surface border border-border-muted rounded-lg shadow-sm">
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">School</label>
+                <label className="text-sm font-medium text-text-secondary">School</label>
                 <Input name="school" value={form.school ?? ''} onChange={onChange} placeholder="e.g. MIT" />
             </div>
 
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Degree</label>
+                <label className="text-sm font-medium text-text-secondary">Degree</label>
                 <Input
                     name="degree"
                     value={form.degree ?? ''}
@@ -40,7 +40,7 @@ export function EducationForm({
             </div>
 
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Field of Study</label>
+                <label className="text-sm font-medium text-text-secondary">Field of Study</label>
                 <Input
                     name="fieldOfStudy"
                     value={form.fieldOfStudy ?? ''}
@@ -56,22 +56,22 @@ export function EducationForm({
                     name="isCurrent"
                     checked={form.isCurrent ?? false}
                     onChange={onChange}
-                    className="w-4 h-4 text-gray-800 rounded border-gray-300 focus:ring-gray-500 accent-gray-800"
+                    className="w-4 h-4 text-text-primary rounded border-border-muted focus:ring-text-tertiary accent-text-primary"
                 />
-                <label htmlFor="isCurrent" className="text-sm font-medium text-gray-700 cursor-pointer">
+                <label htmlFor="isCurrent" className="text-sm font-medium text-text-secondary cursor-pointer">
                     I currently study here
                 </label>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">Start Date</label>
+                    <label className="text-sm font-medium text-text-secondary">Start Date</label>
                     <Input name="startDate" type="month" value={form.startDate ?? ''} onChange={onChange} />
                 </div>
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-gray-700">End Date</label>
+                    <label className="text-sm font-medium text-text-secondary">End Date</label>
                     {form.isCurrent ? (
-                        <div className="w-full py-2 px-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                        <div className="w-full py-2 px-3 border border-border-muted rounded-lg bg-surface-secondary text-text-tertiary text-sm">
                             Present
                         </div>
                     ) : (
@@ -81,7 +81,7 @@ export function EducationForm({
             </div>
 
             <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Description</label>
+                <label className="text-sm font-medium text-text-secondary">Description</label>
                 <TextArea
                     name="description"
                     value={form.description ?? ''}

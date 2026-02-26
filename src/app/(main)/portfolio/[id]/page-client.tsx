@@ -6,10 +6,12 @@ import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
 import ContentEditor from '@/components/tiptap/TipTapContentEditor';
 import TipTapContentViewer from '@/components/tiptap/TipTapContentViewer';
-import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
+import { ADMIN_NAVBAR_HEIGHT } from '@/constants/navbar-height/admin-navbar-height.constant';
+import { VISITOR_NAVBAR_HEIGHT } from '@/constants/navbar-height/visitor-navbar-height.constant';
 import { PORTFOLIO_ITEM_DESCRIPTION_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-description-char-limit.constant';
 import { PORTFOLIO_ITEM_TITLE_CHAR_LIMIT } from '@/constants/portfolio-item/portfolio-item-title-char-limit.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { SkillAttachableOrDetachableEntity } from '@/enums/skill-attachable-or-detachable-entity.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
 import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
@@ -259,9 +261,9 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                             <div className='w-auto h-auto flex flex-col gap-2'>
                                 <label
                                     className={`cursor-pointer right-0 px-2 py-1 text-center
-                                    border-2 border-black rounded-[10px]
-                                    bg-black text-white text-sm
-                                    hover:bg-white hover:text-black
+                                    border-2 border-btn-primary-border rounded-[10px]
+                                    bg-btn-primary-bg text-btn-primary-text text-sm
+                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
                                     duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change Cover Image
@@ -312,7 +314,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 </div>
 
                 <AttachOrDetachSkillForm
-                    entityType="portfolioItem"
+                    entityType={SkillAttachableOrDetachableEntity.PORTFOLIO_ITEM}
                     entityId={portfolioItem.id}
                     attachedSkills={portfolioItem.skills}
                     attachSkillFormRef={attachSkillFormRef}
@@ -322,11 +324,11 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 />
             </div>
 
-            <span className="block w-[full] h-[2px] rounded-full bg-black"></span>
+            <span className="block w-[full] h-[2px] rounded-full bg-border-theme"></span>
 
             <div className="w-full p-[25px]">
                 {isAdmin && !isEditingContent && (
-                    <div className="sticky flex justify-end p-2 z-40 bg-white" style={{ top: NAVBAR_HEIGHT }}>
+                    <div className="sticky flex justify-end p-2 z-40 bg-surface" style={{ top: isAdmin ? ADMIN_NAVBAR_HEIGHT : VISITOR_NAVBAR_HEIGHT }}>
                         <Button onClick={toggleContentEditMode} variant={ButtonVariant.PRIMARY}>
                             Edit
                         </Button>

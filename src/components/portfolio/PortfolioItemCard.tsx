@@ -51,9 +51,9 @@ export default function PortfolioItemCard(
     return (
         <Link
             href={`/portfolio/${portfolioItem.id}`}
-            className="relative w-[300px] h-[350px] bg-white p-4 rounded-2xl shadow-md border 
-            flex flex-col justify-between items-center gap-0 transition-all 
-            hover:border-[#00316E] duration-300 hover:cursor-pointer
+            className="relative w-[300px] h-[350px] bg-surface p-4 rounded-2xl shadow-md border border-border-muted
+            flex flex-col justify-between items-center gap-0 transition-all
+            hover:border-brand-accent duration-300 hover:cursor-pointer
             ease-out hover:shadow-xl"
         >
             {!isAdmin && (
@@ -72,7 +72,7 @@ export default function PortfolioItemCard(
 
             <p className="w-full h-auto font-semibold text-center">{portfolioItem.title}</p>
 
-            <p className="w-full h-[120px] text-gray-600 whitespace-pre-wrap truncate text-sm text-center">
+            <p className="w-full h-[120px] text-text-tertiary whitespace-pre-wrap truncate text-sm text-center">
                 {portfolioItem.description}
             </p>
 

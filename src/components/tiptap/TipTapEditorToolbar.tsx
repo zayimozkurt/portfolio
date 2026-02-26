@@ -1,8 +1,11 @@
 'use client';
 
 import { Button } from '@/components/Button';
-import { NAVBAR_HEIGHT } from '@/constants/navbar-height.constant';
+import { ADMIN_NAVBAR_HEIGHT } from '@/constants/navbar-height/admin-navbar-height.constant';
+import { VISITOR_NAVBAR_HEIGHT } from '@/constants/navbar-height/visitor-navbar-height.constant';
+import { ButtonSize } from '@/enums/button-size.enum';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { useAppSelector } from '@/store/hooks';
 import { ResponseBase } from '@/types/response/response-base';
 import { Editor } from '@tiptap/react';
 import { ChangeEvent, useRef, useState } from 'react';
@@ -26,6 +29,7 @@ export default function EditorToolbar({
 }) {
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const isAdmin = useAppSelector(state => state.isAdmin);
 
     async function addImage(event: ChangeEvent<HTMLInputElement>) {
         const file = event.currentTarget.files?.[0];
@@ -66,13 +70,14 @@ export default function EditorToolbar({
 
     return (
         <div
-            className="sticky flex flex-wrap items-center gap-2 p-2 border-b z-40 bg-white"
-            style={{ top: NAVBAR_HEIGHT }}
+            className="sticky flex flex-wrap items-center gap-2 p-2 border-b border-border-muted z-40 bg-background "
+            style={{ top: isAdmin ? ADMIN_NAVBAR_HEIGHT : VISITOR_NAVBAR_HEIGHT }}
         >
             <Button
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('bold')}
+                size={ButtonSize.SMALL}
             >
                 Bold
             </Button>
@@ -81,6 +86,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleItalic().run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('italic')}
+                size={ButtonSize.SMALL}
             >
                 Italic
             </Button>
@@ -89,6 +95,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('heading', { level: 1 })}
+                size={ButtonSize.SMALL}
             >
                 Title
             </Button>
@@ -97,6 +104,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('heading', { level: 2 })}
+                size={ButtonSize.SMALL}
             >
                 Subtitle
             </Button>
@@ -105,6 +113,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('bulletList')}
+                size={ButtonSize.SMALL}
             >
                 Bullets
             </Button>
@@ -113,6 +122,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('orderedList')}
+                size={ButtonSize.SMALL}
             >
                 Numbers
             </Button>
@@ -121,6 +131,7 @@ export default function EditorToolbar({
                 onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('codeBlock')}
+                size={ButtonSize.SMALL}
             >
                 Code
             </Button>
@@ -128,6 +139,7 @@ export default function EditorToolbar({
             <Button
                 onClick={() => editor.chain().focus().setHorizontalRule().run()}
                 variant={ButtonVariant.TOOLBAR}
+                size={ButtonSize.SMALL}
             >
                 Separator
             </Button>
@@ -141,16 +153,35 @@ export default function EditorToolbar({
                     const input = window.prompt('URL:');
                     if (!input) return;
                     const href = /^\w+:\/\//.test(input) ? input : `https://${input}`;
-                    editor.chain().focus().setLink({ href, target: '_blank' }).run();
+                    const { from, to } = editor.state.selection;
+                    if (from === to) {
+                        editor.chain().focus().insertContent(`<a href="${href}" target="_blank">${href}</a>`).run();
+                    } else {
+                        editor.chain().focus().setLink({ href, target: '_blank' }).run();
+                    }
                 }}
                 variant={ButtonVariant.TOOLBAR}
                 isActive={editor.isActive('link')}
+                size={ButtonSize.SMALL}
             >
                 Link
             </Button>
 
+            <Button
+                onClick={() => {
+                    const input = window.prompt('Enter a YouTube link:');
+                    if (!input) return;
+                    const href = /^\w+:\/\//.test(input) ? input : `https://${input}`;
+                    editor.commands.setYoutubeVideo({ src: href });
+                }}
+                variant={ButtonVariant.TOOLBAR}
+                size={ButtonSize.SMALL}
+            >
+                Video
+            </Button>
+
             <label
-                className={`cursor-pointer px-3 py-1 rounded border text-sm hover:bg-gray-100 border-gray-300 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
+                className={`cursor-pointer px-3 py-1 rounded border text-xs text-text-primary hover:bg-surface-tertiary border-border-muted ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}
             >
                 {isUploading ? 'Uploading...' : 'Image'}
                 <input
@@ -167,13 +198,13 @@ export default function EditorToolbar({
             {(onSave || onCancel) && (
                 <div className="flex gap-2 ml-auto">
                     {onSave && (
-                        <Button onClick={onSave} disabled={isSaving} variant={ButtonVariant.PRIMARY}>
+                        <Button onClick={onSave} disabled={isSaving} variant={ButtonVariant.PRIMARY} size={ButtonSize.SMALL}>
                             {isSaving ? 'Saving...' : 'Save'}
                         </Button>
                     )}
                     
                     {onCancel && (
-                        <Button onClick={onCancel} variant={ButtonVariant.SECONDARY}>
+                        <Button onClick={onCancel} variant={ButtonVariant.SECONDARY} size={ButtonSize.SMALL}>
                             Cancel
                         </Button>
                     )}

@@ -188,9 +188,9 @@ export function AboutSection({ id }: { id?: string }) {
                             <div className="flex gap-2">
                                 <label
                                     className="cursor-pointer px-3 py-1.5
-                                    border-2 border-gray-800 rounded-lg
-                                    bg-gray-800 text-white text-sm font-medium
-                                    hover:bg-white hover:text-gray-800
+                                    border-2 border-btn-primary-border rounded-lg
+                                    bg-btn-primary-bg text-btn-primary-text text-sm font-medium
+                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
                                     transition-colors duration-300"
                                 >
                                     Change

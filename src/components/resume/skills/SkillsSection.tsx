@@ -235,7 +235,7 @@ export function SkillsSection({ id }: { id?: string }) {
                 {!isEditMode && user.skills.length > MAX_VISIBLE_SKILLS && (
                     <button
                         onClick={() => setIsExpanded((prev) => !prev)}
-                        className="mt-4 w-full flex items-center justify-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors cursor-pointer"
+                        className="mt-4 w-full flex items-center justify-center gap-1 text-sm text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
                     >
                         {isExpanded ? (
                             <>

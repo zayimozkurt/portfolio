@@ -57,35 +57,35 @@ export function TimelineItemCard({
             <div className="flex flex-col items-center">
                 <div
                     className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
-                        isCurrent ? 'bg-gray-800 border-gray-800' : 'bg-white border-gray-400'
+                        isCurrent ? 'bg-text-secondary border-text-secondary' : 'bg-surface border-text-muted'
                     }`}
                 />
-                {!isLast && <div className="w-0.5 h-full bg-gray-300 -mb-4" />}
+                {!isLast && <div className="w-0.5 h-full bg-border-muted -mb-4" />}
             </div>
 
             <div className="flex-1 min-w-0 pb-8">
                 <div
                     className={`p-4 md:p-5 rounded-lg border transition-shadow ${
                         isCurrent
-                            ? 'bg-gray-50 border-gray-300 shadow-md hover:shadow-lg'
-                            : 'bg-white border-gray-200 shadow-sm hover:shadow-md'
+                            ? 'bg-surface-secondary border-border-muted shadow-md hover:shadow-lg'
+                            : 'bg-surface border-border-muted shadow-sm hover:shadow-md'
                     }`}
                 >
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                         <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+                            <h3 className="text-lg font-semibold text-text-primary">{title}</h3>
                             {subtitle}
                         </div>
 
                         {isCurrent && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-white self-start">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-btn-primary-bg text-btn-primary-text self-start">
                                 Current
                             </span>
                         )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-sm">
-                        <div className="flex items-center gap-1.5 text-gray-500">
+                        <div className="flex items-center gap-1.5 text-text-tertiary">
                             <svg
                                 className="w-4 h-4 flex-shrink-0"
                                 fill="none"
@@ -103,8 +103,8 @@ export function TimelineItemCard({
                                 {startDateFormatted} - {endDateFormatted}
                             </span>
                         </div>
-                        <span className="text-gray-300 hidden sm:inline">|</span>
-                        <div className="flex items-center gap-1.5 text-gray-500">
+                        <span className="text-border-muted hidden sm:inline">|</span>
+                        <div className="flex items-center gap-1.5 text-text-tertiary">
                             <svg
                                 className="w-4 h-4 flex-shrink-0"
                                 fill="none"
@@ -124,7 +124,7 @@ export function TimelineItemCard({
 
                     {description && (
                         <div className="mt-3">
-                            <p className="text-gray-600 text-sm leading-relaxed inline whitespace-pre-wrap">
+                            <p className="text-text-tertiary text-sm leading-relaxed inline whitespace-pre-wrap">
                                 {displayDescription}
                                 {shouldTruncate && !isDescriptionExpanded && (
                                     <Button
@@ -188,7 +188,7 @@ export function TimelineItemCard({
                     )}
 
                     {isEditMode && (
-                        <div className="flex gap-2 mt-4 pt-3 border-t border-gray-200">
+                        <div className="flex gap-2 mt-4 pt-3 border-t border-border-muted">
                             <Button onClick={onEdit} variant={ButtonVariant.PRIMARY}>
                                 Edit
                             </Button>

@@ -2,6 +2,7 @@ import { Button } from "@/components/Button";
 import { SKILL_NAME_CHAR_LIMIT } from "@/constants/skill-name-char-limit.constant";
 import { ButtonSize } from "@/enums/button-size.enum";
 import { ButtonVariant } from "@/enums/button-variant.enum";
+import { SkillAttachableOrDetachableEntity } from "@/enums/skill-attachable-or-detachable-entity.enum";
 import { Skill } from "@/generated/client";
 import { useAppSelector } from "@/store/hooks";
 import { ResponseBase } from "@/types/response/response-base";
@@ -18,7 +19,7 @@ export default function AttachOrDetachSkillForm(
         setIsAttachSkillFormHidden,
         onRefresh,
     }: {
-        entityType: 'portfolioItem' | 'experience' | 'education';
+        entityType: SkillAttachableOrDetachableEntity;
         entityId: string;
         attachedSkills: Skill[];
         attachSkillFormRef: React.RefObject<HTMLDivElement | null>;
@@ -30,10 +31,10 @@ export default function AttachOrDetachSkillForm(
     const user = useAppSelector(state => state.user);
     const [isSaving, setIsSaving] = React.useState<boolean>(false);
 
-    const idFieldMap = {
-        'portfolioItem': 'portfolioItemId',
-        'experience': 'experienceId',
-        'education': 'educationId',
+    const idFieldMap: Record<SkillAttachableOrDetachableEntity, string> = {
+        [SkillAttachableOrDetachableEntity.PORTFOLIO_ITEM]: 'portfolioItemId',
+        [SkillAttachableOrDetachableEntity.EXPERIENCE]: 'experienceId',
+        [SkillAttachableOrDetachableEntity.EDUCATION]: 'educationId',
     } as const;
 
     function cancel() {
@@ -103,14 +104,14 @@ export default function AttachOrDetachSkillForm(
             ref={attachSkillFormRef}
             className={`
                 ${isAttachSkillFormHidden ? 'invisible opacity-0 pointer-events-none' : 'visible opacity-100'}
-                z-50 absolute bg-white
-                border rounded-xl shadow-lg
+                z-50 absolute bg-surface
+                border border-border-muted rounded-xl shadow-lg
             `}
             style={{ width: '300px', height: '400px', padding: '36px' }}
         >
             <button
                 onClick={() => setIsAttachSkillFormHidden(true)}
-                className="absolute text-gray-400 hover:text-black duration-300 cursor-pointer"
+                className="absolute text-text-muted hover:text-text-primary duration-300 cursor-pointer"
                 style={{ top: '14px', right: '14px' }}
             >
                 <X size={16} />

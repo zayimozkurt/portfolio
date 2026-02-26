@@ -19,8 +19,10 @@ export default function LoadingSpinner({ isHidden, message }: { isHidden?: boole
             const arcSize = Math.PI * 0.75;
             interval = setInterval(() => {
                 ctx!.clearRect(0, 0, canvas.width, canvas.height);
+                const isDark = document.documentElement.classList.contains('dark');
+                const stroke = isDark ? '#ffffff' : '#000000';
                 const endAngle = startAngle + arcSize;
-                roughCanvas.current!.arc(25, 25, 30, 30, startAngle, endAngle, false);
+                roughCanvas.current!.arc(25, 25, 30, 30, startAngle, endAngle, false, { stroke });
                 startAngle += 0.2;
                 if (startAngle >= 2 * Math.PI) {
                     startAngle -= 2 * Math.PI;

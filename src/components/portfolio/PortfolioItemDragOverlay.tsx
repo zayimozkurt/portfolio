@@ -4,8 +4,8 @@ import Image from 'next/image';
 
 export function PortfolioItemDragOverlay({ portfolioItem }: { portfolioItem: ExtendedPortfolioItemModel }) {
     return (
-        <div className="w-[300px] bg-white px-4 py-3 rounded-2xl shadow-lg border flex items-center gap-3 select-none">
-            <span className="text-gray-400">
+        <div className="w-[300px] bg-surface px-4 py-3 rounded-2xl shadow-lg border border-border-muted flex items-center gap-3 select-none">
+            <span className="text-text-muted">
                 <GripVertical size={16} />
             </span>
 

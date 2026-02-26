@@ -7,6 +7,7 @@ import { EducationItem } from '@/components/resume/educations/EducationItem';
 import { SectionHeader } from '@/components/resume/SectionHeader';
 import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSectionShell';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { SkillAttachableOrDetachableEntity } from '@/enums/skill-attachable-or-detachable-entity.enum';
 import { Education } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
@@ -289,7 +290,7 @@ export function EducationsSection({ id }: { id?: string }) {
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm
-                entityType="education"
+                entityType={SkillAttachableOrDetachableEntity.EDUCATION}
                 entityId={attachingEducationId ?? ''}
                 attachedSkills={attachingEducation?.skills ?? []}
                 attachSkillFormRef={attachSkillFormRef}
