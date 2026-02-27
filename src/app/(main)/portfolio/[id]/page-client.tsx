@@ -328,7 +328,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
 
             <div className="w-full p-[25px]">
                 {isAdmin && !isEditingContent && (
-                    <div className="sticky flex justify-end p-2 z-40 bg-surface" style={{ top: isAdmin ? ADMIN_NAVBAR_HEIGHT : VISITOR_NAVBAR_HEIGHT }}>
+                    <div className="sticky flex justify-end p-2 z-40 bg-background" style={{ top: isAdmin ? ADMIN_NAVBAR_HEIGHT : VISITOR_NAVBAR_HEIGHT }}>
                         <Button onClick={toggleContentEditMode} variant={ButtonVariant.PRIMARY}>
                             Edit
                         </Button>
