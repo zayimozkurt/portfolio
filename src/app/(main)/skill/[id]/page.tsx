@@ -9,7 +9,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     return (
         <div className="w-full h-full flex justify-center items-start">
-            <div className="w-[750px] h-full">
+            <div className="w-[325px] sm:w-[700px] h-full">
                 {readSingleSkillResponse.isSuccess && readSingleSkillResponse.skill ? (
                     <PageClient skill={readSingleSkillResponse.skill} />
                 ) : (

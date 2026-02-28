@@ -11,20 +11,25 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
 import { ExtendedSkillModel } from '@/types/db/extended-skill-model';
 import { ResponseBase } from '@/types/response/response-base';
+import AssociatedItemsRow from '@/components/AssociatedItemsRow';
 import Link from 'next/link';
-import { useState } from 'react';
+import React from 'react';
 
 export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
 
-    const [isEditingMeta, setIsEditingMeta] = useState(false);
-    const [isEditingContent, setIsEditingContent] = useState(false);
+    const [isEditingMeta, setIsEditingMeta] = React.useState(false);
+    const [isEditingContent, setIsEditingContent] = React.useState(false);
 
-    const [name, setName] = useState(skill.name);
-    const [content, setContent] = useState<object>(skill.content as object);
+    const [name, setName] = React.useState(skill.name);
+    const [content, setContent] = React.useState<object>(skill.content as object);
 
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSaving, setIsSaving] = React.useState(false);
+
+    React.useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     function toggleMetaEditMode() {
         if (!isEditingMeta) {
@@ -115,7 +120,7 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
                         </Button>
                     </div>
                 )}
-                <div className="w-full h-auto flex justify-start items-center gap-8 p-6 pr-32">
+                <div className="w-full h-auto flex justify-start items-center gap-4 sm:gap-8 p-2 sm:p-6">
                     <Link href={'/resume#skills'}>
                         <Button variant={ButtonVariant.PRIMARY}>←</Button>
                     </Link>
@@ -130,6 +135,23 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
                         <p className="font-semibold text-2xl">{skill.name}</p>
                     )}
                 </div>
+
+                {!isEditingMeta && (
+                    <div className="w-full flex flex-col gap-2 px-2 sm:px-6">
+                        <AssociatedItemsRow
+                            title="Associated Portfolio Items"
+                            items={skill.portfolioItems.map(item => ({ id: item.id, label: item.title, href: `/portfolio/${item.id}` }))}
+                        />
+                        <AssociatedItemsRow
+                            title="Associated Experiences"
+                            items={skill.experiences.map(item => ({ id: item.id, label: item.title, href: '/resume#experiences' }))}
+                        />
+                        <AssociatedItemsRow
+                            title="Associated Educations"
+                            items={skill.educations.map(item => ({ id: item.id, label: item.school, href: '/resume#educations' }))}
+                        />
+                    </div>
+                )}
             </div>
 
             <span className="block w-[full] h-[2px] rounded-full bg-border-theme"></span>

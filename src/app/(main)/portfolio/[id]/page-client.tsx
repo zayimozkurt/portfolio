@@ -17,15 +17,20 @@ import { userActions } from '@/store/slices/user.slice';
 import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
 import { ReadSingleExtendedPortfolioItemResponse } from '@/types/response/portfolio-item/read-single-extended-portfolio-item.response';
 import { ResponseBase } from '@/types/response/response-base';
+import AssociatedItemsRow from '@/components/AssociatedItemsRow';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React from 'react';
 
 export default function PageClient({ initialPortfolioItem }: { initialPortfolioItem: ExtendedPortfolioItemModel }) {
     const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
 
-    const [portfolioItem, setPortfolioItem] = useState<ExtendedPortfolioItemModel>(initialPortfolioItem);
+    const [portfolioItem, setPortfolioItem] = React.useState<ExtendedPortfolioItemModel>(initialPortfolioItem);
+
+    React.useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     async function refreshPortfolioItem() {
         const response: ReadSingleExtendedPortfolioItemResponse = await (
@@ -39,16 +44,16 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
         }
     }
 
-    const [isEditingMeta, setIsEditingMeta] = useState(false);
-    const [isEditingContent, setIsEditingContent] = useState(false);
+    const [isEditingMeta, setIsEditingMeta] = React.useState(false);
+    const [isEditingContent, setIsEditingContent] = React.useState(false);
 
-    const [title, setTitle] = useState(portfolioItem.title);
-    const [description, setDescription] = useState(portfolioItem.description ?? '');
-    const [content, setContent] = useState<object>(portfolioItem.content as object);
-    const [coverImage, setCoverImage] = useState<File | null>(null);
-    const [isAttachSkillFormHidden, setIsAttachSkillFormHidden] = useState<boolean>(true);
+    const [title, setTitle] = React.useState(portfolioItem.title);
+    const [description, setDescription] = React.useState(portfolioItem.description ?? '');
+    const [content, setContent] = React.useState<object>(portfolioItem.content as object);
+    const [coverImage, setCoverImage] = React.useState<File | null>(null);
+    const [isAttachSkillFormHidden, setIsAttachSkillFormHidden] = React.useState<boolean>(true);
 
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSaving, setIsSaving] = React.useState(false);
 
     const attachSkillFormRef = React.useRef<HTMLDivElement>(null);
 
@@ -295,20 +300,10 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                                 </Button>
                         </>
                         :
-                        portfolioItem.skills.length === 0 ?
-                            <></>
-                            :
-                            <div className='w-full flex flex-col justify-start items-start'>
-                                <p className='w-full font-semibold'>Skills</p>
-                                <div
-                                    className='w-full h-[40px] flex justify-start items-center gap-4 p-2 overflow-x-auto text-sm whitespace-nowrap'
-                                    style={{ overflowY: 'hidden' }}
-                                >
-                                    {portfolioItem.skills.map(skill => (
-                                        <p key={skill.id}>• {skill.name}</p>
-                                    ))}
-                                </div>
-                            </div>
+                        <AssociatedItemsRow
+                            title="Skills"
+                            items={portfolioItem.skills.map(skill => ({ id: skill.id, label: skill.name, href: `/skill/${skill.id}` }))}
+                        />
 
                     }
                 </div>

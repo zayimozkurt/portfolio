@@ -22,7 +22,13 @@ export function SkillPill({ skill }: { skill: Skill }) {
                         flex justify-center items-center gap-1.5
                     `}
                 >
-                    <p className='max-w-[125px] sm:max-w-[175px] truncate decoration-border-muted underline-offset-2 group-hover:decoration-brand-accent transition-all duration-100'>{skill.name}</p>
+                    <p
+                        className='max-w-[125px] sm:max-w-[175px] truncate decoration-border-muted underline-offset-2 group-hover:decoration-brand-accent transition-all duration-100'
+                    >
+                        {skill.name}
+
+                    </p>
+
                     <ArrowUpRight size={12} className="text-brand-accent opacity-0 w-0 group-hover:opacity-100 group-hover:w-3 transition-all duration-300" />
                 </span>
             </Link>

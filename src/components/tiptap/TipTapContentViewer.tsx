@@ -58,9 +58,11 @@ export default function TipTapContentViewer({ content }: { content: object }) {
         !content || isActuallyEmpty() ? 
             <div className="flex flex-col items-center justify-center py-20 text-center">
                 <Circle className="w-2 h-2 fill-zinc-200 text-zinc-200 mb-4" />
+                
                 <p className="text-zinc-400 font-light text-sm tracking-wide italic">
                     No detailed information has been added yet.
                 </p>
+
                 <p className="text-zinc-400 font-light text-sm tracking-wide italic">
                     Check back later for updates!
                 </p>
