@@ -9,6 +9,7 @@ import { SkillPill } from '@/components/resume/skills/SkillPill';
 import { SortableSkillPill } from '@/components/resume/skills/SortableSkillPill';
 import { MAX_VISIBLE_SKILLS } from '@/constants/max-visible-skills.constant';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { ResumeNavigationItemId } from '@/enums/resume-navigation-item-id.enum';
 import { Skill } from '@/generated/client';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
@@ -239,7 +240,7 @@ export function SkillsSection({ id }: { id?: string }) {
                     >
                         {isExpanded ? (
                             <>
-                                <span>Show less</span>
+                                <a href={`/resume#${ResumeNavigationItemId.SKILLS}`}>Show less</a>
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                                 </svg>

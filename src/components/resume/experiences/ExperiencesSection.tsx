@@ -105,7 +105,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
         const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
         if (!parentRect) return;
 
-        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
+        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left - 25}px`;
         attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
     }
 
@@ -224,54 +224,53 @@ export function ExperiencesSection({ id }: { id?: string }) {
                 isEditMode={isEditMode}
                 onToggleEditMode={toggleEditMode}
             >
-
-            {user.experiences.map((experience, index) => (
-                <div key={experience.id} className="w-full">
-                    {editingExperienceId === experience.id ? (
-                        <div className="ml-10 md:ml-10 mb-4">
-                            <ExperienceForm
-                                form={experienceForm}
-                                onChange={handleFormChange}
-                                onSave={updateExperience}
-                                onCancel={cancelEdit}
-                                saveLabel="Save"
+                {user.experiences.map((experience, index) => (
+                    <div key={experience.id} className="w-full">
+                        {editingExperienceId === experience.id ? (
+                            <div className="ml-10 md:ml-10 mb-4">
+                                <ExperienceForm
+                                    form={experienceForm}
+                                    onChange={handleFormChange}
+                                    onSave={updateExperience}
+                                    onCancel={cancelEdit}
+                                    saveLabel="Save"
+                                    isSaving={isSaving}
+                                />
+                            </div>
+                        ) : (
+                            <ExperienceItem
+                                experience={experience}
+                                isEditMode={isEditMode}
+                                onEdit={() => startEdit(experience)}
+                                onDelete={() => deleteExperience(experience.id)}
+                                onAttachSkillToggle={(button) => toggleAttachSkillForm(experience.id, button)}
+                                isLast={index === user.experiences.length - 1 && !isAddingExperience}
                                 isSaving={isSaving}
                             />
-                        </div>
-                    ) : (
-                        <ExperienceItem
-                            experience={experience}
-                            isEditMode={isEditMode}
-                            onEdit={() => startEdit(experience)}
-                            onDelete={() => deleteExperience(experience.id)}
-                            onAttachSkillToggle={(button) => toggleAttachSkillForm(experience.id, button)}
-                            isLast={index === user.experiences.length - 1 && !isAddingExperience}
+                        )}
+                    </div>
+                ))}
+
+                {isAddingExperience && (
+                    <div className="ml-10 md:ml-10">
+                        <ExperienceForm
+                            form={experienceForm}
+                            onChange={handleFormChange}
+                            onSave={createExperience}
+                            onCancel={cancelEdit}
+                            saveLabel="Add"
                             isSaving={isSaving}
                         />
-                    )}
-                </div>
-            ))}
+                    </div>
+                )}
 
-            {isAddingExperience && (
-                <div className="ml-10 md:ml-10">
-                    <ExperienceForm
-                        form={experienceForm}
-                        onChange={handleFormChange}
-                        onSave={createExperience}
-                        onCancel={cancelEdit}
-                        saveLabel="Add"
-                        isSaving={isSaving}
-                    />
-                </div>
-            )}
-
-            {isEditMode && !isAddingExperience && !editingExperienceId && (
-                <div className="ml-10 md:ml-10 mt-2">
-                    <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
-                        + Add Experience
-                    </Button>
-                </div>
-            )}
+                {isEditMode && !isAddingExperience && !editingExperienceId && (
+                    <div className="ml-10 md:ml-10 mt-2">
+                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
+                            + Add Experience
+                        </Button>
+                    </div>
+                )}
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm

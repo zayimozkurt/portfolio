@@ -11,23 +11,29 @@ export function ResumeNavigationSidebar() {
 
         function onScroll() {
             cancelAnimationFrame(rafId);
+
             rafId = requestAnimationFrame(() => {
                 let current = RESUME_NAVIGATION_ITEMS[0].id;
+
                 for (const item of RESUME_NAVIGATION_ITEMS) {
                     const element = document.getElementById(item.id);
+
                     if (element && element.getBoundingClientRect().top <= 100) {
                         current = item.id;
                     }
                 }
+
                 setActiveId(current);
             });
         }
 
         window.addEventListener('scroll', onScroll, { passive: true });
+
         onScroll();
 
         return () => {
             window.removeEventListener('scroll', onScroll);
+            
             cancelAnimationFrame(rafId);
         };
     }, []);

@@ -1,7 +1,9 @@
 'use client';
 
+import AssociatedItemsRow from '@/components/AssociatedItemsRow';
 import { Button } from '@/components/Button';
 import { DESCRIPTION_CHAR_LIMIT } from '@/constants/description-char-limit.constant';
+import { AssociatedItemsRowSize } from '@/enums/associated-items-row-size.enum';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { Skill } from '@/generated/client';
 import { calculateDuration } from '@/utils/calculate-duration.util';
@@ -176,33 +178,38 @@ export function TimelineItemCard({
 
                     {skills && skills.length > 0 && !isEditMode && (
                         <div className="mt-3">
-                            <div
-                                className="w-full h-[40px] flex justify-start items-center gap-4 p-2 overflow-x-auto text-sm whitespace-nowrap"
-                                style={{ overflowX: 'auto', overflowY: 'hidden' }}
-                            >
-                                {skills.map(skill => (
-                                    <p key={skill.id}>• {skill.name}</p>
-                                ))}
-                            </div>
+                            <AssociatedItemsRow
+                                title="Skills"
+                                items={skills.map(skill => ({ id: skill.id, label: skill.name, href: `/skill/${skill.id}` }))}
+                                size={AssociatedItemsRowSize.SMALL}
+                                hideTitle
+                                openInNewTab
+                            />
                         </div>
                     )}
 
                     {isEditMode && (
-                        <div className="flex gap-2 mt-4 pt-3 border-t border-border-muted">
-                            <Button onClick={onEdit} variant={ButtonVariant.PRIMARY}>
-                                Edit
-                            </Button>
-                            <Button variant={ButtonVariant.DANGER} onClick={onDelete} disabled={isSaving}>
-                                Delete
-                            </Button>
-                            {onAttachSkillToggle && (
-                                <Button
-                                    onClick={event => onAttachSkillToggle(event.currentTarget)}
-                                    variant={ButtonVariant.SECONDARY}
-                                >
-                                    Attach/Detach Skill
+                        <div className="flex flex-col gap-2 mt-4 pt-3 border-t border-border-muted">
+                            <div className='flex gap-2 justify-start items-center'>
+                                <Button onClick={onEdit} variant={ButtonVariant.PRIMARY}>
+                                    Edit
                                 </Button>
-                            )}
+
+                                <Button variant={ButtonVariant.DANGER} onClick={onDelete} disabled={isSaving}>
+                                    Delete
+                                </Button>
+                            </div>
+
+                            <div>
+                                {onAttachSkillToggle && (
+                                    <Button
+                                        onClick={event => onAttachSkillToggle(event.currentTarget)}
+                                        variant={ButtonVariant.SECONDARY}
+                                    >
+                                        Attach/Detach Skill
+                                    </Button>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

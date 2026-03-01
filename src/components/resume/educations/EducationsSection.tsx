@@ -108,7 +108,7 @@ export function EducationsSection({ id }: { id?: string }) {
         const parentRect = attachSkillFormRef.current.offsetParent?.getBoundingClientRect();
         if (!parentRect) return;
 
-        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left}px`;
+        attachSkillFormRef.current.style.left = `${buttonRect.left - parentRect.left - 25}px`;
         attachSkillFormRef.current.style.top = `${buttonRect.bottom - parentRect.top + 4}px`;
     }
 
@@ -239,54 +239,53 @@ export function EducationsSection({ id }: { id?: string }) {
                 isEditMode={isEditMode}
                 onToggleEditMode={toggleEditMode}
             >
-
-            {user.educations.map((education, index) => (
-                <div key={education.id} className="w-full">
-                    {editingEducationId === education.id ? (
-                        <div className="ml-10 md:ml-10 mb-4">
-                            <EducationForm
-                                form={educationForm}
-                                onChange={handleFormChange}
-                                onSave={updateEducation}
-                                onCancel={cancelEdit}
-                                saveLabel="Save"
+                {user.educations.map((education, index) => (
+                    <div key={education.id} className="w-full">
+                        {editingEducationId === education.id ? (
+                            <div className="ml-10 md:ml-10 mb-4">
+                                <EducationForm
+                                    form={educationForm}
+                                    onChange={handleFormChange}
+                                    onSave={updateEducation}
+                                    onCancel={cancelEdit}
+                                    saveLabel="Save"
+                                    isSaving={isSaving}
+                                />
+                            </div>
+                        ) : (
+                            <EducationItem
+                                education={education}
+                                isEditMode={isEditMode}
+                                onEdit={() => startEdit(education)}
+                                onDelete={() => deleteEducation(education.id)}
+                                onAttachSkillToggle={(button) => toggleAttachSkillForm(education.id, button)}
+                                isLast={index === user.educations.length - 1 && !isAddingEducation}
                                 isSaving={isSaving}
                             />
-                        </div>
-                    ) : (
-                        <EducationItem
-                            education={education}
-                            isEditMode={isEditMode}
-                            onEdit={() => startEdit(education)}
-                            onDelete={() => deleteEducation(education.id)}
-                            onAttachSkillToggle={(button) => toggleAttachSkillForm(education.id, button)}
-                            isLast={index === user.educations.length - 1 && !isAddingEducation}
+                        )}
+                    </div>
+                ))}
+
+                {isAddingEducation && (
+                    <div className="ml-10 md:ml-10">
+                        <EducationForm
+                            form={educationForm}
+                            onChange={handleFormChange}
+                            onSave={createEducation}
+                            onCancel={cancelEdit}
+                            saveLabel="Add"
                             isSaving={isSaving}
                         />
-                    )}
-                </div>
-            ))}
+                    </div>
+                )}
 
-            {isAddingEducation && (
-                <div className="ml-10 md:ml-10">
-                    <EducationForm
-                        form={educationForm}
-                        onChange={handleFormChange}
-                        onSave={createEducation}
-                        onCancel={cancelEdit}
-                        saveLabel="Add"
-                        isSaving={isSaving}
-                    />
-                </div>
-            )}
-
-            {isEditMode && !isAddingEducation && !editingEducationId && (
-                <div className="ml-10 md:ml-10 mt-2">
-                    <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
-                        + Add Education
-                    </Button>
-                </div>
-            )}
+                {isEditMode && !isAddingEducation && !editingEducationId && (
+                    <div className="ml-10 md:ml-10 mt-2">
+                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
+                            + Add Education
+                        </Button>
+                    </div>
+                )}
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm

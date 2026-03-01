@@ -1,6 +1,8 @@
+import { ResumeNavigationItemId } from "@/enums/resume-navigation-item-id.enum";
+
 export const RESUME_NAVIGATION_ITEMS = [
-    { id: 'about', label: 'About' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'experiences', label: 'Experiences' },
-    { id: 'educations', label: 'Educations' },
+    { id: ResumeNavigationItemId.ABOUT, label: 'About' },
+    { id: ResumeNavigationItemId.SKILLS, label: 'Skills' },
+    { id: ResumeNavigationItemId.EXPERIENCE, label: 'Experience' },
+    { id: ResumeNavigationItemId.EDUCATION, label: 'Education' },
 ];

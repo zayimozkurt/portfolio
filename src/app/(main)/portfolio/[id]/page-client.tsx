@@ -19,7 +19,7 @@ import { ReadSingleExtendedPortfolioItemResponse } from '@/types/response/portfo
 import { ResponseBase } from '@/types/response/response-base';
 import AssociatedItemsRow from '@/components/AssociatedItemsRow';
 import Image from 'next/image';
-import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 import React from 'react';
 
 export default function PageClient({ initialPortfolioItem }: { initialPortfolioItem: ExtendedPortfolioItemModel }) {
@@ -210,9 +210,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 )}
 
                 <div className="w-full h-auto flex justify-start items-center gap-4 sm:gap-8 p-2 sm:p-6">
-                    <Link href={'/portfolio'}>
-                        <Button variant={ButtonVariant.PRIMARY}>←</Button>
-                    </Link>
+                    <BackButton href="/portfolio" tooltip="Back to Portfolio" />
 
                     {isEditingMeta ? (
                         <div className='w-[300px] sm:w-[400px] relative'>
