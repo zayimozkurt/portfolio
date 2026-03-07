@@ -224,6 +224,27 @@ export function ExperiencesSection({ id }: { id?: string }) {
                 isEditMode={isEditMode}
                 onToggleEditMode={toggleEditMode}
             >
+                {isEditMode && !isAddingExperience && !editingExperienceId && (
+                    <div className="my-10 md:my-10">
+                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
+                            + Add Experience
+                        </Button>
+                    </div>
+                )}
+
+                {isAddingExperience && (
+                    <div className="my-10 md:my-10">
+                        <ExperienceForm
+                            form={experienceForm}
+                            onChange={handleFormChange}
+                            onSave={createExperience}
+                            onCancel={cancelEdit}
+                            saveLabel="Add"
+                            isSaving={isSaving}
+                        />
+                    </div>
+                )}
+
                 {user.experiences.map((experience, index) => (
                     <div key={experience.id} className="w-full">
                         {editingExperienceId === experience.id ? (
@@ -250,27 +271,6 @@ export function ExperiencesSection({ id }: { id?: string }) {
                         )}
                     </div>
                 ))}
-
-                {isAddingExperience && (
-                    <div className="ml-10 md:ml-10">
-                        <ExperienceForm
-                            form={experienceForm}
-                            onChange={handleFormChange}
-                            onSave={createExperience}
-                            onCancel={cancelEdit}
-                            saveLabel="Add"
-                            isSaving={isSaving}
-                        />
-                    </div>
-                )}
-
-                {isEditMode && !isAddingExperience && !editingExperienceId && (
-                    <div className="ml-10 md:ml-10 mt-2">
-                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
-                            + Add Experience
-                        </Button>
-                    </div>
-                )}
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm

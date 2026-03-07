@@ -239,6 +239,27 @@ export function EducationsSection({ id }: { id?: string }) {
                 isEditMode={isEditMode}
                 onToggleEditMode={toggleEditMode}
             >
+                {isEditMode && !isAddingEducation && !editingEducationId && (
+                    <div className="my-10 md:my-10">
+                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
+                            + Add Education
+                        </Button>
+                    </div>
+                )}
+
+                {isAddingEducation && (
+                    <div className="my-10 md:my-10">
+                        <EducationForm
+                            form={educationForm}
+                            onChange={handleFormChange}
+                            onSave={createEducation}
+                            onCancel={cancelEdit}
+                            saveLabel="Add"
+                            isSaving={isSaving}
+                        />
+                    </div>
+                )}
+
                 {user.educations.map((education, index) => (
                     <div key={education.id} className="w-full">
                         {editingEducationId === education.id ? (
@@ -265,27 +286,6 @@ export function EducationsSection({ id }: { id?: string }) {
                         )}
                     </div>
                 ))}
-
-                {isAddingEducation && (
-                    <div className="ml-10 md:ml-10">
-                        <EducationForm
-                            form={educationForm}
-                            onChange={handleFormChange}
-                            onSave={createEducation}
-                            onCancel={cancelEdit}
-                            saveLabel="Add"
-                            isSaving={isSaving}
-                        />
-                    </div>
-                )}
-
-                {isEditMode && !isAddingEducation && !editingEducationId && (
-                    <div className="ml-10 md:ml-10 mt-2">
-                        <Button onClick={startAdd} variant={ButtonVariant.PRIMARY}>
-                            + Add Education
-                        </Button>
-                    </div>
-                )}
             </TimelineSectionShell>
 
             <AttachOrDetachSkillForm

@@ -15,14 +15,15 @@ export class ExperienceService {
         }
 
         try {
+            const { startDate, endDate, isCurrent, ...restOfDto } = dto;
+
             await prisma.experience.create({
                 data: {
                     userId,
-                    title: dto.title,
-                    company: dto.company,
-                    isCurrent: dto.isCurrent,
-                    startDate: new Date(dto.startDate + '-01'),
-                    endDate: dto.isCurrent ? null : new Date(dto.endDate + '-01'),
+                    isCurrent,
+                    startDate: new Date(startDate + '-01'),
+                    endDate: isCurrent ? null : new Date(endDate + '-01'),
+                    ...restOfDto,
                 },
             });
             return { isSuccess: true, message: 'experience created', statusCode: 201 };
