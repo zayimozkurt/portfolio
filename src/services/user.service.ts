@@ -10,7 +10,7 @@ import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id.resp
 import { UserSignInResponse } from '@/types/response/user/user-sign-in.response';
 import { supabase } from '@/utils/supabase-client';
 import bcrypt from 'bcrypt';
-import jsonwebtoken from 'jsonwebtoken';
+import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken';
 import { prisma } from 'prisma/prisma-client';
 
 export class UserService {
@@ -69,14 +69,24 @@ export class UserService {
 
         try {
             const decoded = jsonwebtoken.verify(jwt, jwtCookieSettings.secret!) as DecodedJwtPayload;
+
             if (!(decoded.userId === userId))
                 return {
                     isSuccess: false,
                     message: 'userId is not matching',
                     statusCode: 403,
                 };
+
             return { isSuccess: true, message: 'authorized', statusCode: 200 };
         } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+                return {
+                    isSuccess: false,
+                    message: error.message,
+                    statusCode: 401
+                };
+            }
+
             console.error(error);
             return { isSuccess: false, message: "internal server error", statusCode: 500 };
         }
