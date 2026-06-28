@@ -1,8 +1,10 @@
 'use client';
 
 import { Button } from '@/components/Button';
+import { Contacts } from '@/components/contacts/Contacts';
 import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
+import { ButtonSize } from '@/enums/button-size.enum';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { UserImagePlace } from '@/enums/user-image-place.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -10,11 +12,14 @@ import { userActions } from '@/store/slices/user.slice';
 import { DeleteUserImageDto } from '@/types/dto/user-image/delete-user-image.dto';
 import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
 import { ResponseBase } from '@/types/response/response-base';
+import { Download } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { ChangeEvent, useState } from 'react';
 
 export default function Page() {
     const dispatch = useAppDispatch();
+    const router = useRouter();
     const user = useAppSelector((state) => state.user);
     const isAdmin = useAppSelector((state) => state.isAdmin);
     const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -169,8 +174,8 @@ export default function Page() {
     }
 
     return (
-        <div className="w-full h-full flex justify-center items-start">
-            <div className="relative w-[700px] h-auto grid grid-cols-1 md:grid-cols-2 gap-0 pt-10 px-6 sm:px-0">
+        <div className="w-full h-full flex flex-col items-center gap-12 pb-16">
+            <div className="relative w-full max-w-[700px] h-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-0 pt-10 px-6 sm:px-0">
                 {isEditMode ? (
                     <>
                         <div className="absolute top-2 right-2 flex gap-2">
@@ -198,11 +203,9 @@ export default function Page() {
 
                             <div className="absolute top-0 left-0 flex flex-col justify-center items-center gap-2">
                                 <label
-                                    className={`cursor-pointer right-0 px-2 py-0.5
-                                    border-2 border-btn-primary-border rounded-[10px]
-                                    bg-btn-primary-bg text-btn-primary-text text-s
-                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
-                                        duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+                                    className={`inline-flex items-center cursor-pointer px-3.5 py-2 rounded-lg
+                                    bg-btn-primary-bg text-btn-primary-text text-[13px] font-semibold
+                                    hover:opacity-[0.88] duration-150 ${isSaving ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change
                                     <input
@@ -220,7 +223,7 @@ export default function Page() {
                                         }}
                                     />
                                 </label>
-                                <Button variant={ButtonVariant.DANGER} onClick={deleteUserImage} disabled={isSaving}>
+                                <Button variant={ButtonVariant.DANGER} onClick={deleteUserImage} disabled={isSaving} size={ButtonSize.SMALL}>
                                     Delete
                                 </Button>
                             </div>
@@ -250,11 +253,9 @@ export default function Page() {
                             />
                             <div className="flex gap-1">
                                 <label
-                                    className={`cursor-pointer right-0 px-2 py-0.5
-                                    border-2 border-btn-primary-border rounded-[10px]
-                                    bg-btn-primary-bg text-btn-primary-text text-s
-                                    hover:bg-btn-primary-hover-bg hover:text-btn-primary-hover-text
-                                        duration-300 ${isSaving ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''}`}
+                                    className={`inline-flex items-center cursor-pointer px-3.5 py-2 rounded-lg
+                                    bg-btn-primary-bg text-btn-primary-text text-[13px] font-semibold
+                                    hover:opacity-[0.88] duration-150 ${isSaving ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}
                                 >
                                     Change CV
                                     <input
@@ -269,7 +270,7 @@ export default function Page() {
                                         }}
                                     />
                                 </label>
-                                <Button variant={ButtonVariant.DANGER} onClick={deleteCv} disabled={isSaving}>
+                                <Button variant={ButtonVariant.DESTRUCTIVE_OUTLINE} onClick={deleteCv} disabled={isSaving} size={ButtonSize.SMALL}>
                                     Delete CV
                                 </Button>
                             </div>
@@ -281,8 +282,8 @@ export default function Page() {
                 ) : (
                     <>
                         {isAdmin && (
-                            <div className="absolute top-2 right-2">
-                                <Button onClick={toggleEditMode} variant={ButtonVariant.PRIMARY}>
+                            <div className="absolute top-2 right-2 z-10">
+                                <Button onClick={toggleEditMode} variant={ButtonVariant.PRIMARY} size={ButtonSize.SMALL}>
                                     Edit
                                 </Button>
                             </div>
@@ -295,23 +296,43 @@ export default function Page() {
                                     user.userImages.find((userImage) => userImage.place === UserImagePlace.LANDING_PAGE)
                                         ?.url ?? `/default-avatar-profile-icon.png`
                                 }
-                                width={200}
-                                height={200}
-                                className="w-[200px] h-[200px] object-cover rounded-full"
+                                width={208}
+                                height={208}
+                                className="w-[208px] h-[208px] object-cover rounded-full border border-border-muted"
                             />
                         </div>
 
-                        <div className="h-full flex flex-col justify-start items-center gap-2 py-2">
-                            <p className="text-2xl font-bold text-center text-brand-primary">{user.fullName}</p>
-                            <p className="text-l font-semibold text-center text-brand-secondary">{user.headline}</p>
-                            <p className="text-center">{user.bio}</p>
-                            <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
-                                View CV
-                            </Button>
+                        <div className="h-full flex flex-col justify-center items-center md:items-start text-center md:text-left gap-0 py-2">
+                            {user.headline && (
+                                <p className="font-mono text-xs tracking-[0.14em] uppercase text-text-muted mb-3.5 break-words">
+                                    {user.headline}
+                                </p>
+                            )}
+                            <h1 className="text-[32px] sm:text-[40px] md:text-[44px] leading-[1.08] md:leading-[1.05] font-bold tracking-[-0.025em] text-text-primary mb-4 break-words">
+                                {user.fullName}
+                            </h1>
+                            {user.bio && (
+                                <p className="text-base sm:text-lg leading-[1.5] text-text-secondary mb-7 max-w-[420px]">
+                                    {user.bio}
+                                </p>
+                            )}
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                                <Button onClick={viewCv} variant={ButtonVariant.PRIMARY} size={ButtonSize.LARGE}>
+                                    View CV
+                                    <Download size={14} />
+                                </Button>
+                                <Button onClick={() => router.push('/portfolio')} variant={ButtonVariant.SECONDARY} size={ButtonSize.LARGE}>
+                                    View work
+                                </Button>
+                            </div>
                         </div>
                     </>
                 )}
             </div>
+
+            <Contacts contacts={user.contacts} />
+
+            <div className='h-4 w-full pt-4'></div>
         </div>
     );
 }

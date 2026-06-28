@@ -11,15 +11,15 @@ export default function ThemeToggle() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => setMounted(true), []);
 
-    if (!mounted) return <div className="w-5 h-5" />;
+    if (!mounted) return <div className="w-[34px] h-[34px]" />;
 
     return (
         <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="text-navbar-text hover:text-text-muted transition-colors duration-250 cursor-pointer"
+            className="w-[34px] h-[34px] flex items-center justify-center border border-border-muted rounded-lg text-navbar-text hover:border-text-muted transition-colors duration-150 cursor-pointer shrink-0"
             aria-label="Toggle theme"
         >
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
         </button>
     );
 }

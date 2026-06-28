@@ -191,108 +191,98 @@ export function Contacts({ contacts }: { contacts: Contact[] }) {
     const activeContact = activeId ? localContacts.find((c) => c.id === activeId) : null;
 
     return (localContacts.length !== 0 || isAdmin ? (
-        <div
-            className={`fixed left-2 bottom-0 sm:left-8 md:left-12 sm:bottom-0 z-50
-                flex flex-col gap-4 sm:gap-4 justify-center items-center`}
-        >
-            {localContacts.map((contact) => (
-                <ContactLink key={contact.id} contact={contact} />
-            ))}
+            <div className="relative w-full flex flex-row flex-wrap gap-5 justify-center items-center">
+                {localContacts.map((contact) => (
+                    <ContactLink key={contact.id} contact={contact} />
+                ))}
 
-            <span className={`block w-[2px] ${localContacts.length > 7 ? 'h-[125px]' : 'h-[150px]'} rounded-full bg-border-theme`}></span>
+                {isAdmin && (
+                    <button
+                        onClick={() => setIsPanelOpen((prev) => !prev)}
+                        className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
+                    >
+                        <Pencil size={16} />
+                    </button>
+                )}
 
-            {isAdmin && (
-                <button
-                    onClick={() => setIsPanelOpen((prev) => !prev)}
-                    className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
-                >
-                    <Pencil size={16} />
-                </button>
-            )}
-
-            {isAdmin && (
-                <div className="relative">
-
-                    {isPanelOpen && (
-                        <div className="absolute left-2 bottom-1 sm:bottom-[150px] sm:left-8 md:left-12 w-[350px] bg-surface border border-border-muted rounded-xl shadow-lg p-4">
-                            <div className="flex justify-between items-center mb-3">
-                                <h3 className="font-semibold text-sm">Contacts</h3>
-                                <button
-                                    onClick={() => {
-                                        setIsPanelOpen(false);
-                                        cancelEdit();
-                                    }}
-                                    className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragStart={handleDragStart}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <SortableContext items={localContacts.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-                                    <div className="flex flex-col gap-2 mb-3">
-                                        {localContacts.map((contact) => (
-                                            <div key={contact.id}>
-                                                {editForm?.id === contact.id ? (
-                                                    <ContactForm
-                                                        form={editForm}
-                                                        onFieldChange={(field, value) => updateForm(setEditForm, field, value)}
-                                                        onSave={updateContact}
-                                                        onCancel={cancelEdit}
-                                                        saveLabel="Save"
-                                                        isSaving={isSaving}
-                                                    />
-                                                ) : (
-                                                    <SortableContactItem
-                                                        contact={contact}
-                                                        onEdit={() => startEdit(contact)}
-                                                        onDelete={() => deleteContact(contact.id)}
-                                                        isSaving={isSaving}
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                </SortableContext>
-                                <DragOverlay>
-                                    {activeContact ? (
-                                        <div className="flex items-center gap-2 bg-surface border border-border-muted rounded-lg px-2 py-1 shadow-lg select-none">
-                                            <span className="text-sm shrink-0">
-                                                {contactIconMap[activeContact.label] ?? contactIconMap[ContactLabel.CUSTOM]}
-                                            </span>
-                                            <span className="text-xs font-medium">
-                                                {activeContact.name}
-                                            </span>
-                                        </div>
-                                    ) : null}
-                                </DragOverlay>
-                            </DndContext>
-
-                            {localContacts.length >= MAX_CONTACTS ? (
-                                <p className="text-xs text-text-muted">Maximum of {MAX_CONTACTS} contacts reached</p>
-                            ) : (
-                                <div className="flex flex-col gap-2 border-t border-border-subtle pt-3">
-                                    <p className="text-xs text-text-tertiary font-medium">Add Contact</p>
-                                    <ContactForm
-                                        form={addForm}
-                                        onFieldChange={(field, value) => updateForm(setAddForm, field, value)}
-                                        onSave={createContact}
-                                        onCancel={() => setAddForm(DEFAULT_ADD_FORM)}
-                                        saveLabel="Add"
-                                        isSaving={isSaving}
-                                    />
+                {isAdmin && isPanelOpen && (
+                    <div className="absolute top-full mt-3 left-1/2 -translate-x-1/2 w-[350px] max-w-[90vw] bg-surface border border-border-muted rounded-xl shadow-lg p-4 z-50">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h3 className="font-semibold text-sm">Contacts</h3>
+                                    <button
+                                        onClick={() => {
+                                            setIsPanelOpen(false);
+                                            cancelEdit();
+                                        }}
+                                        className="text-text-muted hover:text-text-primary duration-300 cursor-pointer"
+                                    >
+                                        <X size={16} />
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                    )}
-                </div>
-            )}
-        </div>
+
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragStart={handleDragStart}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <SortableContext items={localContacts.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+                                        <div className="flex flex-col gap-2 mb-3">
+                                            {localContacts.map((contact) => (
+                                                <div key={contact.id}>
+                                                    {editForm?.id === contact.id ? (
+                                                        <ContactForm
+                                                            form={editForm}
+                                                            onFieldChange={(field, value) => updateForm(setEditForm, field, value)}
+                                                            onSave={updateContact}
+                                                            onCancel={cancelEdit}
+                                                            saveLabel="Save"
+                                                            isSaving={isSaving}
+                                                        />
+                                                    ) : (
+                                                        <SortableContactItem
+                                                            contact={contact}
+                                                            onEdit={() => startEdit(contact)}
+                                                            onDelete={() => deleteContact(contact.id)}
+                                                            isSaving={isSaving}
+                                                        />
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </SortableContext>
+                                    <DragOverlay>
+                                        {activeContact ? (
+                                            <div className="flex items-center gap-2 bg-surface border border-border-muted rounded-lg px-2 py-1 shadow-lg select-none">
+                                                <span className="text-sm shrink-0">
+                                                    {contactIconMap[activeContact.label] ?? contactIconMap[ContactLabel.CUSTOM]}
+                                                </span>
+                                                <span className="text-xs font-medium">
+                                                    {activeContact.name}
+                                                </span>
+                                            </div>
+                                        ) : null}
+                                    </DragOverlay>
+                                </DndContext>
+
+                                {localContacts.length >= MAX_CONTACTS ? (
+                                    <p className="text-xs text-text-muted">Maximum of {MAX_CONTACTS} contacts reached</p>
+                                ) : (
+                                    <div className="flex flex-col gap-2 border-t border-border-subtle pt-3">
+                                        <p className="text-xs text-text-tertiary font-medium">Add Contact</p>
+                                        <ContactForm
+                                            form={addForm}
+                                            onFieldChange={(field, value) => updateForm(setAddForm, field, value)}
+                                            onSave={createContact}
+                                            onCancel={() => setAddForm(DEFAULT_ADD_FORM)}
+                                            saveLabel="Add"
+                                            isSaving={isSaving}
+                                        />
+                                    </div>
+                                )}
+                    </div>
+                )}
+            </div>
         ) : (
             <></>
         )

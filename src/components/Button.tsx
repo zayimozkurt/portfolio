@@ -21,7 +21,7 @@ export function Button({
     [key: string]: unknown;
 }) {
     const baseStyles =
-        'cursor-pointer border-2 rounded-[10px] duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none whitespace-nowrap';
+        'inline-flex items-center justify-center gap-2 cursor-pointer border rounded-[10px] font-semibold duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none whitespace-nowrap';
     const sizeStyles = buttonSizeStyles[size];
 
     const variantStyles = buttonVariantStyles[variant];

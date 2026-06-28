@@ -7,4 +7,7 @@ export enum ContactLabel {
     LINKEDIN = 'LinkedIn',
     GITHUB = 'GitHub',
     UPWORK = 'Upwork',
+    GUMROAD = 'Gumroad',
+    REDDIT = 'Reddit',
+    BUYMEACOFFEE = 'Buy Me a Coffee',
 }

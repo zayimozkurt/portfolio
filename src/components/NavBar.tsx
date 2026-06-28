@@ -1,55 +1,80 @@
 'use client';
 
-import { Button } from '@/components/Button';
 import ThemeToggle from '@/components/ThemeToggle';
 import { links } from '@/constants/links.constant';
-import { ButtonSize } from '@/enums/button-size.enum';
-import { ButtonVariant } from '@/enums/button-variant.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { isAdminActions } from '@/store/slices/is-admin.slice';
 import { ResponseBase } from '@/types/response/response-base';
+import { getInitials } from '@/utils/get-initials.util';
 import Link from 'next/link';
-import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function NavBar() {
     const dispatch = useAppDispatch();
-    const [isOpen, setIsOpen] = useState(false);
     const isAdmin = useAppSelector((state) => state.isAdmin);
+    const user = useAppSelector((state) => state.user);
+    const pathname = usePathname();
+
+    const initials = getInitials(user.fullName) || '–';
 
     async function signOut() {
         const response: ResponseBase = await (
             await fetch(`/api/admin/sign-out`, {
-                method: 'POST'
+                method: 'POST',
             })
         ).json();
 
-        if (response.isSuccess)
-            dispatch(isAdminActions.set(false));
+        if (response.isSuccess) dispatch(isAdminActions.set(false));
     }
 
     return (
-        <nav className="fixed top-0 z-50 w-full h-auto flex flex-col justify-center items-center bg-navbar-bg border-b border-border-muted/10">
+        <nav className="fixed top-0 z-50 w-full bg-navbar-bg backdrop-blur-md backdrop-saturate-150 border-b border-border-muted">
+            <div className="max-w-[1120px] mx-auto h-[58px] px-4 sm:px-7 flex items-center justify-between gap-4">
+                {/* Left — initials logo */}
+                <Link href="/" className="flex items-center shrink-0" aria-label="Home">
+                    <span className="w-[30px] h-[30px] rounded-lg bg-btn-primary-bg text-btn-primary-text font-mono text-[13px] font-semibold flex items-center justify-center">
+                        {initials}
+                    </span>
+                </Link>
 
-            <div className={`w-full ${isAdmin ? 'p-2' : 'p-4'} flex flex-row justify-center items-center ${isAdmin ? 'gap-6' : 'gap-10'} md:gap-12 text-navbar-text text-sm overflow-x-auto whitespace-nowrap scrollbar-hide`}>
-                {isAdmin && (
-                    <div className="flex flex-col justify-center items-center gap-1">
-                        <p className="text-[10px] text-red-500 uppercase font-bold">Admin</p>
-                        <Button onClick={signOut} variant={ButtonVariant.PRIMARY} size={ButtonSize.SMALL}>
-                            SignOut
-                        </Button>
-                    </div>
-                )}
-                {links.map((link, index) => (
-                    <Link
-                        key={`link-${index}-${link.name}`}
-                        href={link.href}
-                        className="hover:text-text-muted transition-colors duration-250 flex-shrink-0"
-                    >
-                        <p>{link.name}</p>
-                    </Link>
-                ))}
+                {/* Center — nav links */}
+                <div className="flex items-center gap-5 sm:gap-7 min-w-0 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    {links.map((link, index) => {
+                        const isActive =
+                            link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
+                        return (
+                            <Link
+                                key={`link-${index}-${link.name}`}
+                                href={link.href}
+                                className={`font-mono text-[13px] py-[18px] transition-colors duration-150 flex-shrink-0 ${
+                                    isActive
+                                        ? 'text-text-primary font-semibold border-b-2 border-text-primary'
+                                        : 'text-text-tertiary hover:text-text-primary'
+                                }`}
+                            >
+                                {link.name}
+                            </Link>
+                        );
+                    })}
+                </div>
 
-                <ThemeToggle />
+                {/* Right — admin controls + theme toggle */}
+                <div className="flex items-center gap-3 shrink-0">
+                    {isAdmin && (
+                        <>
+                            <span className="font-mono text-[10px] font-semibold tracking-[0.14em] text-danger border border-danger rounded-[5px] px-[7px] py-[3px]">
+                                ADMIN
+                            </span>
+                            <button
+                                onClick={signOut}
+                                className="font-mono text-xs text-danger hover:underline cursor-pointer shrink-0"
+                            >
+                                Sign out
+                            </button>
+                        </>
+                    )}
+                    <ThemeToggle />
+                </div>
             </div>
         </nav>
     );

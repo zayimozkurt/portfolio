@@ -4,102 +4,103 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
+    /* Design system: monochrome + claret. JetBrains Mono / Helvetica Neue. */
     --background: #ffffff;
-    --foreground: #171717;
+    --foreground: #161618;
 
     /* Surfaces */
-    --surface: #ffffff;
-    --surface-secondary: #f9fafb;
-    --surface-tertiary: #f3f4f6;
+    --surface: #fafafa;
+    --surface-secondary: #fafafa;
+    --surface-tertiary: #f3f3f4;
 
     /* Borders */
-    --border-theme: #171717;
-    --border-muted: #e5e7eb;
-    --border-subtle: #f3f4f6;
+    --border-theme: #161618;
+    --border-muted: #e7e7ea;
+    --border-subtle: #f3f3f4;
 
     /* Text */
-    --text-primary: #171717;
-    --text-secondary: #374151;
-    --text-tertiary: #6b7280;
-    --text-muted: #9ca3af;
+    --text-primary: #161618;
+    --text-secondary: #6b6b73;
+    --text-tertiary: #6b6b73;
+    --text-muted: #9a9aa3;
 
-    /* Brand */
-    --brand-primary: #003366;
-    --brand-secondary: #174978;
-    --brand-accent: #00316E;
+    /* Brand — collapsed to monochrome accent */
+    --brand-primary: #161618;
+    --brand-secondary: #6b6b73;
+    --brand-accent: #161618;
 
-    /* Button Primary */
-    --btn-primary-bg: #171717;
+    /* Button Primary (accent) */
+    --btn-primary-bg: #161618;
     --btn-primary-text: #ffffff;
-    --btn-primary-border: #171717;
-    --btn-primary-hover-bg: #ffffff;
-    --btn-primary-hover-text: #171717;
+    --btn-primary-border: #161618;
+    --btn-primary-hover-bg: #161618;
+    --btn-primary-hover-text: #ffffff;
 
-    /* NavBar */
-    --navbar-bg: #000000;
-    --navbar-text: #ffffff;
+    /* NavBar — translucent header for blur backdrop */
+    --navbar-bg: rgba(255, 255, 255, 0.82);
+    --navbar-text: #161618;
 
     /* Input */
-    --input-border: #171717;
-    --input-text: #171717;
-    --input-placeholder: #9ca3af;
+    --input-border: #e7e7ea;
+    --input-text: #161618;
+    --input-placeholder: #9a9aa3;
 
     /* Scrollbar */
-    --scrollbar-track: #f1f1f1;
-    --scrollbar-thumb: #888888;
+    --scrollbar-track: #f3f3f4;
+    --scrollbar-thumb: #c7c7cc;
 
-    /* Danger */
-    --danger: #991b1b;
+    /* Danger (claret) */
+    --danger: #8f1d2c;
     --danger-text: #ffffff;
 }
 
 .dark {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0a0a0b;
+    --foreground: #f4f4f5;
 
     /* Surfaces */
-    --surface: #18181b;
-    --surface-secondary: #1e1e22;
-    --surface-tertiary: #27272a;
+    --surface: #141416;
+    --surface-secondary: #141416;
+    --surface-tertiary: #1c1c20;
 
     /* Borders */
-    --border-theme: #a1a1aa;
-    --border-muted: #3f3f46;
-    --border-subtle: #27272a;
+    --border-theme: #f4f4f5;
+    --border-muted: #2a2a30;
+    --border-subtle: #1c1c20;
 
     /* Text */
     --text-primary: #f4f4f5;
-    --text-secondary: #d4d4d8;
+    --text-secondary: #a1a1aa;
     --text-tertiary: #a1a1aa;
-    --text-muted: #71717a;
+    --text-muted: #6f6f78;
 
-    /* Brand */
-    --brand-primary: #60a5fa;
-    --brand-secondary: #93c5fd;
-    --brand-accent: #3b82f6;
+    /* Brand — collapsed to monochrome accent */
+    --brand-primary: #f4f4f5;
+    --brand-secondary: #a1a1aa;
+    --brand-accent: #f4f4f5;
 
-    /* Button Primary */
+    /* Button Primary (accent) */
     --btn-primary-bg: #f4f4f5;
-    --btn-primary-text: #18181b;
+    --btn-primary-text: #0a0a0b;
     --btn-primary-border: #f4f4f5;
-    --btn-primary-hover-bg: #18181b;
-    --btn-primary-hover-text: #f4f4f5;
+    --btn-primary-hover-bg: #f4f4f5;
+    --btn-primary-hover-text: #0a0a0b;
 
-    /* NavBar */
-    --navbar-bg: #09090b;
+    /* NavBar — translucent header for blur backdrop */
+    --navbar-bg: rgba(10, 10, 11, 0.74);
     --navbar-text: #f4f4f5;
 
     /* Input */
-    --input-border: #3f3f46;
+    --input-border: #2a2a30;
     --input-text: #f4f4f5;
-    --input-placeholder: #71717a;
+    --input-placeholder: #6f6f78;
 
     /* Scrollbar */
-    --scrollbar-track: #27272a;
-    --scrollbar-thumb: #52525b;
+    --scrollbar-track: #1c1c20;
+    --scrollbar-thumb: #3f3f46;
 
-    /* Danger */
-    --danger: #dc2626;
+    /* Danger (claret) */
+    --danger: #d24557;
     --danger-text: #ffffff;
 }
 
@@ -133,8 +134,8 @@
     --color-scrollbar-thumb: var(--scrollbar-thumb);
     --color-danger: var(--danger);
     --color-danger-text: var(--danger-text);
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+    --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
 }
 
 body {

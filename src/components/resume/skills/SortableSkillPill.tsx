@@ -4,7 +4,7 @@ import { SKILL_NAME_CHAR_LIMIT } from '@/constants/skill-name-char-limit.constan
 import { Skill } from '@/generated/client';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Check, GripVertical, Pencil } from 'lucide-react';
+import { Check, GripVertical, Pencil, X } from 'lucide-react';
 import React, { useState } from 'react';
 
 export function SortableSkillPill({
@@ -115,9 +115,10 @@ export function SortableSkillPill({
                 <button
                     onClick={() => onDelete(skill.id, skill.name)}
                     disabled={isSaving}
-                    className={`cursor-pointer ${isSaving ? 'text-red-200' : 'text-red-400'} hover:text-red-800 transition-colors ml-0.5`}
+                    className="w-[18px] h-[18px] shrink-0 flex items-center justify-center rounded-full bg-danger/10 text-danger hover:bg-danger/20 transition-colors cursor-pointer ml-0.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                    aria-label={`Remove ${skill.name}`}
                 >
-                    &times;
+                    <X size={11} />
                 </button>
             </span>
         </div>

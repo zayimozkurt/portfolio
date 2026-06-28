@@ -1,16 +1,12 @@
 import RootBody from '@/components/RootBody';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
 import React from 'react';
 import './globals.css';
 
-const geistSans = Geist({
-    variable: '--font-geist-sans',
-    subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-    variable: '--font-geist-mono',
+// Sans is a pure system stack (Helvetica Neue) set directly in globals.css.
+const jetBrainsMono = JetBrains_Mono({
+    variable: '--font-jetbrains-mono',
     subsets: ['latin'],
 });
 
@@ -26,7 +22,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="w-full h-full" suppressHydrationWarning>
-            <body className={`w-full h-full ${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body className={`w-full h-full font-sans ${jetBrainsMono.variable} antialiased`}>
                 <RootBody>{children}</RootBody>
             </body>
         </html>
