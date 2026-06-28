@@ -29,7 +29,7 @@ export default function NavBar() {
 
     return (
         <nav className="fixed top-0 z-50 w-full bg-navbar-bg backdrop-blur-md backdrop-saturate-150 border-b border-border-muted">
-            <div className="max-w-[1120px] mx-auto h-[58px] px-4 sm:px-7 flex items-center justify-between gap-4">
+            <div className="max-w-[1120px] mx-auto h-[58px] px-3 sm:px-7 flex items-center justify-between gap-2 sm:gap-4">
                 {/* Left — initials logo */}
                 <Link href="/" className="flex items-center shrink-0" aria-label="Home">
                     <span className="w-[30px] h-[30px] rounded-lg bg-btn-primary-bg text-btn-primary-text font-mono text-[13px] font-semibold flex items-center justify-center">
@@ -38,7 +38,7 @@ export default function NavBar() {
                 </Link>
 
                 {/* Center — nav links */}
-                <div className="flex items-center gap-5 sm:gap-7 min-w-0 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                <div className="flex items-center gap-4 sm:gap-7 min-w-0 whitespace-nowrap">
                     {links.map((link, index) => {
                         const isActive =
                             link.href === '/' ? pathname === '/' : pathname.startsWith(link.href);
@@ -59,10 +59,10 @@ export default function NavBar() {
                 </div>
 
                 {/* Right — admin controls + theme toggle */}
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     {isAdmin && (
-                        <>
-                            <span className="font-mono text-[10px] font-semibold tracking-[0.14em] text-danger border border-danger rounded-[5px] px-[7px] py-[3px]">
+                        <div className="flex flex-col items-end gap-1 sm:flex-row sm:items-center sm:gap-3">
+                            <span className="font-mono text-[10px] font-semibold tracking-[0.14em] text-danger border border-danger rounded-[5px] px-[7px] py-[2px] sm:py-[3px]">
                                 ADMIN
                             </span>
                             <button
@@ -71,7 +71,7 @@ export default function NavBar() {
                             >
                                 Sign out
                             </button>
-                        </>
+                        </div>
                     )}
                     <ThemeToggle />
                 </div>

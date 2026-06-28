@@ -191,7 +191,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
         <div className="w-full h-auto">
             <div className="w-full h-auto relative">
                 {isAdmin && !isEditingMeta && (
-                    <div className="sm:absolute top-4 right-4 flex justify-end gap-2 p-2">
+                    <div className="sm:absolute top-4 right-4 flex justify-end gap-2 p-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                         <Button onClick={toggleMetaEditMode} variant={ButtonVariant.PRIMARY}>
                             Edit
                         </Button>
@@ -199,7 +199,7 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                 )}
 
                 {isEditingMeta && (
-                    <div className="sm:absolute top-4 right-4 flex justify-end gap-2 p-2">
+                    <div className="sm:absolute top-4 right-4 z-30 flex justify-end gap-2 p-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                         <Button onClick={onSave} variant={ButtonVariant.PRIMARY} disabled={isSaving}>
                             {isSaving ? 'Saving...' : 'Save'}
                         </Button>
@@ -209,11 +209,11 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                     </div>
                 )}
 
-                <div className="w-full h-auto flex justify-start items-center gap-4 sm:gap-8 p-2 sm:p-6">
+                <div className={`w-full h-auto flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-8 p-2 sm:p-6 ${isEditingMeta ? 'sm:pr-[200px]' : ''}`}>
                     <BackButton href="/portfolio" tooltip="Back to Portfolio" />
 
                     {isEditingMeta ? (
-                        <div className='w-[300px] sm:w-[400px] relative'>
+                        <div className='w-full sm:flex-1 min-w-0 max-w-[300px] sm:max-w-[400px] relative'>
                             <Input
                                 value={title}
                                 onChange={(e) => {
@@ -251,13 +251,13 @@ export default function PageClient({ initialPortfolioItem }: { initialPortfolioI
                         <p className="whitespace-pre-wrap">{portfolioItem.description}</p>
                     )}
 
-                    <div className='w-[300px] h-auto items-center flex flex-col gap-2'>
+                    <div className='w-full max-w-[300px] h-auto items-center flex flex-col gap-2'>
                         <Image
                             alt='portfolio item cover image'
                             src={coverImage ? URL.createObjectURL(coverImage) : portfolioItem.coverImageUrl ? portfolioItem.coverImageUrl : '/portfolio-item-cover-placeholder-image.png'}
                             width={300}
                             height={150}
-                            className="object-contain w-auto h-[150] max-w-[300] rounded-[20px]"
+                            className="object-contain w-auto h-[150px] max-w-full rounded-[20px]"
                         />
 
                         {isEditingMeta &&

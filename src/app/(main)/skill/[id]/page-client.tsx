@@ -105,14 +105,14 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
         <div className="w-full h-full">
             <div className="relative">
                 {isAdmin && !isEditingMeta && (
-                    <div className="absolute top-4 right-4">
+                    <div className="sm:absolute top-4 right-4 flex justify-end p-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                         <Button onClick={toggleMetaEditMode} variant={ButtonVariant.PRIMARY}>
                             Edit
                         </Button>
                     </div>
                 )}
                 {isEditingMeta && (
-                    <div className="absolute top-4 right-4 flex gap-2">
+                    <div className="sm:absolute top-4 right-4 z-30 flex justify-end gap-2 p-2 [&>button]:flex-1 sm:[&>button]:flex-none">
                         <Button onClick={handleSaveMeta} variant={ButtonVariant.PRIMARY} disabled={isSaving}>
                             {isSaving ? 'Saving...' : 'Save'}
                         </Button>
@@ -121,7 +121,7 @@ export default function PageClient({ skill }: { skill: ExtendedSkillModel }) {
                         </Button>
                     </div>
                 )}
-                <div className="w-full h-auto flex justify-start items-center gap-4 sm:gap-8 p-2 sm:p-6">
+                <div className={`w-full h-auto flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-8 p-2 sm:p-6 ${isEditingMeta ? 'sm:pr-[200px]' : ''}`}>
                     <BackButton href={`/resume#${ResumeNavigationItemId.SKILLS}`} tooltip="Back to Skills" />
                     {isEditingMeta ? (
                         <Input
