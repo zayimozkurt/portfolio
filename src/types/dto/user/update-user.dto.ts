@@ -36,4 +36,8 @@ export class UpdateUserDto {
     @IsOptional()
     @IsString()
     cvUrl?: string | null;
+
+    @IsOptional()
+    @IsString()
+    resumeMode?: string;
 }

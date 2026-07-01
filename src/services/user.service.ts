@@ -1,3 +1,4 @@
+import { renderResumePdf } from '@/components/resume-pdf/render-resume-pdf';
 import { jwtCookieSettings } from '@/constants/cookie-settings.constant';
 import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
@@ -168,7 +169,7 @@ export class UserService {
 
             const existingCvUrl = readUserByIdResponse.user.cvUrl;
 
-            const newStoragePath = `cv_${Date.now()}`;
+            const newStoragePath = `cv_${Date.now()}.pdf`;
 
             const supabaseUploadResponse = await supabase.storage
                 .from(SupabaseBucketName.CV)
@@ -244,6 +245,65 @@ export class UserService {
             }
 
             return { isSuccess: true, message: 'cv deleted', statusCode: 200 };
+        } catch (error) {
+            console.error(error);
+            return { isSuccess: false, message: "internal server error", statusCode: 500 };
+        }
+    }
+
+    static async generateCv(): Promise<ResponseBase> {
+        try {
+            const readUserByIdResponse = await this.readById();
+            if (!readUserByIdResponse.isSuccess || !readUserByIdResponse.user)
+                throw new Error(readUserByIdResponse.message);
+
+            const user = readUserByIdResponse.user;
+            const existingCvUrl = user.cvUrl;
+
+            const fileBuffer = await renderResumePdf(user);
+
+            const newStoragePath = `cv_${Date.now()}.pdf`;
+
+            const supabaseUploadResponse = await supabase.storage
+                .from(SupabaseBucketName.CV)
+                .upload(newStoragePath, fileBuffer, { contentType: 'application/pdf' });
+
+            if (supabaseUploadResponse.error) {
+                console.error(supabaseUploadResponse.error);
+                return {
+                    isSuccess: false,
+                    message: 'error while uploading to supabase',
+                    statusCode: 500,
+                };
+            }
+
+            const {
+                data: { publicUrl },
+            } = supabase.storage.from(SupabaseBucketName.CV).getPublicUrl(newStoragePath);
+
+            const updateUserResponse = await this.update({
+                cvUrl: publicUrl,
+            } as UpdateUserDto);
+            if (!updateUserResponse.isSuccess) {
+                const supabaseResponse = await supabase.storage.from(SupabaseBucketName.CV).remove([newStoragePath]);
+
+                if (supabaseResponse.error)
+                    console.error(supabaseResponse.error);
+
+                return updateUserResponse;
+            }
+
+            if (existingCvUrl && existingCvUrl.length !== 0) {
+                const oldFileName = existingCvUrl.split('/').pop()?.split('?')[0];
+
+                if (oldFileName) {
+                    const { error } = await supabase.storage.from(SupabaseBucketName.CV).remove([oldFileName]);
+
+                    if (error) console.error(error);
+                }
+            }
+
+            return { isSuccess: true, message: 'cv generated', statusCode: 200 };
         } catch (error) {
             console.error(error);
             return { isSuccess: false, message: "internal server error", statusCode: 500 };

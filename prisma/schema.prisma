@@ -20,7 +20,8 @@ model User {
     bio          String?
     about        String?
     location     String?
-    cvUrl        String?
+    cvUrl      String?
+    resumeMode String  @default("CUSTOM")
 
     userImages     UserImage[]
     contacts       Contact[]

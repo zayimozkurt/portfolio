@@ -23,6 +23,7 @@
         "@next/env": "^16.0.0",
         "@prisma/client": "^6.18.0",
         "@prisma/nextjs-monorepo-workaround-plugin": "^7.0.0",
+        "@react-pdf/renderer": "^4.5.1",
         "@reduxjs/toolkit": "^2.9.2",
         "@supabase/supabase-js": "^2.93.3",
         "@tailwindcss/typography": "^0.5.19",

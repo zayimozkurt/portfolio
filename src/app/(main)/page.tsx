@@ -6,6 +6,7 @@ import { Input } from '@/components/Input';
 import { TextArea } from '@/components/TextArea';
 import { ButtonSize } from '@/enums/button-size.enum';
 import { ButtonVariant } from '@/enums/button-variant.enum';
+import { ResumeMode } from '@/enums/resume-mode.enum';
 import { UserImagePlace } from '@/enums/user-image-place.enum';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
@@ -27,14 +28,17 @@ export default function Page() {
         fullName: user.fullName,
         headline: user.headline ?? undefined,
         bio: user.bio ?? undefined,
+        resumeMode: user.resumeMode ?? ResumeMode.CUSTOM,
     });
     const [userImageFile, setUserImageFile] = useState<File | null>(null);
     const [cvFile, setCvFile] = useState<File | null>(null);
     const [isSaving, setIsSaving] = useState(false);
 
+    const activeCvUrl = user.cvUrl;
+
     function viewCv() {
-        if (user.cvUrl && user.cvUrl.length !== 0) {
-            window.open(user.cvUrl, '_blank');
+        if (activeCvUrl && activeCvUrl.length !== 0) {
+            window.open(activeCvUrl, '_blank');
         }
     }
 
@@ -43,6 +47,7 @@ export default function Page() {
             fullName: user.fullName,
             headline: user.headline ?? undefined,
             bio: user.bio ?? undefined,
+            resumeMode: user.resumeMode ?? ResumeMode.CUSTOM,
         });
         setUserImageFile(null);
         setCvFile(null);
@@ -160,6 +165,24 @@ export default function Page() {
         }
     }
 
+    async function generateCv() {
+        setIsSaving(true);
+        try {
+            const response: ResponseBase = await (
+                await fetch('/api/admin/cv/generate', {
+                    method: 'POST',
+                })
+            ).json();
+
+            if (response.isSuccess) {
+                await dispatch(userActions.refresh());
+            }
+            alert(response.message);
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
     async function onSave() {
         setIsSaving(true);
 
@@ -251,32 +274,82 @@ export default function Page() {
                                 className="w-full text-center resize-none whitespace-pre-wrap break-words"
                                 placeholder="bio..."
                             />
-                            <div className="flex gap-1">
-                                <label
-                                    className={`inline-flex items-center cursor-pointer px-3.5 py-2 rounded-lg
-                                    bg-btn-primary-bg text-btn-primary-text text-[13px] font-semibold
-                                    hover:opacity-[0.88] duration-150 ${isSaving ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}
-                                >
-                                    Change CV
-                                    <input
-                                        name="file"
-                                        type="file"
-                                        className="hidden"
-                                        disabled={isSaving}
-                                        onChange={(event) => {
-                                            if (event.currentTarget.files?.[0].type === 'application/pdf')
-                                                setCvFile(event.currentTarget.files?.[0] ?? null);
-                                            else alert('uploaded file must be type of pdf');
-                                        }}
-                                    />
-                                </label>
-                                <Button variant={ButtonVariant.DESTRUCTIVE_OUTLINE} onClick={deleteCv} disabled={isSaving} size={ButtonSize.SMALL}>
-                                    Delete CV
-                                </Button>
+                            <div className="w-full flex flex-col items-center gap-2 mt-1">
+                                <div className="inline-flex rounded-lg border border-border-muted overflow-hidden text-[13px] font-semibold">
+                                    {[
+                                        { mode: ResumeMode.CUSTOM, label: 'Upload custom' },
+                                        { mode: ResumeMode.AUTO, label: 'Auto-generate' },
+                                        { mode: ResumeMode.NONE, label: 'Hidden' },
+                                    ].map(({ mode, label }) => (
+                                        <button
+                                            key={mode}
+                                            type="button"
+                                            disabled={isSaving}
+                                            onClick={() => setProfileInfo((prev) => ({ ...prev, resumeMode: mode }))}
+                                            className={`px-3 py-1.5 duration-150 ${
+                                                profileInfo.resumeMode === mode
+                                                    ? 'bg-btn-primary-bg text-btn-primary-text'
+                                                    : 'text-text-secondary hover:opacity-80'
+                                            } ${isSaving ? 'opacity-40 cursor-not-allowed' : ''}`}
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {profileInfo.resumeMode === ResumeMode.AUTO ? (
+                                    <p className="text-xs text-text-muted text-center max-w-[280px]">
+                                        The CV is generated from your profile, experience, education and skills. Click
+                                        Regenerate after editing them.
+                                    </p>
+                                ) : profileInfo.resumeMode === ResumeMode.NONE ? (
+                                    <p className="text-xs text-text-muted text-center max-w-[280px]">
+                                        No &quot;View CV&quot; button is shown to visitors.
+                                    </p>
+                                ) : (
+                                    <p className="text-xs text-text-muted text-center max-w-[280px]">
+                                        Visitors see the PDF file you upload.
+                                    </p>
+                                )}
+
+                                {profileInfo.resumeMode === ResumeMode.CUSTOM && (
+                                    <div className="flex gap-1">
+                                        <label
+                                            className={`inline-flex items-center cursor-pointer px-3.5 py-2 rounded-lg
+                                            bg-btn-primary-bg text-btn-primary-text text-[13px] font-semibold
+                                            hover:opacity-[0.88] duration-150 ${isSaving ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}
+                                        >
+                                            {cvFile ? 'CV selected' : 'Change CV'}
+                                            <input
+                                                name="file"
+                                                type="file"
+                                                className="hidden"
+                                                disabled={isSaving}
+                                                onChange={(event) => {
+                                                    if (event.currentTarget.files?.[0].type === 'application/pdf')
+                                                        setCvFile(event.currentTarget.files?.[0] ?? null);
+                                                    else alert('uploaded file must be type of pdf');
+                                                }}
+                                            />
+                                        </label>
+                                        <Button variant={ButtonVariant.DESTRUCTIVE_OUTLINE} onClick={deleteCv} disabled={isSaving} size={ButtonSize.SMALL}>
+                                            Delete CV
+                                        </Button>
+                                    </div>
+                                )}
+
+                                {profileInfo.resumeMode === ResumeMode.AUTO && (
+                                    <Button onClick={generateCv} variant={ButtonVariant.PRIMARY} disabled={isSaving} size={ButtonSize.SMALL}>
+                                        Regenerate CV
+                                    </Button>
+                                )}
+
+                                {profileInfo.resumeMode !== ResumeMode.NONE && (
+                                    <Button onClick={viewCv} variant={ButtonVariant.SECONDARY} size={ButtonSize.SMALL} disabled={!activeCvUrl}>
+                                        View Current CV
+                                    </Button>
+                                )}
                             </div>
-                            <Button onClick={viewCv} variant={ButtonVariant.PRIMARY}>
-                                View Current CV
-                            </Button>
                         </div>
                     </>
                 ) : (
@@ -317,10 +390,12 @@ export default function Page() {
                                 </p>
                             )}
                             <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                                <Button onClick={viewCv} variant={ButtonVariant.PRIMARY} size={ButtonSize.LARGE}>
-                                    View CV
-                                    <Download size={14} />
-                                </Button>
+                                {user.resumeMode !== ResumeMode.NONE && (
+                                    <Button onClick={viewCv} variant={ButtonVariant.PRIMARY} size={ButtonSize.LARGE}>
+                                        View CV
+                                        <Download size={14} />
+                                    </Button>
+                                )}
                                 <Button onClick={() => router.push('/portfolio')} variant={ButtonVariant.SECONDARY} size={ButtonSize.LARGE}>
                                     View work
                                 </Button>

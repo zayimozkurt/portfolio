@@ -22,6 +22,7 @@ const initialState: ExtendedUserModel = {
     about: '',
     location: '',
     cvUrl: '',
+    resumeMode: 'CUSTOM',
     skills: [],
     userImages: [],
     contacts: [],
