@@ -1,5 +1,6 @@
 import { renderResumePdf } from '@/components/resume-pdf/render-resume-pdf';
 import { jwtCookieSettings } from '@/constants/cookie-settings.constant';
+import { getSignInLockoutMinutes } from '@/constants/sign-in-lockout.constant';
 import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { DecodedJwtPayload } from '@/types/decoded-jwt-payload.interface';
@@ -36,15 +37,49 @@ export class UserService {
 
     static async signIn(userSignInDto: UserSignInDto): Promise<UserSignInResponse> {
         try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    userName: userSignInDto.userName,
-                },
-            });
-            if (!user) return { isSuccess: false, message: 'no user found associated with given username', statusCode: 404 };
+            // Single-tenant: the password alone identifies the one account, so
+            // there is no username to look up.
+            const user = await prisma.user.findFirst();
+            if (!user) return { isSuccess: false, message: 'no user found', statusCode: 404 };
 
-            const isMatch = bcrypt.compareSync(userSignInDto.password, user.passwordHash);
-            if (!isMatch) return { isSuccess: false, message: 'invalid password', statusCode: 401 };
+            const now = new Date();
+
+            if (user.lockedUntil && user.lockedUntil > now) {
+                const remainingMinutes = Math.ceil((user.lockedUntil.getTime() - now.getTime()) / 60_000);
+                return {
+                    isSuccess: false,
+                    message: `Too many failed attempts. Try again in ${remainingMinutes} minute${remainingMinutes === 1 ? '' : 's'}.`,
+                    statusCode: 429,
+                };
+            }
+
+            const isMatch = await bcrypt.compare(userSignInDto.password, user.passwordHash);
+
+            if (!isMatch) {
+                // The count deliberately survives an expired lockout — resetting it
+                // there would hand an attacker a fresh batch of free guesses every
+                // time one elapsed. Only a correct password clears it.
+                const failedSignInAttempts = user.failedSignInAttempts + 1;
+                const lockoutMinutes = getSignInLockoutMinutes(failedSignInAttempts);
+
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: {
+                        failedSignInAttempts,
+                        lockedUntil: lockoutMinutes > 0 ? new Date(now.getTime() + lockoutMinutes * 60_000) : null,
+                    },
+                });
+
+                if (lockoutMinutes > 0) {
+                    return {
+                        isSuccess: false,
+                        message: `Invalid password. Too many failed attempts — try again in ${lockoutMinutes} minute${lockoutMinutes === 1 ? '' : 's'}.`,
+                        statusCode: 429,
+                    };
+                }
+
+                return { isSuccess: false, message: 'invalid password', statusCode: 401 };
+            }
 
             const jwtSecret = jwtCookieSettings.secret;
             const jwtExpiresIn = jwtCookieSettings.expiresIn;
@@ -52,6 +87,13 @@ export class UserService {
             const token = jsonwebtoken.sign({ userId: user.id }, jwtSecret, {
                 expiresIn: jwtExpiresIn,
             });
+
+            if (user.failedSignInAttempts !== 0 || user.lockedUntil !== null) {
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: { failedSignInAttempts: 0, lockedUntil: null },
+                });
+            }
 
             return { isSuccess: true, message: 'signed in', jwt: token, statusCode: 200 };
         } catch (error) {
@@ -69,12 +111,15 @@ export class UserService {
             };
 
         try {
+            // Single-tenant: signIn only ever issues a signed token to the one user
+            // in the database, so a valid signature is sufficient proof. Kept
+            // synchronous (no db call) so the proxy can run on any runtime.
             const decoded = jsonwebtoken.verify(jwt, jwtCookieSettings.secret!) as DecodedJwtPayload;
 
-            if (!(decoded.userId === userId))
+            if (!decoded.userId)
                 return {
                     isSuccess: false,
-                    message: 'userId is not matching',
+                    message: 'token is missing a userId',
                     statusCode: 403,
                 };
 

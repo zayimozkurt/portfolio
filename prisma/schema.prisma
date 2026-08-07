@@ -23,6 +23,11 @@ model User {
     cvUrl      String?
     resumeMode String  @default("CUSTOM")
 
+    // Sign-in throttling. Stored on the row rather than in memory because the app
+    // runs serverless — instances neither share memory nor survive between requests.
+    failedSignInAttempts Int       @default(0)
+    lockedUntil          DateTime?
+
     userImages     UserImage[]
     contacts       Contact[]
     skills         Skill[]
