@@ -8,7 +8,7 @@ import { SectionHeader } from '@/components/resume/SectionHeader';
 import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSectionShell';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { SkillAttachableOrDetachableEntity } from '@/enums/skill-attachable-or-detachable-entity.enum';
-import { Experience } from '@/generated/client';
+import { SerializedExperienceModel } from '@/types/db/extended-experience.model';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
@@ -56,7 +56,7 @@ export function ExperiencesSection({ id }: { id?: string }) {
         }));
     }
 
-    function startEdit(experience: Experience) {
+    function startEdit(experience: SerializedExperienceModel) {
         setEditingExperienceId(experience.id);
         setExperienceForm({
             id: experience.id,

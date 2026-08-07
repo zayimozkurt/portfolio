@@ -1,16 +1,23 @@
 import { isAdminReducer } from '@/store/slices/is-admin.slice';
 import { userReducer } from '@/store/slices/user.slice';
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 
-export const store = configureStore({
-    reducer: {
-        user: userReducer,
-        isAdmin: isAdminReducer,
-    },
+const rootReducer = combineReducers({
+    user: userReducer,
+    isAdmin: isAdminReducer,
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
-export type AppStore = typeof store;
+export type RootState = ReturnType<typeof rootReducer>;
 
-export default store;
+/**
+ * A fresh store per request, seeded with data the server already fetched, so the
+ * first paint is complete and no client-side fetch is needed to render the page.
+ */
+export const makeStore = (preloadedState?: Partial<RootState>) =>
+    configureStore({
+        reducer: rootReducer,
+        preloadedState,
+    });
+
+export type AppStore = ReturnType<typeof makeStore>;
+export type AppDispatch = AppStore['dispatch'];

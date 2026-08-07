@@ -1,7 +1,7 @@
 'use client';
 
 import { TimelineItemCard } from '@/components/resume/timeline/TimelineItemCard';
-import { ExtendedEducationModel } from '@/types/db/extended-education.model';
+import { SerializedEducationModel } from '@/types/db/extended-education.model';
 
 export function EducationItem({
     education,
@@ -12,7 +12,7 @@ export function EducationItem({
     isLast = false,
     isSaving,
 }: {
-    education: ExtendedEducationModel;
+    education: SerializedEducationModel;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;

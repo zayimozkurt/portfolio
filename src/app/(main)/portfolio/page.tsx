@@ -1,16 +1,14 @@
 'use client';
 
 import { Button } from '@/components/Button';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import CreatePortfolioItemForm from '@/components/portfolio/CreatePortfolioItemForm';
 import { PlaceholderSortablePortfolioItemCard } from '@/components/portfolio/PlaceholderSortablePortfolioItemCard';
 import PortfolioItemCard from '@/components/portfolio/PortfolioItemCard';
 import { PortfolioItemDragOverlay } from '@/components/portfolio/PortfolioItemDragOverlay';
 import { SortablePortfolioItemCard } from '@/components/portfolio/SortablePortfolioItemCard';
 import { ButtonVariant } from '@/enums/button-variant.enum';
-import { useAppSelector } from '@/store/hooks';
-import { ExtendedPortfolioItemModel } from '@/types/db/extended-portfolio-item.model';
-import { ReadMultipleExtendedPortfolioItemsResponse } from '@/types/response/portfolio-item/read-multiple-extended-portfolio-items.response';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { userActions } from '@/store/slices/user.slice';
 import { ResponseBase } from '@/types/response/response-base';
 import {
     DndContext,
@@ -28,11 +26,14 @@ import { SortableContext, arrayMove, rectSortingStrategy, sortableKeyboardCoordi
 import { useEffect, useRef, useState } from 'react';
 
 export default function Page() {
+    const dispatch = useAppDispatch();
     const isAdmin = useAppSelector((state) => state.isAdmin);
+    // Already fetched by the server as part of the user, so there is nothing to
+    // load here and no second copy of the list to keep in sync.
+    const portfolioItems = useAppSelector((state) => state.user.portfolioItems);
 
     const [isCreatePortfolioItemFormHidden, setIsCreatePortfolioItemFormHidden] = useState<boolean>(true);
     const createPortfolioItemFormRef = useRef<HTMLDivElement>(null);
-    const [portfolioItems, setPortfolioItems] = useState<ExtendedPortfolioItemModel[]>([]);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     const MAX_COLS = 3;
@@ -40,20 +41,8 @@ export default function Page() {
     const placeholderIds = Array.from({ length: placeholderCount }, (_, i) => `placeholder-${i}`);
 
     async function refreshPortfolioItems() {
-        const response: ReadMultipleExtendedPortfolioItemsResponse = await (
-            await fetch('/api/visitor/portfolio-item/read-all-extended-by-user-id')
-        ).json();
-
-        if (response.isSuccess && response.portfolioItems) {
-            console.log("portfolioItems: ", response.portfolioItems);
-            setPortfolioItems(response.portfolioItems);
-        }
+        await dispatch(userActions.refresh());
     }
-
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        refreshPortfolioItems();
-    }, []);
 
     useEffect(() => {
         if (activeId) {
@@ -102,7 +91,7 @@ export default function Page() {
 
         const reordered = arrayMove(portfolioItems, oldIndex, newIndex);
         const previous = portfolioItems;
-        setPortfolioItems(reordered);
+        dispatch(userActions.setPortfolioItems(reordered));
 
         try {
             const response: ResponseBase = await (
@@ -113,22 +102,20 @@ export default function Page() {
                 })
             ).json();
 
-            if (response.isSuccess) {
-                await refreshPortfolioItems();
-            } else {
-                setPortfolioItems(previous);
+            // On success the optimistic order already matches the server, so
+            // there is nothing worth refetching.
+            if (!response.isSuccess) {
+                dispatch(userActions.setPortfolioItems(previous));
                 alert(response.message);
             }
         } catch {
-            setPortfolioItems(previous);
+            dispatch(userActions.setPortfolioItems(previous));
         }
     }
 
     const activeItem = activeId ? portfolioItems.find((item) => item.id === activeId) : null;
 
-    return (portfolioItems.length === 0 ? 
-        <LoadingSpinner />
-        :
+    return (
         <div className="w-full h-full flex flex-col items-center gap-16">
             <div className="relative w-[300px] sm:w-[700px] xl:w-[1000px] h-auto flex flex-col gap-8 pb-8">
                 <div className="flex justify-center items-center gap-4">
@@ -183,6 +170,8 @@ export default function Page() {
                             ) : null}
                         </DragOverlay>
                     </DndContext>
+                ) : portfolioItems.length === 0 ? (
+                    <p className="text-center text-text-muted">Nothing here yet.</p>
                 ) : (
                     <div className={`grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center`}>
                         {portfolioItems.map((portfolioItem) => (

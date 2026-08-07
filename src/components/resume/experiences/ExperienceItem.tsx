@@ -1,7 +1,7 @@
 'use client';
 
 import { TimelineItemCard } from '@/components/resume/timeline/TimelineItemCard';
-import { ExtendedExperienceModel } from '@/types/db/extended-experience.model';
+import { SerializedExperienceModel } from '@/types/db/extended-experience.model';
 
 export function ExperienceItem({
     experience,
@@ -12,7 +12,7 @@ export function ExperienceItem({
     isLast = false,
     isSaving,
 }: {
-    experience: ExtendedExperienceModel;
+    experience: SerializedExperienceModel;
     isEditMode: boolean;
     onEdit: () => void;
     onDelete: () => void;
