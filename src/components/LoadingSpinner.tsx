@@ -1,37 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import rough from 'roughjs';
-import type { RoughCanvas } from 'roughjs/bin/canvas';
+'use client';
 
+import { useEffect, useState } from 'react';
+
+/**
+ * The sketchy look used to come from roughjs redrawing a canvas 33 times a
+ * second. Two slightly-offset SVG arcs give the same hand-drawn double stroke
+ * for free, and `currentColor` follows the theme without reading the DOM.
+ */
 export default function LoadingSpinner({ isHidden, message }: { isHidden?: boolean; message?: string }) {
-    const roughCanvas = useRef<RoughCanvas>(null);
-    const canvasElement = useRef<HTMLCanvasElement>(null);
     const [dotCount, setDotCount] = useState<number>(1);
-
-    useEffect(() => {
-        const canvas = canvasElement.current as HTMLCanvasElement;
-        const ctx = canvas.getContext('2d');
-        if (canvas) {
-            roughCanvas.current = rough.canvas(canvas);
-        }
-        let interval: ReturnType<typeof setInterval>;
-        if (roughCanvas.current) {
-            let startAngle = 0;
-            const arcSize = Math.PI * 0.75;
-            interval = setInterval(() => {
-                ctx!.clearRect(0, 0, canvas.width, canvas.height);
-                const isDark = document.documentElement.classList.contains('dark');
-                const stroke = isDark ? '#ffffff' : '#000000';
-                const endAngle = startAngle + arcSize;
-                roughCanvas.current!.arc(25, 25, 30, 30, startAngle, endAngle, false, { stroke });
-                startAngle += 0.2;
-                if (startAngle >= 2 * Math.PI) {
-                    startAngle -= 2 * Math.PI;
-                }
-            }, 30);
-        }
-
-        return () => clearInterval(interval);
-    }, [canvasElement]);
 
     useEffect(() => {
         const textInterval = setInterval(() => {
@@ -49,7 +26,21 @@ export default function LoadingSpinner({ isHidden, message }: { isHidden?: boole
                 className="w-full h-[50%]
                 flex flex-col justify-center items-center"
             >
-                <canvas ref={canvasElement} width="50" height="50" className=""></canvas>
+                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" className="animate-spin" aria-hidden="true">
+                    <path
+                        d="M 40.2 24.6 A 15 15 0 1 1 24.8 10.3"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                    />
+                    <path
+                        d="M 39.5 25.5 A 14.4 15.7 0 1 1 25.4 9.6"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinecap="round"
+                        opacity="0.75"
+                    />
+                </svg>
                 <p>{message ? message : `Loading${'.'.repeat(dotCount)}`}</p>
             </div>
         </div>

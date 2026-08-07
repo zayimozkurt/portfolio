@@ -1,4 +1,3 @@
-import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { Prisma } from '@/generated/client';
 import { InputJsonValue } from '@/generated/client/runtime/library';
@@ -13,6 +12,7 @@ import { UploadSkillImageResponse } from '@/types/response/skill/upload-skill-im
 import { TransactionClient } from '@/types/transaction-client.type';
 import { extractImageUrlsFromTipTapJson } from '@/utils/extract-image-urls-from-tip-tap-json.util';
 import { supabase } from '@/utils/supabase-client';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class SkillService {
@@ -20,6 +20,8 @@ export class SkillService {
 
     static async create(dto: CreateSkillDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             const duplicateSkill = await prisma.skill.findFirst({
                 where: {
                     userId,
@@ -59,7 +61,7 @@ export class SkillService {
 
     static async readById(id: string): Promise<ReadSingleSkillResponse> {
         try {
-            const skill = await prisma.skill.findUnique({ where: { id }, include: { experiences: true, educations: true, portfolioItems: true } });
+            const skill = await prisma.skill.findUnique({ where: { id }, relationLoadStrategy: 'join', include: { experiences: true, educations: true, portfolioItems: true } });
 
             if (!skill) return { isSuccess: false, message: "skill couldn't be read", statusCode: 404 };
 
@@ -72,6 +74,8 @@ export class SkillService {
 
     static async updateById(id: string, dto: UpdateSkillDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             const skill = await prisma.skill.findUnique({ where: { id } });
 
             if (!skill) {

@@ -1,9 +1,8 @@
-import { ExtendedUserModel } from '@/types/db/extended-user.model';
-import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id.response';
+import { SerializedUserModel } from '@/types/db/extended-user.model';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const refresh = createAsyncThunk('user/refresh', async () => {
-    const response: ReadUserByIdResponse = await (
+    const response: { user?: SerializedUserModel } = await (
         await fetch('/api/visitor/user/read', {
             method: 'GET',
         })
@@ -11,11 +10,10 @@ const refresh = createAsyncThunk('user/refresh', async () => {
     return response.user;
 });
 
-const initialState: ExtendedUserModel = {
+const initialState: SerializedUserModel = {
     id: '',
     email: '',
     userName: '',
-    passwordHash: '',
     fullName: '',
     headline: '',
     bio: '',
@@ -35,14 +33,21 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        set(state, action: PayloadAction<ExtendedUserModel>) {
+        set(state, action: PayloadAction<SerializedUserModel>) {
             return action.payload;
+        },
+        // Lets a reorder apply optimistically (and roll back) without refetching
+        // the entire profile just to learn an order the client already knows.
+        setPortfolioItems(state, action: PayloadAction<SerializedUserModel['portfolioItems']>) {
+            state.portfolioItems = action.payload;
         },
     },
     extraReducers(builder) {
         builder.addCase(refresh.fulfilled, (state, action) => {
+            // Keep whatever is already there if the refresh came back empty,
+            // rather than blanking the whole profile out.
             if (action.payload) return action.payload;
-            return undefined;
+            return state;
         });
     },
 });

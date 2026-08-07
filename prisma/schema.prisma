@@ -1,7 +1,8 @@
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "linux-musl", "rhel-openssl-3.0.x"]
-    output        = "../src/generated/client"
+    provider        = "prisma-client-js"
+    binaryTargets   = ["native", "linux-musl", "rhel-openssl-3.0.x"]
+    output          = "../src/generated/client"
+    previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -22,6 +23,11 @@ model User {
     location     String?
     cvUrl      String?
     resumeMode String  @default("CUSTOM")
+
+    // Sign-in throttling. Stored on the row rather than in memory because the app
+    // runs serverless — instances neither share memory nor survive between requests.
+    failedSignInAttempts Int       @default(0)
+    lockedUntil          DateTime?
 
     userImages     UserImage[]
     contacts       Contact[]

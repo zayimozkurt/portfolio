@@ -1,11 +1,19 @@
 'use client';
 
-import store from '@/store/store';
+import { makeStore, RootState } from '@/store/store';
 import { ThemeProvider } from 'next-themes';
-import React from 'react';
+import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 
-export default function RootBody({ children }: { children: React.ReactNode }) {
+export default function RootBody({
+    children,
+    preloadedState,
+}: {
+    children: React.ReactNode;
+    preloadedState?: Partial<RootState>;
+}) {
+    const [store] = useState(() => makeStore(preloadedState));
+
     return (
         <Provider store={store}>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

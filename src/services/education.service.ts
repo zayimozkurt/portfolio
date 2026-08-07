@@ -1,8 +1,8 @@
-import { userId } from '@/constants/user-id.constant';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
 import { UpdateEducationDto } from '@/types/dto/education/update-education.dto';
 import { ReadAllEducationsResponse } from '@/types/response/education/read-all-educations.response';
 import { ResponseBase } from '@/types/response/response-base';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class EducationService {
@@ -14,6 +14,8 @@ export class EducationService {
         }
 
         try {
+            const userId = await getUserId();
+
             await prisma.education.create({
                 data: {
                     userId,
@@ -35,6 +37,8 @@ export class EducationService {
 
     static async readAllByUserId(): Promise<ReadAllEducationsResponse> {
         try {
+            const userId = await getUserId();
+
             const educations = await prisma.education.findMany({
                 where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],

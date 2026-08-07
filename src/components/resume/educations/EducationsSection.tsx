@@ -8,7 +8,7 @@ import { SectionHeader } from '@/components/resume/SectionHeader';
 import { TimelineSectionShell } from '@/components/resume/timeline/TimelineSectionShell';
 import { ButtonVariant } from '@/enums/button-variant.enum';
 import { SkillAttachableOrDetachableEntity } from '@/enums/skill-attachable-or-detachable-entity.enum';
-import { Education } from '@/generated/client';
+import { SerializedEducationModel } from '@/types/db/extended-education.model';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { userActions } from '@/store/slices/user.slice';
 import { CreateEducationDto } from '@/types/dto/education/create-education.dto';
@@ -56,7 +56,7 @@ export function EducationsSection({ id }: { id?: string }) {
         }));
     }
 
-    function startEdit(education: Education) {
+    function startEdit(education: SerializedEducationModel) {
         setEditingEducationId(education.id);
         setEducationForm({
             id: education.id,

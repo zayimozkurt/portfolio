@@ -16,7 +16,6 @@ export default function Page() {
 
     async function handleSubmit(formData: FormData) {
         const userSignInDto: UserSignInDto = {
-            userName: formData.get('userName')?.toString() ?? '',
             password: formData.get('password')?.toString() ?? '',
         };
         const response: UserSignInResponse = await (
@@ -41,8 +40,7 @@ export default function Page() {
                 className="w-[200px] h-full flex flex-col justify-center items-center gap-2"
             >
                 <h1 className="font-bold text-xl">Admin</h1>
-                <Input type="text" name="userName" placeholder="username..." />
-                <Input type="password" name="password" placeholder="password..." />
+                <Input type="password" name="password" placeholder="password..." autoFocus />
                 <Button type="submit" variant={ButtonVariant.PRIMARY} size={ButtonSize.SMALL}>
                     Sign In
                 </Button>

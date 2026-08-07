@@ -1,5 +1,4 @@
 import { PORTFOLIO_ITEM_COVER_IMAGE_PREFIX } from '@/constants/portfolio-item-cover-image-prefix.constant';
-import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { InputJsonValue } from '@/generated/client/runtime/library';
 import { CleanUpOrphanedPortfolioImagesDto } from '@/types/dto/portfolio-item/clean-up-orphaned-portfolio-images.dto';
@@ -16,6 +15,7 @@ import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
 import { extractImageUrlsFromTipTapJson } from '@/utils/extract-image-urls-from-tip-tap-json.util';
 import { supabase } from '@/utils/supabase-client';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class PortfolioItemService {
@@ -23,6 +23,8 @@ export class PortfolioItemService {
 
     static async create(dto: CreatePortfolioItemDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             const duplicatePortfolioItem = await prisma.portfolioItem.findFirst({
                 where: {
                     userId,
@@ -75,7 +77,7 @@ export class PortfolioItemService {
 
     static async readExtendedById(id: string): Promise<ReadSingleExtendedPortfolioItemResponse> {
         try {
-            const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id }, include: { skills: { orderBy: { order: 'asc' } } } });
+            const portfolioItem = await prisma.portfolioItem.findUnique({ where: { id }, relationLoadStrategy: 'join', include: { skills: { orderBy: { order: 'asc' } } } });
 
             if (!portfolioItem) return { isSuccess: false, message: "portfolio item couldn't read", statusCode: 404 };
 
@@ -87,6 +89,8 @@ export class PortfolioItemService {
 
     static async readAllByUserId(): Promise<ReadMultiplePortfolioItemsResponse> {
         try {
+            const userId = await getUserId();
+
             const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' } });
 
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems, statusCode: 200 };
@@ -98,7 +102,9 @@ export class PortfolioItemService {
 
     static async readAllExtendedByUserId(): Promise<ReadMultipleExtendedPortfolioItemsResponse> {
         try {
-            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' }, include: { skills: { orderBy: { order: 'asc' } } } });
+            const userId = await getUserId();
+
+            const portfolioItems = await prisma.portfolioItem.findMany({ where: { userId }, orderBy: { order: 'asc' }, relationLoadStrategy: 'join', include: { skills: { orderBy: { order: 'asc' } } } });
 
             return { isSuccess: true, message: 'all portfolio items read', portfolioItems, statusCode: 200 };
         } catch (error) {
@@ -109,6 +115,8 @@ export class PortfolioItemService {
 
     static async updateById(id: string, dto: UpdatePortfolioItemDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             if (dto.title) {
                 const duplicatePortfolioItem = await prisma.portfolioItem.findFirst({
                     where: {
@@ -155,6 +163,8 @@ export class PortfolioItemService {
 
     static async deleteById(id: string): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             const readPortfolioItemResponse = await this.readById(id);
 
             if (!readPortfolioItemResponse.isSuccess || !readPortfolioItemResponse.portfolioItem) return readPortfolioItemResponse;
