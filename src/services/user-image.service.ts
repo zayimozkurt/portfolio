@@ -1,9 +1,9 @@
-import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { DeleteUserImageDto } from '@/types/dto/user-image/delete-user-image.dto';
 import { UpsertUserImageDto } from '@/types/dto/user-image/upsert-user-image.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import { supabase } from '@/utils/supabase-client';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class UserImageService {
@@ -11,6 +11,7 @@ export class UserImageService {
 
     static async upsert(file: File, upsertUserImageDto: UpsertUserImageDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
             const fileBuffer = Buffer.from(await file.arrayBuffer());
 
             const existingImage = await prisma.userImage.findUnique({
@@ -68,6 +69,8 @@ export class UserImageService {
 
     static async delete(deleteUserImageDto: DeleteUserImageDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             const existingImage = await prisma.userImage.findUnique({
                 where: { userId_place: { userId: userId!, place: deleteUserImageDto.place } },
             });

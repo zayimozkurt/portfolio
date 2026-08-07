@@ -1,7 +1,6 @@
 import { renderResumePdf } from '@/components/resume-pdf/render-resume-pdf';
 import { jwtCookieSettings } from '@/constants/cookie-settings.constant';
 import { getSignInLockoutMinutes } from '@/constants/sign-in-lockout.constant';
-import { userId } from '@/constants/user-id.constant';
 import { SupabaseBucketName } from '@/enums/supabase-bucket-name.enum';
 import { DecodedJwtPayload } from '@/types/decoded-jwt-payload.interface';
 import { UpdateUserDto } from '@/types/dto/user/update-user.dto';
@@ -10,6 +9,7 @@ import { UserSignUpDto } from '@/types/dto/user/user-sign-up.dto';
 import { ResponseBase } from '@/types/response/response-base';
 import { ReadUserByIdResponse } from '@/types/response/user/read-user-by-id.response';
 import { UserSignInResponse } from '@/types/response/user/user-sign-in.response';
+import { getUserId } from '@/utils/get-user-id.util';
 import { supabase } from '@/utils/supabase-client';
 import bcrypt from 'bcrypt';
 import jsonwebtoken, { JsonWebTokenError } from 'jsonwebtoken';
@@ -140,10 +140,18 @@ export class UserService {
 
     static async readById(): Promise<ReadUserByIdResponse> {
         try {
+            const userId = await getUserId();
+
             const user = await prisma.user.findUnique({
+                // Without this every include below becomes its own round trip to the
+                // database (11 in total, ~1.9s). 'join' collapses them into one query.
+                relationLoadStrategy: 'join',
                 where: {
                     id: userId,
                 },
+                // Never leave the server: the hash, and the sign-in throttling
+                // state that would tell an attacker how close a lockout is.
+                omit: { passwordHash: true, failedSignInAttempts: true, lockedUntil: true },
                 include: {
                     skills: { orderBy: { order: 'asc' } },
                     userImages: true,
@@ -160,7 +168,7 @@ export class UserService {
                         },
                         include: { skills: { orderBy: { order: 'asc' } } },
                     },
-                    portfolioItems: { orderBy: { order: 'asc' } },
+                    portfolioItems: { orderBy: { order: 'asc' }, include: { skills: { orderBy: { order: 'asc' } } } },
                 },
             });
 
@@ -188,6 +196,8 @@ export class UserService {
         }
 
         try {
+            const userId = await getUserId();
+
             await prisma.user.update({
                 where: {
                     id: userId,

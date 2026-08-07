@@ -1,9 +1,9 @@
-import { userId } from '@/constants/user-id.constant';
 import { CreateExperienceDto } from '@/types/dto/experience/create-experience.dto';
 import { UpdateExperienceDto } from '@/types/dto/experience/update-experience.dto';
 import { ReadAllExperiencesResponse } from '@/types/response/experience/read-all-experiences.response';
 import { ReadAllExtendedExperiencesResponse } from '@/types/response/experience/read-all-extended-experiences.response';
 import { ResponseBase } from '@/types/response/response-base';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class ExperienceService {
@@ -15,6 +15,7 @@ export class ExperienceService {
         }
 
         try {
+            const userId = await getUserId();
             const { startDate, endDate, isCurrent, ...restOfDto } = dto;
 
             await prisma.experience.create({
@@ -35,11 +36,12 @@ export class ExperienceService {
 
     static async readAllByUserId(): Promise<ReadAllExperiencesResponse> {
         try {
+            const userId = await getUserId();
+
             const experiences = await prisma.experience.findMany({
                 where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }]
             });
-            console.log("experiences: ", experiences);
             return { isSuccess: true, message: 'all experiences read', experiences, statusCode: 200 };
         } catch (error) {
             console.error(error);
@@ -49,12 +51,14 @@ export class ExperienceService {
 
     static async readAllExtendedByUserId(): Promise<ReadAllExtendedExperiencesResponse> {
         try {
+            const userId = await getUserId();
+
             const experiences = await prisma.experience.findMany({
                 where: { userId },
                 orderBy: [{ isCurrent: 'desc' }, { startDate: 'desc' }],
+                relationLoadStrategy: 'join',
                 include: { skills: { orderBy: { order: 'asc' } }, }
             });
-            console.log("experiences: ", experiences);
             return { isSuccess: true, message: 'all experiences read', experiences, statusCode: 200 };
         } catch (error) {
             console.error(error);

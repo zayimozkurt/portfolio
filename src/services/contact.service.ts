@@ -1,5 +1,4 @@
 import { MAX_CONTACTS } from '@/constants/max-contacts.constant';
-import { userId } from '@/constants/user-id.constant';
 import { ContactLabel } from '@/enums/contact-label.enum';
 import { CreateContactDto } from '@/types/dto/contact/create-contact.dto';
 import { ReorderContactsDto } from '@/types/dto/contact/reorder-contacts.dto';
@@ -7,6 +6,7 @@ import { UpdateContactDto } from '@/types/dto/contact/update-contact.dto';
 import { ReadAllContactsResponse } from '@/types/response/contact/read-all-contacts.response';
 import { ResponseBase } from '@/types/response/response-base';
 import { TransactionClient } from '@/types/transaction-client.type';
+import { getUserId } from '@/utils/get-user-id.util';
 import { prisma } from 'prisma/prisma-client';
 
 export class ContactService {
@@ -14,6 +14,8 @@ export class ContactService {
 
     static async create(dto: CreateContactDto): Promise<ResponseBase> {
         try {
+            const userId = await getUserId();
+
             await prisma.$transaction(async (tx: TransactionClient)=> {
                 const count = await tx.contact.count({ where: { userId } });
 
@@ -41,6 +43,8 @@ export class ContactService {
 
     static async readAllByUserId(): Promise<ReadAllContactsResponse> {
         try {
+            const userId = await getUserId();
+
             const contacts = await prisma.contact.findMany({ where: { userId }, orderBy: { order: 'asc' } });
 
             if (contacts.length === 0) {
