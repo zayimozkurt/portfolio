@@ -145,6 +145,9 @@ body {
 
 html {
     scroll-behavior: smooth;
+    /* Always reserve the vertical scrollbar gutter so pages of different
+       heights don't shift the layout horizontally when navigating. */
+    scrollbar-gutter: stable;
 }
 
 [id='about'],
