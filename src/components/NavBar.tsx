@@ -46,10 +46,11 @@ export default function NavBar() {
                             <Link
                                 key={`link-${index}-${link.name}`}
                                 href={link.href}
-                                className={`font-mono text-[13px] py-[18px] transition-colors duration-150 flex-shrink-0 ${
+                                data-text={link.name}
+                                className={`font-mono text-[13px] py-[18px] transition-colors duration-150 flex-shrink-0 text-center after:block after:h-0 after:overflow-hidden after:invisible after:font-semibold after:content-[attr(data-text)] border-b-2 ${
                                     isActive
-                                        ? 'text-text-primary font-semibold border-b-2 border-text-primary'
-                                        : 'text-text-tertiary hover:text-text-primary'
+                                        ? 'text-text-primary font-semibold border-text-primary'
+                                        : 'text-text-tertiary border-transparent hover:text-text-primary'
                                 }`}
                             >
                                 {link.name}

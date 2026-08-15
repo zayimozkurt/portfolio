@@ -140,15 +140,14 @@ export class UserService {
 
     static async readById(): Promise<ReadUserByIdResponse> {
         try {
-            const userId = await getUserId();
-
-            const user = await prisma.user.findUnique({
+            // findFirst rather than getUserId() + findUnique: there is only one user,
+            // so looking the id up first would cost an extra round trip (and an extra
+            // pooled connection) on every cold start to learn something the query
+            // does not need.
+            const user = await prisma.user.findFirst({
                 // Without this every include below becomes its own round trip to the
                 // database (11 in total, ~1.9s). 'join' collapses them into one query.
                 relationLoadStrategy: 'join',
-                where: {
-                    id: userId,
-                },
                 // Never leave the server: the hash, and the sign-in throttling
                 // state that would tell an attacker how close a lockout is.
                 omit: { passwordHash: true, failedSignInAttempts: true, lockedUntil: true },

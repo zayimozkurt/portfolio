@@ -7,6 +7,9 @@ generator client {
 
 datasource db {
     provider = "postgresql"
+    // The app runs on the transaction-mode pooler (port 6543). CLI commands need a
+    // plain session connection instead, since the pooler cannot run DDL — see
+    // prisma.config.ts, which points them at DIRECT_URL when it is set.
     url      = env("DATABASE_URL")
 }
 
